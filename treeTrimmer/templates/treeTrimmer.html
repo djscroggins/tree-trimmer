@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>treeTrimmer</title>
+
+        <script type="text/javascript" src="{{ url_for('static', filename='dependencies/jquery-3.3.1.js')}}"></script>
+        <!--<script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='sdk_v1.js')}}"></script>-->
+        <script type="text/javascript" src="{{ url_for('static', filename='javascript/treeTrimmer.js')}}"></script>
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_confusion_matrix.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/old_d3_decision_tree.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_feature_table.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_params_table.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_accuracy_report.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/round.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_decision_tree.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_node_summary.js')}}"></script>-->
+        <!--<script type="text/javascript" src="{{ url_for('static', filename='tree_demo/d3_tree_summary.js')}}"></script>-->
+
+        <!--<link rel="stylesheet" href="../static/tree_demo/tree-demo.css">-->
+</head>
+<body>
+
+        <div id="init-data">
+            <strong>Files:</strong>
+            <br>
+            <input id="file-picker" type="file" name="file" accept="text/csv/*" multiple>
+            <br>
+
+            <label for="criterion">Selection criterion:</label>
+            <select id="criterion">
+                <option value="gini">Gini</option>
+                <option value="entropy">Entropy</option>
+            </select>
+            <br>
+
+            <label for="max-depth">Max Depth:</label>
+            <input type="number" id="max-depth" value="20" min="1"/>
+
+            <label for="min-samples-split">Min Samples Split: </label>
+            <input type="number" id="min-samples-split" value="2" min="1"/>
+
+            <label for="min-samples-leaf">Min Samples in Leaf:</label>
+            <input type="number" id="min-samples-leaf" value="1" min="1"/> <br>
+
+            <label for="random-state">Random State: </label>
+            <input type="checkbox" id="random-state" checked/><br>
+
+            <label for="data-has-target"> Does the data have a target? </label>
+            <input type="checkbox" id="data-has-target" onclick="has_target(this);"/>
+            <input type="number" id="data-target-index" value="0" min="0" style="display: none;" />
+            <input type="button" value="Upload!" id="upload-button" onclick="initializeTree(document.getElementById('file-picker').files[0]); return false;"/>
+        </div>
+
+</body>
+</html>
