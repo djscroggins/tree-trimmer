@@ -40,7 +40,14 @@ function show_display_form_toggle () {
     }
 }
 
-function decisionTree (paramsObject) {}
+function decisionTree (paramsObject, onSuccess) {
+
+    $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
+        onSuccess(returnData);
+    }).fail(function () {
+        alert('Post failed')
+    })
+}
 
 
 function initializeTree (fileIn) {
@@ -49,7 +56,8 @@ function initializeTree (fileIn) {
     formData.append('file', fileIn);
     console.log('Type', typeof fileIn);
 
-    targetIndex = ($('#data-has-target')[0].checked) ? $('#data-target-index').val() : null;
+    targetIndex = ($('#data-has-target')[0].checked) ? $('#data-target-index').val() : 0;
+    formData.append('target_index', targetIndex);
 
     $.ajax({
         url: 'load_data',
@@ -58,16 +66,15 @@ function initializeTree (fileIn) {
         processData: false,
         contentType: false
     }).done(function (returnData) {
-        alert('Success');
-        console.log(returnData);
+        // alert('Success');
+        // console.log(returnData);
 
         toggle_input_form(document.getElementById('input-form-toggle'));
         show_display_form_toggle();
         const params = get_parameters();
-        console.log(params);
-
-
-        decisionTree();
+        decisionTree(params, function (mlResults) {
+            console.log(mlResults);
+        });
     }).fail(function () {
         alert('Post failed')
     })
