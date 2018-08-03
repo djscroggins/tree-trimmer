@@ -24,3 +24,8 @@ def load_data():
     file.save('/'.join([save_path, file_name]))
 
     return 'Success'
+
+@app.route('/decision_tree', methods=['GET'])
+def decision_tree():
+
+    return 'Success'

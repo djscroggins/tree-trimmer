@@ -53,5 +53,26 @@
             <input type="button" value="Upload!" id="upload-button" onclick="initializeTree(document.getElementById('file-picker').files[0]); return false;"/>
         </div>
 
+        {# Top row summary data #}
+        <div class="box">
+            <input type="button" value="Show input form" id="input-form-toggle" class="top-box-elements" style="display: none" onclick="toggle_input_form(this)"/>
+            <div id="parameter-table" class="top-box-elements"></div>
+            <div id="accuracy-report" class="top-box-elements"></div>
+            <div id="tree-summary" class="top-box-elements"></div>
+        </div>
+
+        {# Tree display #}
+        <div class="box">
+            {# Container for decision tree #}
+            <div id="tree-container" class="top-box-elements"></div>
+            {# Sidebar summary elements #}
+            <div class="box-vertical">
+                <div id="matrix" class="box-elements"></div>
+                <div id="important-features" class="box-elements"></div>
+                <div id="node-summary" class="box-elements"></div>
+            </div>
+
+        </div>
+
 </body>
 </html>
