@@ -45,6 +45,11 @@ function show_display_form_toggle () {
 
 function update_interaction_parameters (key_to_update, value_to_update) {
 
+    console.log("Inside update_interaction_parameters");
+    console.log(interaction_parameters);
+    console.log("Key to update: ", key_to_update);
+    console.log("Value to update: ", value_to_update);
+
     interaction_parameters[key_to_update] = value_to_update;
     // console.log("Updated interaction parameters");
     // console.log(interaction_parameters);
@@ -123,6 +128,7 @@ function initializeTree (fileIn) {
         toggle_input_form(document.getElementById('input-form-toggle'));
         show_display_form_toggle();
         const params = get_parameters();
+        interaction_parameters = params;
         decisionTree(params, function (mlResults) {
             console.log(mlResults);
             tree_trimmer_app(mlResults, params)
@@ -134,5 +140,19 @@ function initializeTree (fileIn) {
 
 
     // if ($('#data-has-target')[0].checked) {target = $('#data-target-index').val();}
+
+}
+
+function retrain_tree() {
+
+    stored_parameters_array.push(counter);
+    counter++;
+
+    console.log('Interaction parameters');
+    console.log(interaction_parameters);
+
+    // decisionTree(interaction_parameters, function (mlResults) {
+    //     tree_trimmer_app(mlResults, interaction_parameters)
+    // });
 
 }
