@@ -8,17 +8,19 @@
 {#        <script type="text/javascript" src="{{ url_for('static', filename='dependencies/d3.js') }}"></script>#}
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/treeTrimmer.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/confusion_matrix.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/feature_table.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/params_table.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/accuracy_report.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/round.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/decision_tree.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/node_summary.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/tree_summary.js')}}"></script>
 
-        <link rel="stylesheet" href="../static/javascript/tree-demo.css">
+        <script type="text/javascript" src="{{ url_for('static', filename='src/main.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/utilities/round.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/accuracy_report.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/confusion_matrix.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/decision_tree.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/feature_table.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/node_summary.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/params_table.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/tree_summary.js')}}"></script>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/tree-demo.css')}}">
+
 </head>
 <body>
 
