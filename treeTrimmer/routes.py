@@ -44,7 +44,12 @@ def decision_tree():
     min_impurity_decrease = float(parameters.pop('min_impurity_decrease', 0))
     random_state = 7 if parameters['random_state'] is True else None
     filter_feature = parameters.pop('filter_feature', None)
+    print("Filter feature")
+    print(filter_feature)
+    print(type(filter_feature))
 
-    dt_results = get_decision_tree(data_dict['features'], data_dict['feature_names'], data_dict['target'], criterion, max_depth, min_samples_split, min_samples_leaf, min_impurity_decrease, random_state, filter_feature)
+    dt_results = get_decision_tree(data_dict['features'], data_dict['feature_names'], data_dict['target'], criterion,
+                                   max_depth, min_samples_split, min_samples_leaf, min_impurity_decrease, random_state,
+                                   filter_feature)
 
     return jsonify(dt_results)

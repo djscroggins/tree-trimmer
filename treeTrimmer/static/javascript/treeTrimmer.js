@@ -151,8 +151,8 @@ function retrain_tree() {
     console.log('Interaction parameters');
     console.log(interaction_parameters);
 
-    // decisionTree(interaction_parameters, function (mlResults) {
-    //     tree_trimmer_app(mlResults, interaction_parameters)
-    // });
+    decisionTree(interaction_parameters, function (mlResults) {
+        tree_trimmer_app(mlResults, interaction_parameters)
+    });
 
 }

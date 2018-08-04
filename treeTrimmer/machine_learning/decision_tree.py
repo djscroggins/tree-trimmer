@@ -5,23 +5,24 @@ from sklearn.model_selection import cross_val_predict
 from sklearn.tree import DecisionTreeClassifier
 
 
-def filter_features(dataset_in, feature_labels_in, filter_features_in):
-    """Returns dataset with features in filter_features_in dropped"""
-    pd_df = pd.DataFrame(dataset_in)
+def filter_features(features_in, feature_names_in, filter_features_in):
+    """
+    Filters out features from dataset
 
-    # for each feature in filter_features_in, return index of feature in feature_labels_in
-    # each call to np.arghwere() returns a numpy array, so converting to Python list simpler than
-    # multiple concatenations and flattening needed to use arghwere
-    indices = [feature_labels_in.tolist().index(feature) for feature in filter_features_in]
+    :param features_in: numpy.ndarray of features
+    :param feature_names_in: numpy.ndarray of feature column names
+    :param filter_features_in: list of features to be filtered
+    :return: numpy.ndarray filtered_features with features in filter_features_in removed, numpy.ndarray
+    filtered_feature_names with names of filtered features removed
+    """
 
-    # Drop data columns for filtered feature(s)
-    # TODO: Change to use iloc
-    filtered_df = pd_df.drop(indices, axis=1)
+    indices = [feature_names_in.tolist().index(feature) for feature in filter_features_in]
 
-    # Return new numpy array with filtered feature(s) removed
-    filtered_features = np.delete(feature_labels_in, indices)
+    filtered_features = np.delete(features_in, indices, axis=1)
 
-    return filtered_df, filtered_features
+    filtered_feature_names = np.delete(feature_names_in, indices)
+
+    return filtered_features, filtered_feature_names
 
 
 def get_node_data(tree_in, features_in, labels_in, node_index_in, criterion_in, leaf=False):
@@ -115,44 +116,44 @@ def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_sa
     return tree_dict
 
 
-def get_decision_tree(dataset_in, feature_labels_in, target_in, criterion_in, max_depth_in,
+def get_decision_tree(features_in, feature_names_in, target_in, criterion_in, max_depth_in,
                       min_samples_split_in, min_samples_leaf_in, min_impurity_decrease_in, random_state_in,
                       filter_feature_in):
 
     tree_depth.clear()
 
     if filter_feature_in is not None:
-        dataset_in, feature_labels_in = filter_features(dataset_in, feature_labels_in, filter_feature_in)
+        features_in, feature_names_in = filter_features(features_in, feature_names_in, filter_feature_in)
 
-    # # Will only prevent split if >= so increase slightly
+    # Will only prevent split if >= so increase slightly
     min_impurity_decrease = min_impurity_decrease_in if min_impurity_decrease_in == 0 else min_impurity_decrease_in + 0.0001
 
     clf = DecisionTreeClassifier(criterion=criterion_in, max_depth=max_depth_in, min_samples_split=min_samples_split_in,
                                  min_samples_leaf=min_samples_leaf_in, min_impurity_decrease=min_impurity_decrease,
                                  random_state=random_state_in)
 
-    dt_clf = clf.fit(dataset_in, target_in)
+    dt_clf = clf.fit(features_in, target_in)
 
-    predicted = cross_val_predict(dt_clf, dataset_in, target_in)
+    predicted = cross_val_predict(dt_clf, features_in, target_in)
     #
     importances = clf.feature_importances_
     # # returns (up to) 10 most important feature indices sorted by importance
     top_indices = np.argsort(importances)[::-1][:10]
     # # list of tuple(feature name, feature importance score [rounded to 4 decimal places])
-    importance_list = [(feature_labels_in[i], round(importances[i], 4)) for i in top_indices]
+    importance_list = [(feature_names_in[i], round(importances[i], 4)) for i in top_indices]
     #
     conf_matrix = confusion_matrix(target_in, predicted)
 
-    print(type(target_in))
+    # print(type(target_in))
 
     # Get unique list of label names
     labels = np.unique(target_in).tolist()
 
-    print("Class labels", labels)
+    # print("Class labels", labels)
     criterion = clf.criterion
     n_total_samples = target_in.size
-    print("total samples", n_total_samples)
-    returned_tree = tree_to_dictionary(clf, feature_labels_in, labels, criterion, n_total_samples)
+    # print("total samples", n_total_samples)
+    returned_tree = tree_to_dictionary(clf, feature_names_in, labels, criterion, n_total_samples)
     #
     tree_summary = {"total_depth": max(tree_depth), "total_nodes": clf.tree_.node_count}
     #
