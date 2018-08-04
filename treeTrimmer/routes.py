@@ -1,10 +1,10 @@
 from treeTrimmer import app
+from treeTrimmer.machine_learning.preprocessing import get_pandas_data
+from treeTrimmer.machine_learning.decision_tree import get_decision_tree
+
 from flask import render_template, request, jsonify
 from json import loads
 import os
-
-from treeTrimmer.machine_learning.preprocessing import get_pandas_data
-from treeTrimmer.machine_learning.decision_tree import get_decision_tree
 
 # Just hold data in memory for demo
 data_dict = dict()
@@ -22,17 +22,12 @@ def load_data():
     target_index = loads((request.form['target_index']))
 
     root_path = os.path.dirname(os.path.abspath(__file__))
-    save_path = os.path.join(root_path, 'file_storage/')
-
-    file_name = file.filename
-    full_path = '/'.join([save_path, file_name])
+    storage_path = os.path.join(root_path, 'file_storage/')
+    full_path = '/'.join([storage_path, file.filename])
 
     file.save(full_path)
 
-    target, features, feature_names = get_pandas_data(full_path, target_index)
-    data_dict['target'] = target
-    data_dict['features'] = features
-    data_dict['feature_names'] = feature_names
+    (data_dict['target'], data_dict['features'], data_dict['feature_names']) = get_pandas_data(full_path, target_index)
 
     return 'Success'
 
@@ -50,10 +45,6 @@ def decision_tree():
     random_state = 7 if parameters['random_state'] is True else None
     filter_feature = parameters.pop('filter_feature', None)
 
-    ml_results = get_decision_tree(data_dict['features'], data_dict['feature_names'], data_dict['target'], criterion, max_depth, min_samples_split, min_samples_leaf, min_impurity_decrease, random_state, filter_feature)
-    # target_index = loads((request.form['target_index']))
+    dt_results = get_decision_tree(data_dict['features'], data_dict['feature_names'], data_dict['target'], criterion, max_depth, min_samples_split, min_samples_leaf, min_impurity_decrease, random_state, filter_feature)
 
-    # print(type(target_index))
-    # print(target_index)
-
-    return jsonify(ml_results)
+    return jsonify(dt_results)
