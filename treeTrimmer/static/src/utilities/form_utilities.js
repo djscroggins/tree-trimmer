@@ -1,28 +1,23 @@
 const formUtilities = function () {
     const newFormUtilities = {
 
-        hasTarget: function (target_checkbox) {
+        hasTarget: function (targetCheckbox) {
                 const index_input = document.getElementById('data-target-index');
-                if (target_checkbox.checked) {
+                if (targetCheckbox.checked) {
                     index_input.style.display = 'inline-block';
                 } else {
                     index_input.style.display = 'none';
                 }
         },
 
-        toggleInputForm: function (input_form_toggle) {
-            const init_data_element = document.getElementById("init-data");
-            if (init_data_element.style.display === "none") {
-                init_data_element.style.display = "block";
-                input_form_toggle.value = "Hide input form";
+        toggleInputForm: function (inputFormToggleButton, inputForm) {
+            // const init_data_element = document.getElementById(inputForm);
+            if (inputForm.style.display === "none") {
+                inputForm.style.display = "block";
+                inputFormToggleButton.value = "Hide input form";
             } else {
-                init_data_element.style.display = "none";
-                // Check because element initially set to display:none and so treated as if it doesn't exist
-                // if (typeof input_form_toggle !== 'undefined') {
-                // input_form_toggle.value = "Show input form";
-                // }
-                // }
-
+                inputForm.style.display = "none";
+                inputFormToggleButton.value = "Show input form"
             }
         },
 
@@ -37,11 +32,23 @@ const formUtilities = function () {
 
         },
 
-        showFormButton: function () {
-            const element = document.getElementById("input-form-toggle");
+        showFormButton: function (id) {
+            const element = document.getElementById(id);
             if (element.style.display === "none") {
                 element.style.display = "block";
             }
+        },
+
+        showErrorMessage: function (id) {
+            const element = document.getElementById(id);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            }
+        },
+
+        hideErrorMessage: function (id) {
+            const element = document.getElementById(id);
+            element.style.display = "none";
         }
 
     };

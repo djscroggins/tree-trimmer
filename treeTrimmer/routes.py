@@ -7,8 +7,6 @@ from json import loads
 import os
 from werkzeug.utils import secure_filename
 
-import numpy as np
-
 # Just hold data in memory for demo
 data_dict = dict()
 
@@ -40,7 +38,7 @@ def load_data():
 
         (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(file_path, target_index)
 
-        return jsonify(message='File succesfully loaded'), 201
+        return jsonify(message='File successfully loaded'), 201
 
     else:
         return jsonify(message='Only .csv files currently accepted'), 403

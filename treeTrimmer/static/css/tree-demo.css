@@ -1,5 +1,10 @@
 /*TODO: Clean this up*/
 
+#file-warning-message {
+    color: red;
+    font-size: 120%;
+}
+
 .app-header {
     margin-bottom: 10px;
 }

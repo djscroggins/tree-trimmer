@@ -8,9 +8,6 @@ const FeatureTable = function () {
 
         renderFeatureTable: function(params) {
 
-            console.log("Feature table");
-            console.log(params.features);
-
             resetFeatureTable();
 
             const columnLabels = ["Feature", "Score"];

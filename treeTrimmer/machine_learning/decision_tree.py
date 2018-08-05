@@ -1,5 +1,3 @@
-# TODO: Doc strings
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix
@@ -25,10 +23,21 @@ def filter_features(features_in, feature_names_in, filter_features_in):
     return filtered_features, filtered_feature_names
 
 
-def get_node_data(tree_in, features_in, labels_in, node_index_in, criterion_in, leaf=False):
+def get_node_data(tree_in, feature_names_in, labels_in, node_index_in, criterion_in, leaf=False):
+    """
+    Generates statstics for given node
+
+    :param tree_in: trained sklearn DecisionTreeClassifier
+    :param feature_names_in: numpy.ndarray of feature column names
+    :param labels_in: list of class names
+    :param node_index_in: index of current node
+    :param criterion_in: splitting criterion
+    :param leaf: boolean indicating whether node is a leaf or not
+    :return: node summary statistics relative to whether node is leaf or internal
+    """
 
     if not leaf:
-        split_feature = features_in[tree_in.tree_.feature[node_index_in]]
+        split_feature = feature_names_in[tree_in.tree_.feature[node_index_in]]
         split_threshold = tree_in.tree_.threshold[node_index_in]
         split = [split_feature, round(split_threshold, 3)]
 
@@ -48,6 +57,20 @@ def get_node_data(tree_in, features_in, labels_in, node_index_in, criterion_in, 
 
 def get_impurity_decrease_data(tree_in, node_index_in, left_index_in, right_index_in, total_samples_in,
                                origin_impurity_in):
+    """
+    Calculate weighted impurity decrease as well as this decrease expressed as a percentage relative to starting node
+
+    :param tree_in: trained sklearn DecisionTreeClassifier
+    :param node_index_in: current node index
+    :param left_index_in: index of left child
+    :param right_index_in: index of right child
+    :param total_samples_in: number of instances used for training
+    :param origin_impurity_in: impurity of starting node
+    :return: See scikit-learn DecisionTreeClassifier API documentation for more details on math used here;
+    impurity_decrease: difference between parent impurity and children's impurity each weighted relative to percentage
+    of samples in given node, percentage_decrease: weighted decrease expressed as a percentage improvement relative to
+    starting node
+    """
 
     current_node_samples = tree_in.tree_.n_node_samples[node_index_in]
 
@@ -70,8 +93,21 @@ def get_impurity_decrease_data(tree_in, node_index_in, left_index_in, right_inde
 tree_depth = set([])
 
 
-def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_samples_in, node_index=0, depth=0,
+def tree_to_dictionary(tree_in, features_names_in, labels_in, criterion_in, n_total_samples_in, node_index=0, depth=0,
                        origin_impurity_in=0):
+    """
+    Converts scikit-learn tree structure to nested dictionary with summary data for each node
+
+    :param tree_in: trained sklearn DecisionTreeClassifier 
+    :param features_names_in: numpy.ndarray of feature column names
+    :param labels_in: list of class names
+    :param criterion_in: splitting criterion
+    :param n_total_samples_in: number of instances used for training
+    :param node_index: index of current node; tree starts at 0
+    :param depth: depth of current node
+    :param origin_impurity_in: impurity of current node, used to calculate percentage improvement relative to starting node
+    :return: tree_dict: nested dictionary containing tree structure and node data
+    """
 
     tree_dict = {}
 
@@ -83,7 +119,7 @@ def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_sa
         # Use tuple unpacking to load nested dictionary
         (tree_dict['leaf']['impurity'],
          tree_dict['leaf']['n_node_samples'],
-         tree_dict['leaf']['node_class_counts']) = get_node_data(tree_in, features_in, labels_in,
+         tree_dict['leaf']['node_class_counts']) = get_node_data(tree_in, features_names_in, labels_in,
                                                                  node_index, criterion_in, True)
 
     else:
@@ -99,7 +135,7 @@ def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_sa
         (tree_dict['node']['split'],
          tree_dict['node']['impurity'],
          tree_dict['node']['n_node_samples'],
-         tree_dict['node']['node_class_counts']) = get_node_data(tree_in, features_in, labels_in,
+         tree_dict['node']['node_class_counts']) = get_node_data(tree_in, features_names_in, labels_in,
                                                                  node_index, criterion_in)
 
         (tree_dict['node']['weighted_impurity_decrease'],
@@ -108,9 +144,9 @@ def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_sa
                                                                                          n_total_samples_in,
                                                                                          origin_impurity)
 
-        tree_dict['children'] = [tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_samples_in,
+        tree_dict['children'] = [tree_to_dictionary(tree_in, features_names_in, labels_in, criterion_in, n_total_samples_in,
                                                     right_index, depth + 1, origin_impurity),
-                                 tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_samples_in,
+                                 tree_to_dictionary(tree_in, features_names_in, labels_in, criterion_in, n_total_samples_in,
                                                     left_index, depth + 1, origin_impurity)]
 
     return tree_dict
@@ -119,6 +155,23 @@ def tree_to_dictionary(tree_in, features_in, labels_in, criterion_in, n_total_sa
 def get_decision_tree(features_in, feature_names_in, target_in, criterion_in, max_depth_in,
                       min_samples_split_in, min_samples_leaf_in, min_impurity_decrease_in, random_state_in,
                       filter_feature_in):
+    """
+    Trains sklearn DecisionTreeClassifier and returns a collection of summary data for front-end visualization
+
+    :param features_in: numpy.ndarray of features
+    :param feature_names_in: numpy.ndarray of feature column names
+    :param target_in: numpy.ndaray of class
+    :param criterion_in: splitting criterion
+    :param max_depth_in: max depth of tree
+    :param min_samples_split_in: min samples for node splitting
+    :param min_samples_leaf_in: min samples required in leaves
+    :param min_impurity_decrease_in: min threshold restricting splitting based on impurity
+    :param random_state_in: integer for random state, internally defaults to 7
+    :param filter_feature_in: features to be filtered when building tree; None if no filtering requested
+    :return: class_labels: list of class names, tree_json: nested dictionary used to build tree visualization,
+    tree_summary: summary of tree depth and node count, confusion_matrix: confusion matrix build from cross-validated
+    predictions, important_features: list of 10 most important features in decision tree
+    """
 
     tree_depth.clear()
 

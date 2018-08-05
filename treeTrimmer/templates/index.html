@@ -29,6 +29,7 @@
         <script> const indexFormUtilities = formUtilities(); </script>
 
         <div id="init-data">
+            <p id="file-warning-message" style="display: none">Only .csv uploads currently supported</p>
             <strong>Files:</strong>
             <br>
             <input id="file-picker" type="file" name="file" accept="text/csv/*" multiple>
@@ -61,7 +62,7 @@
 
         {# Top row summary data #}
         <div class="box">
-            <input type="button" value="Show input form" id="input-form-toggle" class="top-box-elements" style="display: none" onclick="indexFormUtilities.toggleInputForm(this)"/>
+            <input type="button" value="Show input form" id="input-form-toggle-button" class="top-box-elements" style="display: none" onclick="indexFormUtilities.toggleInputForm(this, document.getElementById('init-data'))"/>
             <div id="parameter-table" class="top-box-elements"></div>
             <div id="accuracy-report" class="top-box-elements"></div>
             <div id="tree-summary" class="top-box-elements"></div>

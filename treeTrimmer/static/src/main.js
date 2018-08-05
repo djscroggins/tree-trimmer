@@ -31,30 +31,24 @@ function initializeTree(fileIn) {
     formData.append('target_index', targetIndex);
 
     $.ajax({url: 'load_data', type: 'POST', data: formData, processData: false, contentType: false})
-        .done(function (returnData, textStatus, jqXHR) {
+        .done(function (returnData, _, jqXHR) {
 
-            console.log('Done');
-            console.log(returnData);
-            console.log(textStatus);
-            console.log(jqXHR);
+            console.log(jqXHR.status + ' (' + jqXHR.statusText + ') ' + returnData.message);
 
-            myFormUtilities.toggleInputForm(document.getElementById('input-form-toggle'));
-            myFormUtilities.showFormButton();
+            myFormUtilities.toggleInputForm(document.getElementById('input-form-toggle-button'), document.getElementById('init-data'));
+            myFormUtilities.showFormButton('input-form-toggle-button');
+            myFormUtilities.hideErrorMessage("file-warning-message");
 
             const params = myFormUtilities.getInitParameters();
             interactionParameters = params;
 
             getDecisionTree(params, function (results) {
-                console.log(results);
                 app.renderApp(results.ml_results, params, updateInteractionParameters, retrainTree)
-
             });
-        }).fail(function (jqXHR, textStatus) {
-            //TODO: Add sensible error handling
-            console.log('Failed');
-            console.log(jqXHR);
-            console.log(textStatus);
-            alert('Post failed')
+
+        }).fail(function (jqXHR) {
+            console.log(jqXHR.status + ' (' + jqXHR.statusText + ') ' + jqXHR.responseJSON.message);
+            myFormUtilities.showErrorMessage("file-warning-message");
         })
 }
 
