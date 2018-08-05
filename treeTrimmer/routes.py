@@ -5,14 +5,16 @@ from treeTrimmer.machine_learning.decision_tree import get_decision_tree
 from flask import render_template, request, jsonify
 from json import loads
 import os
+from werkzeug.utils import secure_filename
 
-from flask.json import JSONEncoder
 import numpy as np
-
-from pandas.errors import ParserError
 
 # Just hold data in memory for demo
 data_dict = dict()
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 
 @app.route('/', defaults={'path': ''})
@@ -23,48 +25,25 @@ def index(path):
 @app.route('/load_data', methods=['POST'])
 def load_data():
 
+    UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
+
     file = request.files['file']
     target_index = loads((request.form['target_index']))
 
-    if file.filename.lower().endswith('.csv'):
+    if not os.path.isdir(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
 
-        print('Instance path', os.path.dirname(app.instance_path))
-        print('Root path', os.path.dirname(app.root_path))
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
 
-        root_path = os.path.dirname(os.path.abspath(__file__))
-        print('root_path', root_path)
-        storage_path = os.path.join(root_path, 'file_storage')
-        print('storage_path', storage_path)
-        full_path = '/'.join([storage_path, file.filename])
-        print('full_path: ', full_path)
-        file.save(full_path)
-        save_path = os.path.join(app.instance_path, file.filename)
-        # print('save_path: ', save_path)
-
-        if not os.path.isdir(os.path.join(app.instance_path)):
-            print("Instance directory does not exist")
-            os.makedirs(os.path.join(app.instance_path))
-        else:
-            print('Instance directory exists')
-
-        # file.save(save_path)
-
-        # if os.path.isfile(full_path):
-        #     os.remove(full_path)
-        # else:
-        #     # TODO: Catch with logging later
-        #     print('File could not be removed')
-
-        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(full_path, target_index)
+        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(file_path, target_index)
 
         return jsonify(message='File succesfully loaded'), 201
 
     else:
         return jsonify(message='Only .csv files currently accepted'), 403
-
-
-
-    # return 'Success'
 
 
 @app.route('/decision_tree', methods=['POST'])
