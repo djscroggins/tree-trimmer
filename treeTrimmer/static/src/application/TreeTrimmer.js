@@ -5,7 +5,7 @@ const treeSummary = TreeSummary();
 const confusionMatrix = ConfusionMatrix();
 const featureTable = FeatureTable();
 
-const treeTrimmer = function () {
+const TreeTrimmer = function () {
     const newTreeTrimmer = {
 
         renderApp: function (ml_results, parameters, updateInteractionParameters, retrainTree) {
@@ -48,7 +48,7 @@ const treeTrimmer = function () {
         featureTable.renderFeatureTable({
             container: '#important-features',
             features: ml_results.important_features,
-            current_parameters: parameters,
+            currentParameters: parameters,
             updateInteractionParameters: updateInteractionParameters,
             retrainTree: retrainTree
         });

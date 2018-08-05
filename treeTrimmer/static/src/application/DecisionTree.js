@@ -1,4 +1,4 @@
-// Get JSON data
+// TODO: Documentation
 const nodeSummary = NodeSummary();
 
 const DecisionTree = function () {
@@ -6,11 +6,9 @@ const DecisionTree = function () {
     const newDecisionTree = {
 
 
-        renderDecisionTree: function(params_in) {
+        renderDecisionTree: function(params) {
 
-            reset_tree();
-
-            // console.log(treeData);
+            resetTree();
 
             // Calculate total nodes, max label length
             let totalNodes = 0;
@@ -50,7 +48,7 @@ const DecisionTree = function () {
             }
 
             // Call visit function to establish maxLabelLength
-            visit(params_in.data, function() {
+            visit(params.data, function() {
                 totalNodes++;
                 maxLabelLength = Math.max(20, maxLabelLength);
 
@@ -59,7 +57,6 @@ const DecisionTree = function () {
             });
 
             // Define the zoom function for the zoomable tree
-
             function zoom() {
                 svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
             }
@@ -69,7 +66,7 @@ const DecisionTree = function () {
             const zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
             // define the baseSvg, attaching a class for styling and the zoomListener
-            const baseSvg = d3.select(params_in.container).append("svg").attr("id", "base-svg")
+            const baseSvg = d3.select(params.container).append("svg").attr("id", "base-svg")
                 .attr("width", viewerWidth)
                 .attr("height", viewerHeight)
                 .attr("class", "overlay")
@@ -95,7 +92,6 @@ const DecisionTree = function () {
 
 
             // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
-
             function center_node(source) {
                 const scale = zoomListener.scale();
                 let x = -source.y0;
@@ -110,7 +106,6 @@ const DecisionTree = function () {
             }
 
             // Toggle children function
-
             function toggleChildren(d) {
                 if (d.children) {
                     d._children = d.children;
@@ -123,7 +118,6 @@ const DecisionTree = function () {
             }
 
             // Toggle children on click.
-
             // TODO: Leave in for now. Might want to resume collapse and expand functionality
             function click(d) {
                 if (d3.event.defaultPrevented) return; // click suppressed
@@ -149,12 +143,8 @@ const DecisionTree = function () {
                     }
                 };
                 childCount(0, root);
-                // console.log("Level Width:");
-                // console.log(levelWidth);
                 const maxHeight = d3.max(levelWidth) * 25; // 25 pixels per line
                 const newHeight = maxHeight >= 75 ? maxHeight : 75;
-                // console.log("New Height");
-                // console.log(newHeight);
 
                 tree = tree.nodeSize([newHeight, viewerWidth]);
 
@@ -175,7 +165,6 @@ const DecisionTree = function () {
 
                 // Enter any new nodes at the parent's previous position.
                 const nodeEnter = node.enter().append("g")
-                // .call(dragListener)
                     .attr("class", "node")
                     .attr("transform", function () {
                         return "translate(" + source.x0 + "," + source.y0 + ")";
@@ -187,17 +176,15 @@ const DecisionTree = function () {
                     .style("fill", function(d) {
                         return d._children ? "lightsteelblue" : "#fff";
                     }).on('click', function (d) {
-                        // console.log(d);
                         d3.selectAll(".nodeCircle").style("fill", function (d) {
                             return d._children ? "lightsteelblue" : "#fff";
                         });
                         d3.select(this).style("fill", "red");
-                        d.node ? nodeSummary.renderNodeSummary(d.node, params_in.updateInteractionParameters, params_in.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params_in.updateInteractionParameters, params_in.retrainTree, true);
+                        d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
                      });
 
                 nodeEnter.append("text")
                     .attr("y", function(d) {
-                        // return d.children || d._children ? -10 : 10;
                         return d.children || d._children ? 18 : 18;
                     })
                     .attr("dy", ".35em")
@@ -207,30 +194,30 @@ const DecisionTree = function () {
                     .attr("x", 0)
                     .text(function(d) {
                         // console.log(d);
-                        return d.node ? get_splitter_text(d.node) : get_criterion_text(d.leaf);
+                        return d.node ? getSplitterText(d.node) : getCriterionText(d.leaf);
                     })
                     .append("tspan")
                     .attr("x", 0)
                     .attr("dy", "1em")
                     .text(function (d) {
-                        return d.node ? get_criterion_text(d.node) : get_node_samples_text(d.leaf);
+                        return d.node ? getCriterionText(d.node) : getNodeSamplesText(d.leaf);
                     })
                     .append("tspan")
                     .attr("x", 0)
                     .attr("dy", "1em").text(function (d) {
-                        return d.node ? get_percentage_impurity_decrease_text(d.node) : get_sample_distribution_text(d.leaf)
+                        return d.node ? getPercentageImpurityDecreaseText(d.node) : getSampleDistributionText(d.leaf)
                     })
                     .append("tspan")
                     .attr("x", 0)
                     .attr("dy", "1em")
                     .text(function (d) {
-                        return d.node ? get_node_samples_text(d.node) : null;
+                        return d.node ? getNodeSamplesText(d.node) : null;
                     })
                     .append("tspan")
                     .attr("x", 0)
                     .attr("dy", "1em")
                     .text(function (d) {
-                        return d.node ? get_sample_distribution_text(d.node) : null;
+                        return d.node ? getSampleDistributionText(d.node) : null;
                     });
 
                 // Change the circle fill depending on whether it has children and is collapsed
@@ -312,26 +299,22 @@ const DecisionTree = function () {
                 });
             }
 
-            function get_splitter_text (node_in) {
-                // console.log("get_node_text, node_in");
-                // console.log(node_in);
-                return node_in.split[0] + " >= " + node_in.split[1] + "\n";
-                // const impurity = node_in.impurity[0] + " = " + node_in.impurity[1];
-                // return splitter;
+            function getSplitterText(node) {
+                return node.split[0] + " >= " + node.split[1] + "\n";
             }
 
-            function get_criterion_text (node_in) {
-                return node_in.impurity[0] + " = " + node_in.impurity[1];
+            function getCriterionText (node) {
+                return node.impurity[0] + " = " + node.impurity[1];
             }
 
-            function get_node_samples_text (node_in) {
-                return "Samples: " + node_in.n_node_samples
+            function getNodeSamplesText (node) {
+                return "Samples: " + node.n_node_samples
             }
 
-            function get_sample_distribution_text (node_in) {
+            function getSampleDistributionText (node) {
 
                 const accumulator = [];
-                const class_counts = node_in.node_class_counts;
+                const class_counts = node.node_class_counts;
                 class_counts.forEach(function (cv) {
                     accumulator.push(cv[1]);
                 });
@@ -340,11 +323,11 @@ const DecisionTree = function () {
 
             }
 
-            function get_percentage_impurity_decrease_text (node_in) {
-                return "Impurity Decrease: " + node_in.percentage_impurity_decrease + "%";
+            function getPercentageImpurityDecreaseText (node) {
+                return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
             }
 
-            function reset_tree () {
+            function resetTree () {
                 d3.selectAll("#base-svg").remove();
                 d3.select("#summary").remove();
                 d3.select("#trim-button").remove();
@@ -356,7 +339,7 @@ const DecisionTree = function () {
             const svgGroup = baseSvg.append("g").attr("id", "");
 
             // Define the root
-            root = params_in.data;
+            root = params.data;
             root.x0 = viewerHeight / 2;
             root.y0 = 0;
 
@@ -371,5 +354,4 @@ const DecisionTree = function () {
         }
     };
     return newDecisionTree;
-
 };

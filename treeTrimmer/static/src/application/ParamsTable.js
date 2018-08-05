@@ -6,22 +6,22 @@ const ParamsTable = function () {
     const newParamsTable = {
 
 
-        renderParamsTable: function(params_in) {
+        renderParamsTable: function(params) {
 
             d3.selectAll("#p-table").remove();
 
             // Get keys as array
-            let parameters_array = Object.keys(params_in.parameters);
+            let parametersArray = Object.keys(params.parameters);
 
             // We don't need to display 'filter_feature' array here; filter out value
-            const values_array = Object.values(params_in.parameters)
-                .filter((value, index, array) => parameters_array.indexOf('filter_feature') !== array.indexOf(value));
+            const valuesArray = Object.values(params.parameters)
+                .filter((value, index, array) => parametersArray.indexOf('filter_feature') !== array.indexOf(value));
 
             // filter out 'filter_feature' key
-            parameters_array = parameters_array.filter(key => key !== 'filter_feature');
+            parametersArray = parametersArray.filter(key => key !== 'filter_feature');
 
             // set up table
-            const table = d3.select(params_in.container)
+            const table = d3.select(params.container)
                             .append("table")
                             .attr("id", "p-table");
             const thead = table.append("thead");
@@ -30,14 +30,14 @@ const ParamsTable = function () {
             // build column labels
             thead.append("tr")
                 .selectAll("th")
-                .data(parameters_array)
+                .data(parametersArray)
                 .enter()
                 .append("th")
                 .text(function (d) {return d;});
 
             // build cells
             tbody.selectAll("td")
-                .data(values_array)
+                .data(valuesArray)
                 .enter().append("td")
                 .text(function (d) {return d;
                 }).attr("align", "center");

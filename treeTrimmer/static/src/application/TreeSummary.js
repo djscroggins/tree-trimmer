@@ -1,16 +1,16 @@
 const TreeSummary = function () {
     const newTreeSummary = {
 
-        renderTreeSummary: function(params_in) {
+        renderTreeSummary: function(params) {
 
             d3.selectAll("#t-summary-table").remove();
 
-            const summary_array = Object.keys(params_in.summary);
+            const summaryArray = Object.keys(params.summary);
 
-            const values_array = Object.values(params_in.summary);
+            const valuesArray = Object.values(params.summary);
 
             const table = d3
-                .select(params_in.container)
+                .select(params.container)
                 .append("table")
                 .attr("id", "t-summary-table");
 
@@ -19,12 +19,12 @@ const TreeSummary = function () {
 
             thead.append("tr")
                 .selectAll("th")
-                .data(summary_array)
+                .data(summaryArray)
                 .enter().append("th")
                 .text(function (d) {return d;});
 
             tbody.selectAll("td")
-                .data(values_array)
+                .data(valuesArray)
                 .enter().append("td")
                 .text(function (d) {return d;})
                 .attr("align", "center");

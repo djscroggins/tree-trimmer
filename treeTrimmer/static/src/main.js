@@ -1,12 +1,14 @@
-const app = treeTrimmer();
+const app = TreeTrimmer();
 const myFormUtilities = formUtilities();
 
 let interactionParameters;
 
 
-function updateInteractionParameters (key_to_update, value_to_update) {interactionParameters[key_to_update] = value_to_update;}
+function updateInteractionParameters(key_to_update, value_to_update) {
+    interactionParameters[key_to_update] = value_to_update;
+}
 
-function getDecisionTree (paramsObject, onSuccess) {
+function getDecisionTree(paramsObject, onSuccess) {
     $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
         onSuccess(returnData);
     }).fail(function () {
@@ -26,6 +28,7 @@ function initializeTree(fileIn) {
 
     $.ajax({url: 'load_data', type: 'POST', data: formData, processData: false, contentType: false})
         .done(function (returnData) {
+
             myFormUtilities.toggleInputForm(document.getElementById('input-form-toggle'));
             myFormUtilities.showFormButton();
 
@@ -34,25 +37,18 @@ function initializeTree(fileIn) {
 
             getDecisionTree(params, function (mlResults) {
                 app.renderApp(mlResults, params, updateInteractionParameters, retrainTree)
+
             });
         }).fail(function () {
             //TODO: Add sensible error handling
             alert('Post failed')
         })
-
-
-
-    // if ($('#data-has-target')[0].checked) {target = $('#data-target-index').val();}
-
 }
+
 
 function retrainTree() {
 
-    console.log("RETAIN TREE");
-
     getDecisionTree(interactionParameters, function (mlResults) {
-        // tree_trimmer_app(mlResults, interactionParameters)
         app.renderApp(mlResults, interactionParameters, updateInteractionParameters, retrainTree)
     });
-
 }

@@ -7,16 +7,16 @@
 const AccuracyReport = function () {
     const newAccuracyReport = {
 
-        renderAccuracyReport: function(params_in) {
+        renderAccuracyReport: function(params) {
 
             d3.selectAll("#a-table").remove();
 
             const label = ["Accuracy"];
-            const confusion_matrix = params_in.matrix;
-            const accuracy_score = [round(sum_true_positives(confusion_matrix) / compute_instance_sum(confusion_matrix), 4) * 100];
+            const confusion_matrix = params.matrix;
+            const accuracy_score = [round(sumTruePositives(confusion_matrix) / computeInstanceSum(confusion_matrix), 4) * 100];
 
             // set up table
-            const table = d3.select(params_in.container)
+            const table = d3.select(params.container)
                 .append("table")
                 .attr("id", "a-table");
             const thead = table.append("thead");
@@ -40,11 +40,12 @@ const AccuracyReport = function () {
 
 
             // Uses reduce to first concatenate the sub-arrays then sum the elements in the resulting array
-            function compute_instance_sum (matrix_in) {
+            function computeInstanceSum (matrix_in) {
                 return matrix_in.reduce((a, b) => a.concat(b)).reduce((a, b) => a + b);
             }
 
-            function sum_true_positives (matrix_in) {
+
+            function sumTruePositives (matrix_in) {
                 // Map each row to filter function
                 return matrix_in.map((row, row_index) =>
                     // If row index equals column index of value return value
