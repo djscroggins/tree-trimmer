@@ -1,19 +1,26 @@
+const accuracyReport = AccuracyReport();
+const decisionTree = DecisionTree();
+const paramsTable = ParamsTable();
+const treeSummary = TreeSummary();
+const confusionMatrix = ConfusionMatrix();
+const featureTable = FeatureTable();
+
 const treeTrimmer = function () {
     const newTreeTrimmer = {
 
         renderApp: function (ml_results, parameters, updateInteractionParameters) {
-        draw_accuracy_report({
+        accuracyReport.renderAccuracyReport({
             container: '#accuracy-report',
             matrix: ml_results.confusion_matrix
         });
 
-        draw_params_table({
+        paramsTable.renderParamsTable({
             container: '#parameter-table',
             parameters: parameters
         });
 
 
-        draw_tree_summary({
+        treeSummary.renderTreeSummary({
             container: "#tree-summary",
             summary: ml_results.tree_summary
         });
@@ -23,13 +30,13 @@ const treeTrimmer = function () {
 
         // TODO: Update this function to take object style parameters, correct display issues
         // draw_decision_tree(ml_results.tree_json);
-        draw_decision_tree({
+        decisionTree.renderDecisionTree({
             data: ml_results.tree_json,
             container: '#tree-container',
             updateInteractionParameters: updateInteractionParameters
         });
 
-        draw_confusion_matrix({
+        confusionMatrix.renderConfusionMatrix({
             container: '#matrix',
             matrix: ml_results.confusion_matrix,
             labels: ml_results.class_labels,
@@ -37,7 +44,7 @@ const treeTrimmer = function () {
             end_color: '#042E8D'
         });
 
-        draw_feature_table({
+        featureTable.renderFeatureTable({
             container: '#important-features',
             features: ml_results.important_features,
             current_parameters: parameters,

@@ -49,7 +49,7 @@ const myFormUtilities = formUtilities();
 //     }
 // }
 
-function update_interaction_parameters (key_to_update, value_to_update) {
+function updateInteractionParameters (key_to_update, value_to_update) {
 
     console.log("Inside update_interaction_parameters");
     console.log(interaction_parameters);
@@ -62,7 +62,7 @@ function update_interaction_parameters (key_to_update, value_to_update) {
 
 }
 
-function decisionTree (paramsObject, onSuccess) {
+function getDecisionTree (paramsObject, onSuccess) {
 
     $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
         onSuccess(returnData);
@@ -117,7 +117,7 @@ function decisionTree (paramsObject, onSuccess) {
 // }
 
 
-function initializeTree (fileIn) {
+function initializeTree(fileIn) {
 
     const formData = new FormData();
     formData.append('file', fileIn);
@@ -137,10 +137,10 @@ function initializeTree (fileIn) {
         myFormUtilities.showFormButton();
         const params = myFormUtilities.getInitParameters();
         interaction_parameters = params;
-        decisionTree(params, function (mlResults) {
+        getDecisionTree(params, function (mlResults) {
             console.log(mlResults);
             // tree_trimmer_app(mlResults, params)
-            app.renderApp(mlResults, params, update_interaction_parameters)
+            app.renderApp(mlResults, params, updateInteractionParameters)
         });
         }).fail(function () {
         alert('Post failed')
@@ -160,9 +160,9 @@ function retrain_tree() {
     console.log('Interaction parameters');
     console.log(interaction_parameters);
 
-    decisionTree(interaction_parameters, function (mlResults) {
+    getDecisionTree(interaction_parameters, function (mlResults) {
         // tree_trimmer_app(mlResults, interaction_parameters)
-        app.renderApp(mlResults, interaction_parameters, update_interaction_parameters)
+        app.renderApp(mlResults, interaction_parameters, updateInteractionParameters)
     });
 
 }

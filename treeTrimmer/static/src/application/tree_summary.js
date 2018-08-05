@@ -1,29 +1,35 @@
-function draw_tree_summary (params_in) {
+const TreeSummary = function () {
+    const newTreeSummary = {
 
-    d3.selectAll("#t-summary-table").remove();
+        renderTreeSummary: function(params_in) {
 
-    const summary_array = Object.keys(params_in.summary);
+            d3.selectAll("#t-summary-table").remove();
 
-    const values_array = Object.values(params_in.summary);
+            const summary_array = Object.keys(params_in.summary);
 
-    const table = d3
-        .select(params_in.container)
-        .append("table")
-        .attr("id", "t-summary-table");
+            const values_array = Object.values(params_in.summary);
 
-    const thead = table.append("thead");
-    const tbody = table.append("tbody");
+            const table = d3
+                .select(params_in.container)
+                .append("table")
+                .attr("id", "t-summary-table");
 
-    thead.append("tr")
-        .selectAll("th")
-        .data(summary_array)
-        .enter().append("th")
-        .text(function (d) {return d;});
+            const thead = table.append("thead");
+            const tbody = table.append("tbody");
 
-    tbody.selectAll("td")
-        .data(values_array)
-        .enter().append("td")
-        .text(function (d) {return d;})
-        .attr("align", "center");
+            thead.append("tr")
+                .selectAll("th")
+                .data(summary_array)
+                .enter().append("th")
+                .text(function (d) {return d;});
 
-}
+            tbody.selectAll("td")
+                .data(values_array)
+                .enter().append("td")
+                .text(function (d) {return d;})
+                .attr("align", "center");
+
+        }
+    };
+    return newTreeSummary;
+};
