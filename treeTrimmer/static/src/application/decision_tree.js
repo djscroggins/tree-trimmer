@@ -185,7 +185,7 @@ function draw_decision_tree (params_in) {
                     return d._children ? "lightsteelblue" : "#fff";
                 });
                 d3.select(this).style("fill", "red");
-                d.node ? display_node_summary(d.node) : display_node_summary(d.leaf, true);
+                d.node ? display_node_summary(d.node, params_in.updateInteractionParameters) : display_node_summary(d.leaf, params_in.updateInteractionParameters, true);
              });
 
         nodeEnter.append("text")

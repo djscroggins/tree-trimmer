@@ -119,7 +119,8 @@ function draw_feature_table (params_in) {
         .attr("ry", 10)
         .on("click", function () {
             // function in sdk_tree_demo; pass features to be filtered
-            update_interaction_parameters("filter_feature", features_to_filter_array);
+            params_in.updateInteractionParameters("filter_feature", features_to_filter_array);
+            // update_interaction_parameters("filter_feature", features_to_filter_array);
             // function in sdk_tree_demo
             retrain_tree();
         });
@@ -131,7 +132,8 @@ function draw_feature_table (params_in) {
         .attr("text-anchor", "middle")
         // Ensure clicking on rectangle and text appear as single event to user
         .text("Re-train tree").on("click", function () {
-            update_interaction_parameters("filter_feature", features_to_filter_array);
+            params_in.updateInteractionParameters("filter_feature", features_to_filter_array);
+            // update_interaction_parameters("filter_feature", features_to_filter_array);
             retrain_tree();
         });
 

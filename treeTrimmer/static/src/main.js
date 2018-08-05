@@ -162,7 +162,7 @@ function retrain_tree() {
 
     decisionTree(interaction_parameters, function (mlResults) {
         // tree_trimmer_app(mlResults, interaction_parameters)
-        app.renderApp(mlResults, interaction_parameters)
+        app.renderApp(mlResults, interaction_parameters, update_interaction_parameters)
     });
 
 }

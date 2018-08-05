@@ -25,7 +25,8 @@ const treeTrimmer = function () {
         // draw_decision_tree(ml_results.tree_json);
         draw_decision_tree({
             data: ml_results.tree_json,
-            container: '#tree-container'
+            container: '#tree-container',
+            updateInteractionParameters: updateInteractionParameters
         });
 
         draw_confusion_matrix({

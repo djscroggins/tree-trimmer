@@ -1,4 +1,4 @@
-function display_node_summary (data_in, leaf=false) {
+function display_node_summary (data_in, updateInteractionParameters, leaf=false) {
 
     reset_node_summary();
 
@@ -199,7 +199,8 @@ function display_node_summary (data_in, leaf=false) {
             .attr("rx", 10)
             .attr("ry", 10)
             .on("click", function () {
-                update_interaction_parameters(update_array[0], update_array[1]);
+                updateInteractionParameters(update_array[0], update_array[1]);
+                // update_interaction_parameters(update_array[0], update_array[1]);
                 retrain_tree();
                 reset_node_summary();
             });
@@ -211,7 +212,8 @@ function display_node_summary (data_in, leaf=false) {
             .attr("text-anchor", "middle")
             // Ensure clicking on rectangle and text appear as single event to user
             .text("Re-train tree").on("click", function () {
-                update_interaction_parameters(update_array[0], update_array[1]);
+                updateInteractionParameters(update_array[0], update_array[1]);
+                // update_interaction_parameters(update_array[0], update_array[1]);
                 retrain_tree();
                 reset_node_summary();
             });
