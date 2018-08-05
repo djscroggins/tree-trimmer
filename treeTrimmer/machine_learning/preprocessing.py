@@ -2,10 +2,21 @@ import pandas as pd
 import numpy as np
 
 
-def get_pandas_data(file_path, target_index):
+def file_to_numpy(file_path, target_index):
+    """
+    Converts file to numpy arrays
+    :param file_path: path to file to be processed
+    :param target_index: index of class
+    :return: numpy.ndarray target (class), numpy.ndarray features, numpy.ndarray feature_names
+    """
 
-    print("In get_pandas_data")
-    # TODO: Change to specify header
+    # print("In file_to_numpy, type of file_path: ", type(file_path))
+    #
+    # if not file_path.lower().endswith('.csv'):
+    #     raise TypeError
+    # else:
+    #     pass
+
     df = pd.read_csv(file_path, header=0)
 
     target = df.iloc[:, [target_index]]
@@ -19,9 +30,6 @@ def get_pandas_data(file_path, target_index):
     feature_names = features.columns.values
     features = features.values
 
-    print("Results of get_pandas_data")
-    print("Type of target", type(target))
-    print("Type of features", type(features))
-    print("Type of feature_names", type(feature_names))
+    print('In file_to_numpy, feature_names: ', feature_names)
 
     return target, features, feature_names

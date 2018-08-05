@@ -1,3 +1,5 @@
+# TODO: Doc strings
+
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix
@@ -17,9 +19,7 @@ def filter_features(features_in, feature_names_in, filter_features_in):
     """
 
     indices = [feature_names_in.tolist().index(feature) for feature in filter_features_in]
-
     filtered_features = np.delete(features_in, indices, axis=1)
-
     filtered_feature_names = np.delete(feature_names_in, indices)
 
     return filtered_features, filtered_feature_names
@@ -135,28 +135,29 @@ def get_decision_tree(features_in, feature_names_in, target_in, criterion_in, ma
     dt_clf = clf.fit(features_in, target_in)
 
     predicted = cross_val_predict(dt_clf, features_in, target_in)
-    #
+
     importances = clf.feature_importances_
-    # # returns (up to) 10 most important feature indices sorted by importance
+    # returns (up to) 10 most important feature indices sorted by importance
     top_indices = np.argsort(importances)[::-1][:10]
-    # # list of tuple(feature name, feature importance score [rounded to 4 decimal places])
+    # list of tuple(feature name, feature importance score [rounded to 4 decimal places])
     importance_list = [(feature_names_in[i], round(importances[i], 4)) for i in top_indices]
-    #
+
     conf_matrix = confusion_matrix(target_in, predicted)
 
-    # print(type(target_in))
-
     # Get unique list of label names
+    # We could set up handler class to cast int64 to int to jsonify, but since we need to coerce to list
+    # to jsonify regardless, just coerce here
     labels = np.unique(target_in).tolist()
+    print('In get_decision_tree, feature_names_in: ', feature_names_in)
+    print('In get_decision_tree, labels', labels)
 
-    # print("Class labels", labels)
     criterion = clf.criterion
     n_total_samples = target_in.size
-    # print("total samples", n_total_samples)
+
     returned_tree = tree_to_dictionary(clf, feature_names_in, labels, criterion, n_total_samples)
-    #
+
     tree_summary = {"total_depth": max(tree_depth), "total_nodes": clf.tree_.node_count}
-    #
+
     tree_dict = {"class_labels": labels, "tree_json": returned_tree, "tree_summary": tree_summary,
                  "confusion_matrix": conf_matrix.tolist(), "important_features": importance_list}
 

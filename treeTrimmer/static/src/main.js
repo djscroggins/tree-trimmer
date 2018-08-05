@@ -8,11 +8,15 @@ function updateInteractionParameters(key_to_update, value_to_update) {
     interactionParameters[key_to_update] = value_to_update;
 }
 
+
 function getDecisionTree(paramsObject, onSuccess) {
     $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
         onSuccess(returnData);
-    }).fail(function () {
+    }).fail(function (jqXHR, textStatus) {
         //TODO: Add sensible error handling
+        console.log('Decision tree failed');
+        console.log(jqXHR);
+        console.log(textStatus);
         alert('Post failed')
     })
 }
@@ -27,7 +31,12 @@ function initializeTree(fileIn) {
     formData.append('target_index', targetIndex);
 
     $.ajax({url: 'load_data', type: 'POST', data: formData, processData: false, contentType: false})
-        .done(function (returnData) {
+        .done(function (returnData, textStatus, jqXHR) {
+
+            console.log('Done');
+            console.log(returnData);
+            console.log(textStatus);
+            console.log(jqXHR);
 
             myFormUtilities.toggleInputForm(document.getElementById('input-form-toggle'));
             myFormUtilities.showFormButton();
@@ -35,20 +44,23 @@ function initializeTree(fileIn) {
             const params = myFormUtilities.getInitParameters();
             interactionParameters = params;
 
-            getDecisionTree(params, function (mlResults) {
-                app.renderApp(mlResults, params, updateInteractionParameters, retrainTree)
+            getDecisionTree(params, function (results) {
+                console.log(results);
+                app.renderApp(results.ml_results, params, updateInteractionParameters, retrainTree)
 
             });
-        }).fail(function () {
+        }).fail(function (jqXHR, textStatus) {
             //TODO: Add sensible error handling
+            console.log('Failed');
+            console.log(jqXHR);
+            console.log(textStatus);
             alert('Post failed')
         })
 }
 
 
 function retrainTree() {
-
-    getDecisionTree(interactionParameters, function (mlResults) {
-        app.renderApp(mlResults, interactionParameters, updateInteractionParameters, retrainTree)
+    getDecisionTree(interactionParameters, function (results) {
+        app.renderApp(results.ml_results, interactionParameters, updateInteractionParameters, retrainTree)
     });
 }
