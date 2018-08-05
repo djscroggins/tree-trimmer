@@ -9,7 +9,6 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
 
-        <script type="text/javascript" src="{{ url_for('static', filename='src/main.js')}}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/utilities/round.js')}}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/application/accuracy_report.js')}}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/application/confusion_matrix.js')}}"></script>
@@ -19,10 +18,26 @@
         <script type="text/javascript" src="{{ url_for('static', filename='src/application/params_table.js')}}"></script>
         <script type="text/javascript" src="{{ url_for('static', filename='src/application/tree_summary.js')}}"></script>
 
+        <script type="text/javascript" src="{{ url_for('static', filename='src/application/tree_trimmer.js')}}"></script>
+
+{#            <script type="text/javascript" src="{{ url_for('static', filename='src/application/tree_trimmer.js')}}"></script>#}
+
+
+        <script type="text/javascript" src="{{ url_for('static', filename='src/utilities/form_utilities.js')}}"></script>
+
+        <script type="text/javascript" src="{{ url_for('static', filename='src/main.js')}}"></script>
+
+
+
         <link rel="stylesheet" href="{{ url_for('static', filename='css/tree-demo.css')}}">
 
 </head>
 <body>
+
+        <script>
+
+            const indexFormUtilities = formUtilities();
+        </script>
 
         <div id="init-data">
             <strong>Files:</strong>
@@ -50,14 +65,14 @@
             <input type="checkbox" id="random-state" checked/><br>
 
             <label for="data-has-target"> Does the data have a target? </label>
-            <input type="checkbox" id="data-has-target" onclick="has_target(this);"/>
+            <input type="checkbox" id="data-has-target" onclick="indexFormUtilities.hasTarget(this);"/>
             <input type="number" id="data-target-index" value="0" min="0" style="display: none;" />
             <input type="button" value="Upload!" id="upload-button" onclick="initializeTree(document.getElementById('file-picker').files[0]); return false;"/>
         </div>
 
         {# Top row summary data #}
         <div class="box">
-            <input type="button" value="Show input form" id="input-form-toggle" class="top-box-elements" style="display: none" onclick="toggle_input_form(this)"/>
+            <input type="button" value="Show input form" id="input-form-toggle" class="top-box-elements" style="display: none" onclick="indexFormUtilities.toggleInputForm(this)"/>
             <div id="parameter-table" class="top-box-elements"></div>
             <div id="accuracy-report" class="top-box-elements"></div>
             <div id="tree-summary" class="top-box-elements"></div>
