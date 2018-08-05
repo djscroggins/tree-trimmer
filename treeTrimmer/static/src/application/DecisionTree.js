@@ -192,7 +192,7 @@ const DecisionTree = function () {
                             return d._children ? "lightsteelblue" : "#fff";
                         });
                         d3.select(this).style("fill", "red");
-                        d.node ? nodeSummary.renderNodeSummary(d.node, params_in.updateInteractionParameters) : nodeSummary.renderNodeSummary(d.leaf, params_in.updateInteractionParameters, true);
+                        d.node ? nodeSummary.renderNodeSummary(d.node, params_in.updateInteractionParameters, params_in.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params_in.updateInteractionParameters, params_in.retrainTree, true);
                      });
 
                 nodeEnter.append("text")

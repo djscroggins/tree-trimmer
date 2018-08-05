@@ -8,7 +8,7 @@ const featureTable = FeatureTable();
 const treeTrimmer = function () {
     const newTreeTrimmer = {
 
-        renderApp: function (ml_results, parameters, updateInteractionParameters) {
+        renderApp: function (ml_results, parameters, updateInteractionParameters, retrainTree) {
         accuracyReport.renderAccuracyReport({
             container: '#accuracy-report',
             matrix: ml_results.confusion_matrix
@@ -33,7 +33,8 @@ const treeTrimmer = function () {
         decisionTree.renderDecisionTree({
             data: ml_results.tree_json,
             container: '#tree-container',
-            updateInteractionParameters: updateInteractionParameters
+            updateInteractionParameters: updateInteractionParameters,
+            retrainTree: retrainTree
         });
 
         confusionMatrix.renderConfusionMatrix({
@@ -48,7 +49,8 @@ const treeTrimmer = function () {
             container: '#important-features',
             features: ml_results.important_features,
             current_parameters: parameters,
-            updateInteractionParameters: updateInteractionParameters
+            updateInteractionParameters: updateInteractionParameters,
+            retrainTree: retrainTree
         });
         }
 

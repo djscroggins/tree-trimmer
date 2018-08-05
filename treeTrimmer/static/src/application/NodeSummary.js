@@ -1,7 +1,7 @@
 const NodeSummary = function () {
     const newNodeSummary = {
 
-        renderNodeSummary: function(data_in, updateInteractionParameters, leaf=false) {
+        renderNodeSummary: function(data_in, updateInteractionParameters, retrainTree, leaf=false) {
 
             reset_node_summary();
 
@@ -115,7 +115,7 @@ const NodeSummary = function () {
             //         // function in sdk_tree_demo; pass features to be filtered
             //         update_interaction_parameters("filter_feature", features_to_filter_array);
             //         // function in sdk_tree_demo
-            //         retrain_tree();
+            //         retrainTree();
             //     });
             //
             // retrain_button.append("text")
@@ -204,7 +204,7 @@ const NodeSummary = function () {
                     .on("click", function () {
                         updateInteractionParameters(update_array[0], update_array[1]);
                         // update_interaction_parameters(update_array[0], update_array[1]);
-                        retrain_tree();
+                        retrainTree();
                         reset_node_summary();
                     });
 
@@ -217,7 +217,7 @@ const NodeSummary = function () {
                     .text("Re-train tree").on("click", function () {
                         updateInteractionParameters(update_array[0], update_array[1]);
                         // update_interaction_parameters(update_array[0], update_array[1]);
-                        retrain_tree();
+                        retrainTree();
                         reset_node_summary();
                     });
             }

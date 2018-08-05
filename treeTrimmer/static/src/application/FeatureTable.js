@@ -125,7 +125,8 @@ const FeatureTable = function () {
                     params_in.updateInteractionParameters("filter_feature", features_to_filter_array);
                     // update_interaction_parameters("filter_feature", features_to_filter_array);
                     // function in sdk_tree_demo
-                    retrain_tree();
+                    params_in.retrainTree();
+                    // retrainTree();
                 });
 
             svg.append("text")
@@ -137,7 +138,8 @@ const FeatureTable = function () {
                 .text("Re-train tree").on("click", function () {
                     params_in.updateInteractionParameters("filter_feature", features_to_filter_array);
                     // update_interaction_parameters("filter_feature", features_to_filter_array);
-                    retrain_tree();
+                params_in.retrainTree();
+                    // retrainTree();
                 });
 
             function display_warning_message () {

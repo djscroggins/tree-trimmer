@@ -12,7 +12,7 @@ data_dict = dict()
 
 @app.route('/', defaults={'path': ''})
 def index(path):
-    return render_template('treeTrimmer.html')
+    return render_template('index.html')
 
 
 @app.route('/load_data', methods=['POST'])
