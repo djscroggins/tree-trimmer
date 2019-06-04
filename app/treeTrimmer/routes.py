@@ -5,7 +5,7 @@ import traceback
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
-from treeTrimmer.machine_learning.preprocessing import file_to_numpy
+from treeTrimmer.core.preprocessing import file_to_numpy
 from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
