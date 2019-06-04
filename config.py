@@ -11,7 +11,7 @@ class Config(object):
 class DevServer(Config):
     FLASK_HOST = '0.0.0.0'
     FLASK_PORT = 5000
-    FLASK_ENV = "development"
+    DEBUG = True
 
 
 config_by_name = dict(
