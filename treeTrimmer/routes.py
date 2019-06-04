@@ -1,5 +1,6 @@
 from json import loads
 import os
+import traceback
 
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
@@ -58,8 +59,14 @@ def decision_tree():
     min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
     random_state = 7 if parameters['random_state'] is True else None
     feature_filter = parameters.get('filter_feature', None)
+    result = None
+    try:
+        dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
+        result = dtw.get_decision_tree(feature_filter)
+        return jsonify(ml_result=result)
+    except AssertionError as e:
+        print(e)
+        print(traceback.print_exc())
+        return jsonify(ml_result=str(e)), 500
 
-    dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
-    dt_results = dtw.get_decision_tree(feature_filter)
-
-    return jsonify(ml_results=dt_results)
+    # return jsonify(ml_results=result)

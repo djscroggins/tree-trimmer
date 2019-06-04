@@ -9,6 +9,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 class DecisionTreeWrapper:
     def __init__(self, **kwargs):
+        assert('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.tree_depth = set([])
         self.feature_data = data.get('features')
