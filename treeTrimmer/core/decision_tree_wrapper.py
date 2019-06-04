@@ -23,6 +23,10 @@ class DecisionTreeWrapper:
             if min_impurity_decrease == 0 \
             else min_impurity_decrease + 0.0001
         self.random_state = 7 if parameters.get('random_state') else None
+        self.feature_filter = parameters.get('filter_feature', None)
+        if self.feature_filter:
+            self.filter_features(self.feature_filter)
+        self.classifier = self._fit()
 
     def filter_features(self, filter_features_in: list) -> None:
         """
@@ -36,6 +40,10 @@ class DecisionTreeWrapper:
         indices = [self.feature_names.tolist().index(feature) for feature in filter_features_in]
         self.feature_data = np.delete(self.feature_data, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
+        print('FILTER_FEATURES')
+        print(self.feature_names)
+        print(self.feature_names.size)
+
 
     def get_node_data(self, tree_in, feature_names_in, labels_in, node_index_in, criterion_in, leaf=False):
         """
@@ -162,7 +170,7 @@ class DecisionTreeWrapper:
 
         return tree_dict
 
-    def _get_top_features(self, clf: object, feat_names: np.ndarray, limit=10) -> List[tuple]:
+    def _get_top_features(self, clf: DecisionTreeClassifier, feat_names: np.ndarray, limit=10) -> List[tuple]:
         """
         Returns (up to) 10 most important feature indices sorted by importance
 
@@ -176,6 +184,7 @@ class DecisionTreeWrapper:
 
         """
         top_indices = np.argsort(clf.feature_importances_)[::-1][:limit]
+        print('TOP INDICES', top_indices)
         return [(feat_names[i], round(clf.feature_importances_[i], 4)) for i in top_indices]
 
     def _fit(self) -> DecisionTreeClassifier:
@@ -190,28 +199,31 @@ class DecisionTreeWrapper:
 
         return clf
 
+    def _get_confusion_matrix(self):
+        pass
+
     def get_decision_tree(self, feature_filter: list) -> dict:
 
-        if feature_filter:
-            self.filter_features(feature_filter)
+        # if self.feature_filter:
+        #     self.filter_features(feature_filter)
 
-        clf = self._fit()
+        # clf = self._fit()
 
-        predicted = skl.model_selection.cross_val_predict(clf, self.feature_data, self.target_data)
+        predicted = skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
 
-        important_features = self._get_top_features(clf, self.feature_names)
+        important_features = self._get_top_features(self.classifier, self.feature_names)
 
         conf_matrix = skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
 
         # Get unique list of label names
         labels = np.unique(self.target_data).tolist()
 
-        criterion = clf.criterion
+        criterion = self.classifier.criterion
         n_total_samples = self.target_data.size
 
-        returned_tree = self.tree_to_dictionary(clf, self.feature_names, labels, criterion, n_total_samples)
+        returned_tree = self.tree_to_dictionary(self.classifier, self.feature_names, labels, criterion, n_total_samples)
 
-        tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": clf.tree_.node_count}
+        tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": self.classifier.tree_.node_count}
 
         tree_dict = {"class_labels": labels, "tree_json": returned_tree, "tree_summary": tree_summary,
                      "confusion_matrix": conf_matrix, "important_features": important_features}
