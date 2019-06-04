@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 
 from treeTrimmer.machine_learning.preprocessing import file_to_numpy
 from treeTrimmer.machine_learning.decision_tree import get_decision_tree
-from treeTrimmer.lib.decision_tree_wrapper import DecisionTreeWrapper
+from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
