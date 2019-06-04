@@ -148,7 +148,7 @@ class DecisionTreeWrapper:
 
         return tree_dict
 
-    def _get_top_features(self, clf: DecisionTreeClassifier, feat_names: np.ndarray, limit=10) -> List[tuple]:
+    def _get_top_features(self, limit=10) -> List[tuple]:
         """
         Returns (up to) 10 most important feature indices sorted by importance
 
@@ -161,9 +161,9 @@ class DecisionTreeWrapper:
             List of tuple(feature name, feature importance score)
 
         """
-        top_indices = np.argsort(clf.feature_importances_)[::-1][:limit]
+        top_indices = np.argsort(self.classifier.feature_importances_)[::-1][:limit]
         print('TOP INDICES', top_indices)
-        return [(feat_names[i], round(clf.feature_importances_[i], 4)) for i in top_indices]
+        return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices]
 
     def _get_cross_val_predict(self):
         return skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
@@ -187,17 +187,15 @@ class DecisionTreeWrapper:
 
     def get_decision_tree(self) -> dict:
 
-        important_features = self._get_top_features(self.classifier, self.feature_names)
+        important_features = self._get_top_features()
 
         conf_matrix = self._get_cross_val_confusion_matrix()
-
-        labels = np.unique(self.target_data).tolist()
 
         returned_tree = self.tree_to_dictionary()
 
         tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": self.classifier.tree_.node_count}
 
-        tree_dict = {"class_labels": labels, "tree_json": returned_tree, "tree_summary": tree_summary,
+        tree_dict = {"class_labels": self.labels, "tree_json": returned_tree, "tree_summary": tree_summary,
                      "confusion_matrix": conf_matrix, "important_features": important_features}
 
         return tree_dict
