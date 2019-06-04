@@ -63,7 +63,6 @@ def decision_tree():
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
         result = dtw.get_decision_tree(feature_filter)
-        print(result)
         return jsonify(ml_results=result), 200
     except AssertionError as e:
         print(e)

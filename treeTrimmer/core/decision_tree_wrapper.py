@@ -2,14 +2,12 @@ from typing import Union, Tuple, List
 
 import numpy as np
 import sklearn as skl
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import cross_val_predict
 from sklearn.tree import DecisionTreeClassifier
 
 
 class DecisionTreeWrapper:
     def __init__(self, **kwargs):
-        assert('data' and 'parameters' in kwargs)
+        assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.tree_depth = set([])
         self.feature_data = data.get('features')
@@ -164,7 +162,7 @@ class DecisionTreeWrapper:
 
         return tree_dict
 
-    def _get_top_features(self, clf: DecisionTreeClassifier, feat_names: np.ndarray, limit=10) -> List[tuple]:
+    def _get_top_features(self, clf: object, feat_names: np.ndarray, limit=10) -> List[tuple]:
         """
         Returns (up to) 10 most important feature indices sorted by importance
 
@@ -180,10 +178,7 @@ class DecisionTreeWrapper:
         top_indices = np.argsort(clf.feature_importances_)[::-1][:limit]
         return [(feat_names[i], round(clf.feature_importances_[i], 4)) for i in top_indices]
 
-    def get_decision_tree(self, feature_filter: list) -> dict:
-
-        if feature_filter:
-            self.filter_features(feature_filter)
+    def _fit(self) -> DecisionTreeClassifier:
 
         clf = skl.tree.DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
                                               min_samples_split=self.min_samples_split,
@@ -192,6 +187,15 @@ class DecisionTreeWrapper:
                                               random_state=self.random_state)
 
         clf.fit(self.feature_data, self.target_data)
+
+        return clf
+
+    def get_decision_tree(self, feature_filter: list) -> dict:
+
+        if feature_filter:
+            self.filter_features(feature_filter)
+
+        clf = self._fit()
 
         predicted = skl.model_selection.cross_val_predict(clf, self.feature_data, self.target_data)
 
