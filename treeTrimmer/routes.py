@@ -6,7 +6,6 @@ from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
 from treeTrimmer.machine_learning.preprocessing import file_to_numpy
-from treeTrimmer.machine_learning.decision_tree import get_decision_tree
 from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
@@ -52,14 +51,6 @@ def load_data():
 def decision_tree():
     parameters = loads(request.form['parameters'])
 
-    criterion = parameters.get('criterion')
-    max_depth = int(parameters.get('max_depth'))
-    min_samples_split = int(parameters.get('min_samples_split'))
-    min_samples_leaf = int(parameters.get('min_samples_leaf'))
-    min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
-    random_state = 7 if parameters['random_state'] is True else None
-    feature_filter = parameters.get('filter_feature', None)
-    # result = None
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
         result = dtw.get_decision_tree()

@@ -1,7 +1,8 @@
-from typing import Union, Tuple, List
+from typing import List
 
 import numpy as np
-import sklearn as skl
+from sklearn.metrics import confusion_matrix as skl_confusion_matrix
+from sklearn.model_selection import cross_val_predict as skl_cross_val_predict
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -92,7 +93,7 @@ class DecisionTreeWrapper:
 
         return impurity_decrease, percentage_decrease
 
-    def tree_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0):
+    def parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0):
         """
 
         Args:
@@ -143,8 +144,8 @@ class DecisionTreeWrapper:
                                                                                                   origin_impurity)
 
             tree_dict['children'] = [
-                self.tree_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
-                self.tree_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
+                self.parse_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
+                self.parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
 
         return tree_dict
 
@@ -162,22 +163,21 @@ class DecisionTreeWrapper:
 
         """
         top_indices = np.argsort(self.classifier.feature_importances_)[::-1][:limit]
-        print('TOP INDICES', top_indices)
         return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices]
 
     def _get_cross_val_predict(self):
-        return skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
+        return skl_cross_val_predict(self.classifier, self.feature_data, self.target_data)
 
     def _get_cross_val_confusion_matrix(self) -> list:
         predicted = self._get_cross_val_predict()
-        return skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
+        return skl_confusion_matrix(self.target_data, predicted).tolist()
 
     def fit(self):
-        clf = skl.tree.DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
-                                              min_samples_split=self.min_samples_split,
-                                              min_samples_leaf=self.min_samples_leaf,
-                                              min_impurity_decrease=self.min_impurity_decrease,
-                                              random_state=self.random_state)
+        clf = DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
+                                     min_samples_split=self.min_samples_split,
+                                     min_samples_leaf=self.min_samples_leaf,
+                                     min_impurity_decrease=self.min_impurity_decrease,
+                                     random_state=self.random_state)
 
         clf.fit(self.feature_data, self.target_data)
 
@@ -191,7 +191,7 @@ class DecisionTreeWrapper:
 
         conf_matrix = self._get_cross_val_confusion_matrix()
 
-        returned_tree = self.tree_to_dictionary()
+        returned_tree = self.parse_to_dictionary()
 
         tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": self.classifier.tree_.node_count}
 
