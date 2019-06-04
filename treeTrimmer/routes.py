@@ -61,8 +61,8 @@ def decision_tree():
     feature_filter = parameters.get('filter_feature', None)
     # result = None
     try:
-        dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
-        result = dtw.get_decision_tree(feature_filter)
+        dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
+        result = dtw.get_decision_tree()
         return jsonify(ml_results=result), 200
     except AssertionError as e:
         print(e)
