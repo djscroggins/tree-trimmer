@@ -9,30 +9,34 @@ from sklearn.tree import DecisionTreeClassifier
 
 class DecisionTreeWrapper:
     def __init__(self, **kwargs):
+        data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.tree_depth = set([])
-        self.feature_data = kwargs.get('data').get('features')
-        self.feature_names = kwargs.get('data').get('feature_names')
-        self.target_data = kwargs.get('data').get('target')
-        self.criterion = kwargs.get('parameters').get('criterion')
+        self.feature_data = data.get('features')
+        self.feature_names = data.get('feature_names')
+        self.target_data = data.get('target')
+        self.criterion = parameters.get('criterion')
+        self.max_depth = int(parameters.get('max_depth'))
+        self.min_samples_split = int(parameters.get('min_samples_split'))
+        self.min_samples_leaf = int(parameters.get('min_samples_leaf'))
+        min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
+        # Will only prevent split if >= so increase slightly
+        self.min_impurity_decrease = min_impurity_decrease \
+            if min_impurity_decrease == 0 \
+            else min_impurity_decrease + 0.0001
+        self.random_state = 7 if parameters.get('random_state') else None
 
-    def filter_features(self,
-                        filter_features_in: list) -> None:
+    def filter_features(self, filter_features_in: list) -> None:
         """
 
         Args:
-            features_in ():
-            feature_names_in ():
-            filter_features_in ():
+            filter_features_in (list): list of features to be filtered
 
         Returns:
-
+            None
         """
-        if filter_features_in:
-            indices = [self.feature_names.tolist().index(feature) for feature in filter_features_in]
-            self.feature_data = np.delete(self.feature_data, indices, axis=1)
-            self.feature_names = np.delete(self.feature_names, indices)
-
-        # return filtered_features, filtered_feature_names
+        indices = [self.feature_names.tolist().index(feature) for feature in filter_features_in]
+        self.feature_data = np.delete(self.feature_data, indices, axis=1)
+        self.feature_names = np.delete(self.feature_names, indices)
 
     def get_node_data(self, tree_in, feature_names_in, labels_in, node_index_in, criterion_in, leaf=False):
         """
@@ -175,26 +179,16 @@ class DecisionTreeWrapper:
         top_indices = np.argsort(clf.feature_importances_)[::-1][:limit]
         return [(feat_names[i], round(clf.feature_importances_[i], 4)) for i in top_indices]
 
-    def get_decision_tree(self,
-                          criterion: str, max_depth: int, min_samples_split: int, min_samples_leaf: int,
-                          min_impurity_decrease: float, random_state: Union[int, None],
-                          filter_features: list) -> dict:
-        # self._tree_depth.clear()
+    def get_decision_tree(self, feature_filter: list) -> dict:
 
-        # if filter_features is not None:
-        #     feature_data, feature_names = self.filter_features(self.feature_data, self.feature_names, filter_features)
-        self.filter_features(filter_features)
+        if feature_filter:
+            self.filter_features(feature_filter)
 
-        # Will only prevent split if >= so increase slightly
-        min_impurity_decrease = min_impurity_decrease \
-            if min_impurity_decrease == 0 \
-            else min_impurity_decrease + 0.0001
-
-        clf = skl.tree.DecisionTreeClassifier(criterion=criterion, max_depth=max_depth,
-                                              min_samples_split=min_samples_split,
-                                              min_samples_leaf=min_samples_leaf,
-                                              min_impurity_decrease=min_impurity_decrease,
-                                              random_state=random_state)
+        clf = skl.tree.DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
+                                              min_samples_split=self.min_samples_split,
+                                              min_samples_leaf=self.min_samples_leaf,
+                                              min_impurity_decrease=self.min_impurity_decrease,
+                                              random_state=self.random_state)
 
         clf.fit(self.feature_data, self.target_data)
 
