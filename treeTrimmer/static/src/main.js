@@ -12,8 +12,6 @@ function updateInteractionParameters(key_to_update, value_to_update) {
 function getDecisionTree(paramsObject, onSuccess) {
     $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
         onSuccess(returnData);
-        console.log('Trained Tree')
-        console.log(returnData);
     }).fail(function (jqXHR, textStatus) {
         //TODO: Add sensible error handling
         console.log('Decision tree failed');
@@ -45,8 +43,6 @@ function initializeTree(fileIn) {
             interactionParameters = params;
 
             getDecisionTree(params, function (results) {
-                console.log('getDecisionTree');
-                console.log(results)
                 app.renderApp(results.ml_results, params, updateInteractionParameters, retrainTree)
             });
 

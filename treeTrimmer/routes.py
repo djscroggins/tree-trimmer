@@ -59,15 +59,14 @@ def decision_tree():
     min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
     random_state = 7 if parameters['random_state'] is True else None
     feature_filter = parameters.get('filter_feature', None)
-    result = None
+    # result = None
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
         result = dtw.get_decision_tree(feature_filter)
         print(result)
-        return jsonify(ml_result=result), 200
+        return jsonify(ml_results=result), 200
     except AssertionError as e:
         print(e)
         print(traceback.print_exc())
-        return jsonify(ml_result=str(e)), 500
+        return jsonify(ml_results=str(e)), 500
 
-    # return jsonify(ml_results=result)
