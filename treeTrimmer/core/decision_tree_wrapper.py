@@ -8,11 +8,15 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 class DecisionTreeWrapper:
-    def __init__(self):
-        self._tree_depth = set([])
+    def __init__(self, **kwargs):
+        self.tree_depth = set([])
+        self.feature_data = kwargs.get('data').get('features')
+        self.feature_names = kwargs.get('data').get('feature_names')
+        self.target_data = kwargs.get('data').get('target')
+        self.criterion = kwargs.get('parameters').get('criterion')
 
-    def filter_features(self, features_in: np.ndarray, feature_names_in: np.ndarray,
-                        filter_features_in: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def filter_features(self,
+                        filter_features_in: list) -> None:
         """
 
         Args:
@@ -23,11 +27,12 @@ class DecisionTreeWrapper:
         Returns:
 
         """
-        indices = [feature_names_in.tolist().index(feature) for feature in filter_features_in]
-        filtered_features = np.delete(features_in, indices, axis=1)
-        filtered_feature_names = np.delete(feature_names_in, indices)
+        if filter_features_in:
+            indices = [self.feature_names.tolist().index(feature) for feature in filter_features_in]
+            self.feature_data = np.delete(self.feature_data, indices, axis=1)
+            self.feature_names = np.delete(self.feature_names, indices)
 
-        return filtered_features, filtered_feature_names
+        # return filtered_features, filtered_feature_names
 
     def get_node_data(self, tree_in, feature_names_in, labels_in, node_index_in, criterion_in, leaf=False):
         """
@@ -114,7 +119,7 @@ class DecisionTreeWrapper:
 
         if tree_in.tree_.children_left[node_index] == -1:  # see source code: TREE_LEAF = -1
 
-            self._tree_depth.add(depth)
+            self.tree_depth.add(depth)
             tree_dict['leaf'] = {}
             tree_dict['leaf']['node_depth'] = depth
             # Use tuple unpacking to load nested dictionary
@@ -170,43 +175,44 @@ class DecisionTreeWrapper:
         top_indices = np.argsort(clf.feature_importances_)[::-1][:limit]
         return [(feat_names[i], round(clf.feature_importances_[i], 4)) for i in top_indices]
 
-    def get_decision_tree(self, features_in: np.ndarray, feature_names_in: np.ndarray, target_in: np.ndarray,
-                          criterion_in: str, max_depth_in: int, min_samples_split_in: int, min_samples_leaf_in: int,
-                          min_impurity_decrease_in: float, random_state_in: Union[int, None],
-                          filter_feature_in: str) -> dict:
+    def get_decision_tree(self,
+                          criterion: str, max_depth: int, min_samples_split: int, min_samples_leaf: int,
+                          min_impurity_decrease: float, random_state: Union[int, None],
+                          filter_features: list) -> dict:
         # self._tree_depth.clear()
 
-        if filter_feature_in is not None:
-            features_in, feature_names_in = self.filter_features(features_in, feature_names_in, filter_feature_in)
+        # if filter_features is not None:
+        #     feature_data, feature_names = self.filter_features(self.feature_data, self.feature_names, filter_features)
+        self.filter_features(filter_features)
 
         # Will only prevent split if >= so increase slightly
-        min_impurity_decrease = min_impurity_decrease_in \
-            if min_impurity_decrease_in == 0 \
-            else min_impurity_decrease_in + 0.0001
+        min_impurity_decrease = min_impurity_decrease \
+            if min_impurity_decrease == 0 \
+            else min_impurity_decrease + 0.0001
 
-        clf = skl.tree.DecisionTreeClassifier(criterion=criterion_in, max_depth=max_depth_in,
-                                              min_samples_split=min_samples_split_in,
-                                              min_samples_leaf=min_samples_leaf_in,
+        clf = skl.tree.DecisionTreeClassifier(criterion=criterion, max_depth=max_depth,
+                                              min_samples_split=min_samples_split,
+                                              min_samples_leaf=min_samples_leaf,
                                               min_impurity_decrease=min_impurity_decrease,
-                                              random_state=random_state_in)
+                                              random_state=random_state)
 
-        clf.fit(features_in, target_in)
+        clf.fit(self.feature_data, self.target_data)
 
-        predicted = skl.model_selection.cross_val_predict(clf, features_in, target_in)
+        predicted = skl.model_selection.cross_val_predict(clf, self.feature_data, self.target_data)
 
-        important_features = self._get_top_features(clf, feature_names_in)
+        important_features = self._get_top_features(clf, self.feature_names)
 
-        conf_matrix = skl.metrics.confusion_matrix(target_in, predicted).tolist()
+        conf_matrix = skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
 
         # Get unique list of label names
-        labels = np.unique(target_in).tolist()
+        labels = np.unique(self.target_data).tolist()
 
         criterion = clf.criterion
-        n_total_samples = target_in.size
+        n_total_samples = self.target_data.size
 
-        returned_tree = self.tree_to_dictionary(clf, feature_names_in, labels, criterion, n_total_samples)
+        returned_tree = self.tree_to_dictionary(clf, self.feature_names, labels, criterion, n_total_samples)
 
-        tree_summary = {"total_depth": max(self._tree_depth), "total_nodes": clf.tree_.node_count}
+        tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": clf.tree_.node_count}
 
         tree_dict = {"class_labels": labels, "tree_json": returned_tree, "tree_summary": tree_summary,
                      "confusion_matrix": conf_matrix, "important_features": important_features}

@@ -51,17 +51,16 @@ def load_data():
 def decision_tree():
     parameters = loads(request.form['parameters'])
 
-    criterion = parameters.pop('criterion')
-    max_depth = int(parameters.pop('max_depth'))
-    min_samples_split = int(parameters.pop('min_samples_split'))
-    min_samples_leaf = int(parameters.pop('min_samples_leaf'))
-    min_impurity_decrease = float(parameters.pop('min_impurity_decrease', 0))
+    criterion = parameters.get('criterion')
+    max_depth = int(parameters.get('max_depth'))
+    min_samples_split = int(parameters.get('min_samples_split'))
+    min_samples_leaf = int(parameters.get('min_samples_leaf'))
+    min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
     random_state = 7 if parameters['random_state'] is True else None
-    filter_feature = parameters.pop('filter_feature', None)
+    filter_feature = parameters.get('filter_feature', None)
 
-    dtw = DecisionTreeWrapper()
-    dt_results = dtw.get_decision_tree(data_dict['features'], data_dict['feature_names'],
-                                       data_dict['target'], criterion, max_depth, min_samples_split,
+    dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
+    dt_results = dtw.get_decision_tree(criterion, max_depth, min_samples_split,
                                        min_samples_leaf, min_impurity_decrease, random_state,
                                        filter_feature)
 
