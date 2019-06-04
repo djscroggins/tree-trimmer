@@ -1,29 +1,31 @@
-from treeTrimmer import app
+from json import loads
+import os
+
+from flask import render_template, request, jsonify, Blueprint, current_app
+from werkzeug.utils import secure_filename
+
 from treeTrimmer.machine_learning.preprocessing import file_to_numpy
 from treeTrimmer.machine_learning.decision_tree import get_decision_tree
 
-from flask import render_template, request, jsonify
-from json import loads
-import os
-from werkzeug.utils import secure_filename
+tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
 # Just hold data in memory for demo
 data_dict = dict()
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-@app.route('/', defaults={'path': ''})
+@tree_trimmer.route('/', defaults={'path': ''})
 def index(path):
     return render_template('index.html')
 
 
-@app.route('/load_data', methods=['POST'])
+@tree_trimmer.route('/load_data', methods=['POST'])
 def load_data():
 
-    UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
+    UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
 
     file = request.files['file']
     target_index = loads((request.form['target_index']))
@@ -44,7 +46,7 @@ def load_data():
         return jsonify(message='Only .csv files currently accepted'), 403
 
 
-@app.route('/decision_tree', methods=['POST'])
+@tree_trimmer.route('/decision_tree', methods=['POST'])
 def decision_tree():
 
     parameters = loads(request.form['parameters'])
