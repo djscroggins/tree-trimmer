@@ -199,6 +199,8 @@ class DecisionTreeWrapper:
 
         conf_matrix = skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
 
+        print('conf_matrix', conf_matrix)
+
         # Get unique list of label names
         labels = np.unique(self.target_data).tolist()
 

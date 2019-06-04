@@ -19,8 +19,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-@tree_trimmer.route('/')
-def index():
+@tree_trimmer.route('/', defaults={'path': ''})
+def index(path):
     return render_template('index.html')
 
 
@@ -63,7 +63,8 @@ def decision_tree():
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters)
         result = dtw.get_decision_tree(feature_filter)
-        return jsonify(ml_result=result)
+        print(result)
+        return jsonify(ml_result=result), 200
     except AssertionError as e:
         print(e)
         print(traceback.print_exc())
