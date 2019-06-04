@@ -199,8 +199,12 @@ class DecisionTreeWrapper:
 
         return clf
 
-    def _get_confusion_matrix(self):
-        pass
+    def _get_cross_val_predict(self):
+        return skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
+
+    def _get_cross_val_confusion_matrix(self) -> list:
+        predicted = self._get_cross_val_predict()
+        return skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
 
     def get_decision_tree(self, feature_filter: list) -> dict:
 
@@ -209,11 +213,11 @@ class DecisionTreeWrapper:
 
         # clf = self._fit()
 
-        predicted = skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
+        # predicted = skl.model_selection.cross_val_predict(self.classifier, self.feature_data, self.target_data)
 
         important_features = self._get_top_features(self.classifier, self.feature_names)
 
-        conf_matrix = skl.metrics.confusion_matrix(self.target_data, predicted).tolist()
+        conf_matrix = self._get_cross_val_confusion_matrix()
 
         # Get unique list of label names
         labels = np.unique(self.target_data).tolist()
@@ -221,7 +225,7 @@ class DecisionTreeWrapper:
         criterion = self.classifier.criterion
         n_total_samples = self.target_data.size
 
-        returned_tree = self.tree_to_dictionary(self.classifier, self.feature_names, labels, criterion, n_total_samples)
+        returned_tree = self.tree_to_dictionary(self.classifier, self.feature_names, labels, self.classifier.criterion, n_total_samples)
 
         tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": self.classifier.tree_.node_count}
 
