@@ -1,11 +1,12 @@
 from json import loads
 import os
+import traceback
 
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
 from treeTrimmer.machine_learning.preprocessing import file_to_numpy
-from treeTrimmer.machine_learning.decision_tree import get_decision_tree
+from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
@@ -24,7 +25,6 @@ def index(path):
 
 @tree_trimmer.route('/load_data', methods=['POST'])
 def load_data():
-
     UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
 
     file = request.files['file']
@@ -38,7 +38,8 @@ def load_data():
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
 
-        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(file_path, target_index)
+        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(file_path,
+                                                                                                 target_index)
 
         return jsonify(message='File successfully loaded'), 201
 
@@ -48,19 +49,14 @@ def load_data():
 
 @tree_trimmer.route('/decision_tree', methods=['POST'])
 def decision_tree():
-
     parameters = loads(request.form['parameters'])
 
-    criterion = parameters.pop('criterion')
-    max_depth = int(parameters.pop('max_depth'))
-    min_samples_split = int(parameters.pop('min_samples_split'))
-    min_samples_leaf = int(parameters.pop('min_samples_leaf'))
-    min_impurity_decrease = float(parameters.pop('min_impurity_decrease', 0))
-    random_state = 7 if parameters['random_state'] is True else None
-    filter_feature = parameters.pop('filter_feature', None)
+    try:
+        dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
+        result = dtw.get_decision_tree()
+        return jsonify(ml_results=result), 200
+    except AssertionError as e:
+        print(e)
+        print(traceback.print_exc())
+        return jsonify(ml_results=str(e)), 500
 
-    dt_results = get_decision_tree(data_dict['features'], data_dict['feature_names'], data_dict['target'], criterion,
-                                   max_depth, min_samples_split, min_samples_leaf, min_impurity_decrease, random_state,
-                                   filter_feature)
-
-    return jsonify(ml_results=dt_results)

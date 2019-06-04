@@ -1,8 +1,10 @@
+from typing import Tuple
+
 import pandas as pd
 import numpy as np
 
 
-def file_to_numpy(file_path, target_index):
+def file_to_numpy(file_path, target_index) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Converts file to numpy arrays
     :param file_path: path to file to be processed
@@ -29,7 +31,5 @@ def file_to_numpy(file_path, target_index):
     features = df.iloc[:, feature_indices]
     feature_names = features.columns.values
     features = features.values
-
-    print('In file_to_numpy, feature_names: ', feature_names)
 
     return target, features, feature_names
