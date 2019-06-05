@@ -12,10 +12,8 @@ class DecisionTreeWrapper:
     def __init__(self, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
-        self.feature_data = data.get('features')
-        print('feature_data_sh', self.feature_data.shape)
+        self.feature_values = data.get('feature_values')
         self.feature_names = data.get('feature_names')
-        print('feature_names_sh\n', self.feature_names.shape)
         self.target_data = data.get('target')
         self.labels = data.get('labels').tolist()
         self.criterion = parameters.get('criterion')
@@ -23,14 +21,10 @@ class DecisionTreeWrapper:
         self.min_samples_split = int(parameters.get('min_samples_split'))
         self.min_samples_leaf = int(parameters.get('min_samples_leaf'))
         min_impurity_decrease = float(parameters.get('min_impurity_decrease', 0))
-        # Will only prevent split if >= so increase slightly
         self.min_impurity_decrease = min_impurity_decrease \
             if min_impurity_decrease == 0 \
             else min_impurity_decrease + 0.0001
         self.random_state = 7 if parameters.get('random_state') else None
-        # self.feature_filter = parameters.get('filter_feature', None)
-        # if self.feature_filter:
-        #     self._filter_features(self.feature_filter)
         self.classifier = None
 
     # Move to pre-processing
@@ -46,7 +40,7 @@ class DecisionTreeWrapper:
             None
         """
         indices = [self.feature_names.tolist().index(feature) for feature in feature_filter]
-        self.feature_data = np.delete(self.feature_data, indices, axis=1)
+        self.feature_values = np.delete(self.feature_values, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
     @typechecked
@@ -66,7 +60,7 @@ class DecisionTreeWrapper:
 
     @typechecked
     def _get_cross_val_predict(self) -> np.ndarray:
-        return skl_cross_val_predict(self.classifier, self.feature_data, self.target_data)
+        return skl_cross_val_predict(self.classifier, self.feature_values, self.target_data)
 
     @typechecked
     def _get_cross_val_confusion_matrix(self) -> List[List[int]]:
@@ -81,7 +75,7 @@ class DecisionTreeWrapper:
                                      min_impurity_decrease=self.min_impurity_decrease,
                                      random_state=self.random_state)
 
-        clf.fit(self.feature_data, self.target_data)
+        clf.fit(self.feature_values, self.target_data)
 
         self.classifier = clf
 

@@ -15,13 +15,10 @@ class DecisionTreeParser:
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.classifier = clf
         self.tree_depth = set([])
-        self.feature_data = data.get('features')
+        self.feature_values = data.get('feature_values')
         self.feature_names = data.get('feature_names')
         self.target_data = data.get('target')
-        # self.feature_filter = parameters.get('filter_feature', None)
         self.criterion = parameters.get('criterion')
-        # if self.feature_filter:
-        #     self._filter_features(self.feature_filter)
         self.labels = data.get('labels').tolist()
 
     # Move to pre-processing
@@ -37,7 +34,7 @@ class DecisionTreeParser:
             None
         """
         indices = [self.feature_names.tolist().index(feature) for feature in feature_filter]
-        self.feature_data = np.delete(self.feature_data, indices, axis=1)
+        self.feature_values = np.delete(self.feature_values, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
     @typechecked

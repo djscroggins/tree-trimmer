@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 import numpy as np
 import pandas as pd
@@ -56,20 +56,20 @@ class DataPreprocessor:
         df = pd.read_csv(file_path, header=0)
 
         target = self._get_target(df, target_index)
-        features = self._get_features(df, target_index)
-        feature_names = self._get_feature_names(features)
-        features = self._get_feature_values(features)
+        feature_values = self._get_features(df, target_index)
+        feature_names = self._get_feature_names(feature_values)
+        feature_values = self._get_feature_values(feature_values)
         labels = self._get_labels(target)
 
-        return dict(target=target, features=features, feature_names=feature_names, labels=labels)
+        return dict(target=target, feature_values=feature_values, feature_names=feature_names, labels=labels)
 
     @staticmethod
-    def filter_features(data: dict, feature_filter: List[str]):
-        feature_data = data.get('features')
+    def filter_features(data: dict, feature_filter: List[str]) -> Dict[str, np.ndarray]:
+        feature_values = data.get('feature_values')
         feature_names = data.get('feature_names')
 
         indices = [feature_names.tolist().index(feature) for feature in feature_filter]
-        filtered_feature_data = np.delete(feature_data, indices, axis=1)
+        filtered_feature_values = np.delete(feature_values, indices, axis=1)
         filtered_feature_names = np.delete(feature_names, indices)
 
-        return dict(features=filtered_feature_data, feature_names=filtered_feature_names)
+        return dict(feature_values=filtered_feature_values, feature_names=filtered_feature_names)
