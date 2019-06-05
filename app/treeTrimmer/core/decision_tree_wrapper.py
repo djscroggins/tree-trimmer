@@ -53,8 +53,7 @@ class DecisionTreeWrapper:
             leaf (bool): leaf or not
 
         Returns:
-            (tuple)
-            Either (list, int, list) or (list, list, int list)
+            dict of summary data
 
         """
         if not leaf:
@@ -73,21 +72,22 @@ class DecisionTreeWrapper:
         if leaf:
             return dict(impurity=impurity, n_node_samples=n_node_samples, node_class_counts=node_class_counts)
         else:
-            return dict(split=split, impurity=impurity, n_node_samples=n_node_samples, node_class_counts=node_class_counts)
+            return dict(split=split, impurity=impurity, n_node_samples=n_node_samples,
+                        node_class_counts=node_class_counts)
 
-    def get_impurity_decrease_data(self, node_index, left_index, right_index, origin_impurity):
+    def get_impurity_decrease_data(self, node_index: np.int64, left_index: np.int64, right_index: np.int64,
+                                   origin_impurity: np.float64) -> dict:
         """
+        Gets node impurity change summary data
 
         Args:
-            tree_in ():
-            node_index ():
-            left_index ():
-            right_index ():
-            total_samples ():
-            origin_impurity ():
+            node_index (np.int64):
+            left_index (np.int64):
+            right_index (np.int64):
+            origin_impurity (np.float64): impurity at original split
 
         Returns:
-
+            dict with weighted impurity decrease and % impurity decrease
         """
         current_node_samples = self.classifier.tree_.n_node_samples[node_index]
 
@@ -106,21 +106,17 @@ class DecisionTreeWrapper:
 
         return dict(weighted_impurity_decrease=impurity_decrease, percentage_impurity_decrease=percentage_decrease)
 
-    def parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0):
+    def parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0) -> dict:
         """
+        Parses DecisionTreeClassifier tree structure to Python dict in D3.js hierarchical format
 
         Args:
-            clf ():
-            feature_names ():
-            labels ():
-            criterion ():
-            total_samples ():
-            node_index ():
-            depth ():
-            origin_impurity_in ():
+            node_index (np.int64):
+            depth (int):
+            origin_impurity_in (np.float64):
 
         Returns:
-
+            dict
         """
         test_dict = {}
 
@@ -162,8 +158,6 @@ class DecisionTreeWrapper:
         Returns (up to) 10 most important feature indices sorted by importance
 
         Args:
-            clf (DecisionTreeClassifier): trained DT classifier
-            feat_names (np.ndarray): feature names
             limit (int): limit of important features to return
 
         Returns:
@@ -173,14 +167,14 @@ class DecisionTreeWrapper:
         top_indices = np.argsort(self.classifier.feature_importances_)[::-1][:limit]
         return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices]
 
-    def _get_cross_val_predict(self):
+    def _get_cross_val_predict(self) -> np.ndarray:
         return skl_cross_val_predict(self.classifier, self.feature_data, self.target_data)
 
     def _get_cross_val_confusion_matrix(self) -> list:
-        predicted = self._get_cross_val_predict()
-        return skl_confusion_matrix(self.target_data, predicted).tolist()
+        predictions = self._get_cross_val_predict()
+        return skl_confusion_matrix(self.target_data, predictions).tolist()
 
-    def fit(self):
+    def fit(self) -> 'DecisionTreeWrapper':
         clf = DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
                                      min_samples_split=self.min_samples_split,
                                      min_samples_leaf=self.min_samples_leaf,
