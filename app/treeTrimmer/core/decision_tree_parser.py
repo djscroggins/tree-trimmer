@@ -1,12 +1,14 @@
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
+from pytypes import typechecked
 
 
 class DecisionTreeParser:
     """
     Class for parsing scikit-learn DecisionTreeClassifier tree data structure.
     """
-    def __init__(self, clf: DecisionTreeClassifier, **kwargs):
+    @typechecked
+    def __init__(self, clf: DecisionTreeClassifier, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.classifier = clf
@@ -22,6 +24,7 @@ class DecisionTreeParser:
         self.labels = np.unique(self.target_data).tolist()
 
     # Move to pre-processing
+    @typechecked
     def _filter_features(self, feature_filter: list) -> None:
         """
         Removes features in feature list from data set
@@ -36,12 +39,13 @@ class DecisionTreeParser:
         self.feature_data = np.delete(self.feature_data, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
-    def _get_node_data(self, node_index: np.int64, leaf=False) -> dict:
+    @typechecked
+    def _get_node_data(self, node_index: int, leaf: bool = False) -> dict:
         """
         Gets summary data for tree node
 
         Args:
-            node_index (np.int64): current node index
+            node_index (int): current node index
             leaf (bool): leaf or not
 
         Returns:
@@ -67,8 +71,9 @@ class DecisionTreeParser:
             return dict(split=split, impurity=impurity, n_node_samples=n_node_samples,
                         node_class_counts=node_class_counts)
 
-    def _get_impurity_decrease_data(self, node_index: np.int64, left_index: np.int64, right_index: np.int64,
-                                    origin_impurity: np.float64) -> dict:
+    @typechecked
+    def _get_impurity_decrease_data(self, node_index: int, left_index: np.int64, right_index: np.int64,
+                                    origin_impurity: float) -> dict:
         """
         Gets node impurity change summary data
 
@@ -76,7 +81,7 @@ class DecisionTreeParser:
             node_index (np.int64):
             left_index (np.int64):
             right_index (np.int64):
-            origin_impurity (np.float64): impurity at original split
+            origin_impurity (float): impurity at original split
 
         Returns:
             dict with weighted impurity decrease and % impurity decrease
@@ -98,14 +103,15 @@ class DecisionTreeParser:
 
         return dict(weighted_impurity_decrease=impurity_decrease, percentage_impurity_decrease=percentage_decrease)
 
-    def _parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0) -> dict:
+    @typechecked
+    def _parse_to_dictionary(self, node_index: int = 0, depth: int = 0, origin_impurity_in: float = 0.0) -> dict:
         """
         Parses DecisionTreeClassifier tree structure to Python dict in D3.js hierarchical format
 
         Args:
-            node_index (np.int64):
+            node_index (int):
             depth (int):
-            origin_impurity_in (np.float64):
+            origin_impurity_in (float):
 
         Returns:
             dict
@@ -124,7 +130,8 @@ class DecisionTreeParser:
 
         else:
 
-            origin_impurity = self.classifier.tree_.impurity[node_index] if node_index == 0 else origin_impurity_in
+            origin_impurity = self.classifier.tree_.impurity[
+                node_index].item() if node_index == 0 else origin_impurity_in
 
             left_index = self.classifier.tree_.children_left[node_index]
             right_index = self.classifier.tree_.children_right[node_index]
@@ -140,11 +147,14 @@ class DecisionTreeParser:
             test_dict['node'].update(impurity_data)
 
             test_dict['children'] = [
-                self._parse_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
-                self._parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
+                self._parse_to_dictionary(node_index=right_index.item(), depth=depth + 1,
+                                          origin_impurity_in=origin_impurity),
+                self._parse_to_dictionary(node_index=left_index.item(), depth=depth + 1,
+                                          origin_impurity_in=origin_impurity)]
 
         return test_dict
 
+    @typechecked
     def parse(self) -> dict:
         tree_dict = self._parse_to_dictionary()
         tree_summary = dict(total_depth=max(self.tree_depth), total_nodes=self.classifier.tree_.node_count)
