@@ -3,6 +3,9 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 class DecisionTreeParser:
+    """
+    Class for parsing scikit-learn DecisionTreeClassifier tree data structure.
+    """
     def __init__(self, clf: DecisionTreeClassifier, **kwargs):
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
