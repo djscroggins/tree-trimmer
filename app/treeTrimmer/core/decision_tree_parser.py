@@ -110,6 +110,7 @@ class DecisionTreeParser:
         if self.classifier.tree_.children_left[node_index] == -1:  # see source code: TREE_LEAF = -1
 
             self.tree_depth.add(depth)
+            print('tree depth DTP', self.tree_depth)
             test_dict['leaf'] = {}
 
             test_dict['leaf']['node_depth'] = depth
@@ -139,3 +140,8 @@ class DecisionTreeParser:
                 self.parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
 
         return test_dict
+
+    def parse(self) -> dict:
+        tree_dict = self.parse_to_dictionary()
+        tree_summary = dict(total_depth=max(self.tree_depth), total_nodes=self.classifier.tree_.node_count)
+        return dict(tree_json=tree_dict, tree_summary=tree_summary)

@@ -200,7 +200,10 @@ class DecisionTreeWrapper:
 
         tree_summary = {"total_depth": max(self.tree_depth), "total_nodes": self.classifier.tree_.node_count}
 
-        tree_dict = {"class_labels": self.labels, "tree_json": returned_tree, "tree_summary": tree_summary,
+        tree_dict = {"class_labels": self.labels,
+
+                     # "tree_json": returned_tree, "tree_summary": tree_summary, #  REmove these
+
                      "confusion_matrix": conf_matrix, "important_features": important_features}
 
         return tree_dict

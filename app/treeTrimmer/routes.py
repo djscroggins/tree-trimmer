@@ -1,6 +1,7 @@
 from json import loads
 import os
 import traceback
+import copy
 
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
@@ -56,13 +57,22 @@ def decision_tree():
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
         clf = dtw.get_classifier()
         result = dtw.get_decision_tree()
+        cp = copy.deepcopy(result)
+        print('copy', cp)
 
         dtp = DecisionTreeParser(clf=clf, data=data_dict, parameters=parameters)
-        tree_dict = dtp.parse_to_dictionary()
+        parsed_tree = dtp.parse()
+        print('parsed tree \n', parsed_tree)
 
-        assert(result.get('tree_json') == tree_dict)
+        # assert(result.get('tree_json') == tree_dict)
 
-        return jsonify(ml_results=result), 200
+        result.update(parsed_tree)
+
+        print('AFTER UPDATE\n', result)
+
+        # assert(result == cp)
+
+        return jsonify(ml_results=cp), 200
     except AssertionError as e:
         print(e)
         print(traceback.print_exc())
