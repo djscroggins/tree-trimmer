@@ -15,6 +15,7 @@ class DecisionTreeWrapper:
         self.feature_data = data.get('features')
         self.feature_names = data.get('feature_names')
         self.target_data = data.get('target')
+        self.labels = data.get('labels').tolist()
         self.criterion = parameters.get('criterion')
         self.max_depth = int(parameters.get('max_depth'))
         self.min_samples_split = int(parameters.get('min_samples_split'))
@@ -28,8 +29,6 @@ class DecisionTreeWrapper:
         self.feature_filter = parameters.get('filter_feature', None)
         if self.feature_filter:
             self._filter_features(self.feature_filter)
-        # Move to data dict
-        self.labels = np.unique(self.target_data).tolist()
         self.classifier = None
 
     # Move to pre-processing

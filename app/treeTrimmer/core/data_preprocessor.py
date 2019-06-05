@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pytypes import typechecked
 
@@ -31,5 +32,6 @@ class DataPreprocessor:
         features = df.iloc[:, feature_indices]
         feature_names = features.columns.values
         features = features.values
+        labels = np.unique(target)
 
-        return dict(target=target, features=features, feature_names=feature_names)
+        return dict(target=target, features=features, feature_names=feature_names, labels=labels)

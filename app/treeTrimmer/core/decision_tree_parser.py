@@ -22,8 +22,7 @@ class DecisionTreeParser:
         self.criterion = parameters.get('criterion')
         if self.feature_filter:
             self._filter_features(self.feature_filter)
-        # Move to data_dict
-        self.labels = np.unique(self.target_data).tolist()
+        self.labels = data.get('labels').tolist()
 
     # Move to pre-processing
     @typechecked
