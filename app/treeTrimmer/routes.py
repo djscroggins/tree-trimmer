@@ -6,9 +6,9 @@ import copy
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
-from treeTrimmer.core.preprocessing import file_to_numpy
 from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 from treeTrimmer.core.decision_tree_parser import DecisionTreeParser
+from treeTrimmer.core.file_manager import DataPreprocessor
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
@@ -40,8 +40,9 @@ def load_data():
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
 
-        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = file_to_numpy(file_path,
-                                                                                                 target_index)
+        dpp = DataPreprocessor()
+        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = dpp.file_to_numpy(file_path,
+                                                                                                     target_index)
 
         return jsonify(message='File successfully loaded'), 201
 
@@ -68,4 +69,3 @@ def decision_tree():
         print(e)
         print(traceback.print_exc())
         return jsonify(ml_results=str(e)), 500
-
