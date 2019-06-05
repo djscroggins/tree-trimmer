@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from pytypes import typechecked
@@ -25,7 +27,7 @@ class DecisionTreeParser:
 
     # Move to pre-processing
     @typechecked
-    def _filter_features(self, feature_filter: list) -> None:
+    def _filter_features(self, feature_filter: List[str]) -> None:
         """
         Removes features in feature list from data set
 
