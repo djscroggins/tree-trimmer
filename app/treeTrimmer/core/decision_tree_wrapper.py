@@ -1,13 +1,15 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
+from pytypes import typechecked
 from sklearn.metrics import confusion_matrix as skl_confusion_matrix
 from sklearn.model_selection import cross_val_predict as skl_cross_val_predict
 from sklearn.tree import DecisionTreeClassifier
 
 
 class DecisionTreeWrapper:
-    def __init__(self, **kwargs):
+    @typechecked
+    def __init__(self, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.feature_data = data.get('features')
@@ -31,6 +33,7 @@ class DecisionTreeWrapper:
         self.classifier = None
 
     # Move to pre-processing
+    @typechecked
     def _filter_features(self, feature_filter: list) -> None:
         """
         Removes features in feature list from data set
@@ -45,7 +48,8 @@ class DecisionTreeWrapper:
         self.feature_data = np.delete(self.feature_data, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
-    def _get_top_features(self, limit=10) -> List[tuple]:
+    @typechecked
+    def _get_top_features(self, limit: int = 10) -> List[Tuple[str, np.float64]]:
         """
         Returns (up to) 10 most important feature indices sorted by importance
 
@@ -59,13 +63,16 @@ class DecisionTreeWrapper:
         top_indices = np.argsort(self.classifier.feature_importances_)[::-1][:limit]
         return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices]
 
+    @typechecked
     def _get_cross_val_predict(self) -> np.ndarray:
         return skl_cross_val_predict(self.classifier, self.feature_data, self.target_data)
 
-    def _get_cross_val_confusion_matrix(self) -> list:
+    @typechecked
+    def _get_cross_val_confusion_matrix(self) -> List[List[int]]:
         predictions = self._get_cross_val_predict()
         return skl_confusion_matrix(self.target_data, predictions).tolist()
 
+    @typechecked
     def fit(self) -> 'DecisionTreeWrapper':
         clf = DecisionTreeClassifier(criterion=self.criterion, max_depth=self.max_depth,
                                      min_samples_split=self.min_samples_split,
@@ -79,9 +86,11 @@ class DecisionTreeWrapper:
 
         return self
 
+    @typechecked
     def get_classifier(self) -> DecisionTreeClassifier:
         return self.classifier
 
+    @typechecked
     def get_summary(self) -> dict:
         important_features = self._get_top_features()
         conf_matrix = self._get_cross_val_confusion_matrix()

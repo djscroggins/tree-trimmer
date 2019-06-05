@@ -8,7 +8,7 @@ class DecisionTreeParser:
     Class for parsing scikit-learn DecisionTreeClassifier tree data structure.
     """
     @typechecked
-    def __init__(self, clf: DecisionTreeClassifier, **kwargs: dict):
+    def __init__(self, clf: DecisionTreeClassifier, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.classifier = clf
