@@ -14,10 +14,12 @@ class DecisionTreeParser:
         self.feature_filter = parameters.get('filter_feature', None)
         self.criterion = parameters.get('criterion')
         if self.feature_filter:
-            self.filter_features(self.feature_filter)
+            self._filter_features(self.feature_filter)
+        # Move to data_dict
         self.labels = np.unique(self.target_data).tolist()
 
-    def filter_features(self, feature_filter: list) -> None:
+    # Move to pre-processing
+    def _filter_features(self, feature_filter: list) -> None:
         """
         Removes features in feature list from data set
 
@@ -31,7 +33,7 @@ class DecisionTreeParser:
         self.feature_data = np.delete(self.feature_data, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
-    def get_node_data(self, node_index: np.int64, leaf=False) -> dict:
+    def _get_node_data(self, node_index: np.int64, leaf=False) -> dict:
         """
         Gets summary data for tree node
 
@@ -62,8 +64,8 @@ class DecisionTreeParser:
             return dict(split=split, impurity=impurity, n_node_samples=n_node_samples,
                         node_class_counts=node_class_counts)
 
-    def get_impurity_decrease_data(self, node_index: np.int64, left_index: np.int64, right_index: np.int64,
-                                   origin_impurity: np.float64) -> dict:
+    def _get_impurity_decrease_data(self, node_index: np.int64, left_index: np.int64, right_index: np.int64,
+                                    origin_impurity: np.float64) -> dict:
         """
         Gets node impurity change summary data
 
@@ -93,7 +95,7 @@ class DecisionTreeParser:
 
         return dict(weighted_impurity_decrease=impurity_decrease, percentage_impurity_decrease=percentage_decrease)
 
-    def parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0) -> dict:
+    def _parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0) -> dict:
         """
         Parses DecisionTreeClassifier tree structure to Python dict in D3.js hierarchical format
 
@@ -115,7 +117,7 @@ class DecisionTreeParser:
 
             test_dict['leaf']['node_depth'] = depth
 
-            node_data = self.get_node_data(node_index, True)
+            node_data = self._get_node_data(node_index, True)
             test_dict['leaf'].update(node_data)
 
         else:
@@ -129,19 +131,19 @@ class DecisionTreeParser:
 
             test_dict['node']['node_depth'] = depth
 
-            node_data = self.get_node_data(node_index)
+            node_data = self._get_node_data(node_index)
             test_dict['node'].update(node_data)
 
-            impurity_data = self.get_impurity_decrease_data(node_index, left_index, right_index, origin_impurity)
+            impurity_data = self._get_impurity_decrease_data(node_index, left_index, right_index, origin_impurity)
             test_dict['node'].update(impurity_data)
 
             test_dict['children'] = [
-                self.parse_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
-                self.parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
+                self._parse_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
+                self._parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
 
         return test_dict
 
     def parse(self) -> dict:
-        tree_dict = self.parse_to_dictionary()
+        tree_dict = self._parse_to_dictionary()
         tree_summary = dict(total_depth=max(self.tree_depth), total_nodes=self.classifier.tree_.node_count)
         return dict(tree_json=tree_dict, tree_summary=tree_summary)

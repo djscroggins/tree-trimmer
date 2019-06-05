@@ -56,13 +56,13 @@ def decision_tree():
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
         clf = dtw.get_classifier()
-        result = dtw.get_decision_tree()
+        result = dtw.get_summary()
         cp = copy.deepcopy(result)
-        print('copy', cp)
+        # print('copy', cp)
 
         dtp = DecisionTreeParser(clf=clf, data=data_dict, parameters=parameters)
         parsed_tree = dtp.parse()
-        print('parsed tree \n', parsed_tree)
+        # print('parsed tree \n', parsed_tree)
 
         # assert(result.get('tree_json') == tree_dict)
 
@@ -72,7 +72,7 @@ def decision_tree():
 
         # assert(result == cp)
 
-        return jsonify(ml_results=cp), 200
+        return jsonify(ml_results=result), 200
     except AssertionError as e:
         print(e)
         print(traceback.print_exc())
