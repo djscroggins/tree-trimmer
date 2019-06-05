@@ -1,14 +1,13 @@
 from json import loads
 import os
 import traceback
-import copy
 
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 
 from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
 from treeTrimmer.core.decision_tree_parser import DecisionTreeParser
-from treeTrimmer.core.file_manager import DataPreprocessor
+from treeTrimmer.core.data_preprocessor import DataPreprocessor
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
