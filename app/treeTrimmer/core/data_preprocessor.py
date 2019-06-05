@@ -40,7 +40,7 @@ class DataPreprocessor:
         return np.unique(target)
 
     @typechecked
-    def file_to_numpy(self, file_path: str, target_index: int) -> dict:
+    def file_to_numpy(self, file_path: str, target_index: int) -> Dict[str, np.ndarray]:
         # TODO: Add labels?
         """
         Converts file to numpy arrays

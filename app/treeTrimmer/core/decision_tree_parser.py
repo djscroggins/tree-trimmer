@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Union
 
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
@@ -38,7 +38,8 @@ class DecisionTreeParser:
         self.feature_names = np.delete(self.feature_names, indices)
 
     @typechecked
-    def _get_node_data(self, node_index: int, leaf: bool = False) -> dict:
+    def _get_node_data(self, node_index: int, leaf: bool = False) \
+            -> Dict[str, Union[List[List[int]], List[Union[np.float64, str]], int]]:
         """
         Gets summary data for tree node
 
@@ -69,7 +70,7 @@ class DecisionTreeParser:
 
     @typechecked
     def _get_impurity_decrease_data(self, node_index: int, left_index: np.int64, right_index: np.int64,
-                                    origin_impurity: float) -> dict:
+                                    origin_impurity: float) -> Dict[str, np.float64]:
         """
         Gets node impurity change summary data
 

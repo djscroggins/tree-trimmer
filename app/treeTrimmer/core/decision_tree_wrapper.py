@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Union
 
 import numpy as np
 from pytypes import typechecked
@@ -86,7 +86,7 @@ class DecisionTreeWrapper:
         return self.classifier
 
     @typechecked
-    def get_summary(self) -> dict:
+    def get_summary(self) -> Dict[str, Union[List[List[int]], List[Tuple[str, np.float64]], List[int]]]:
         important_features = self._get_top_features()
         conf_matrix = self._get_cross_val_confusion_matrix()
         return dict(class_labels=self.labels, confusion_matrix=conf_matrix, important_features=important_features)
