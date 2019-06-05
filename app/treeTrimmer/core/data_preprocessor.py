@@ -64,7 +64,7 @@ class DataPreprocessor:
         return dict(target=target, features=features, feature_names=feature_names, labels=labels)
 
     @staticmethod
-    def filter_features(self, data: dict, feature_filter: List[str]):
+    def filter_features(data: dict, feature_filter: List[str]):
         feature_data = data.get('features')
         feature_names = data.get('feature_names')
 
@@ -72,4 +72,4 @@ class DataPreprocessor:
         filtered_feature_data = np.delete(feature_data, indices, axis=1)
         filtered_feature_names = np.delete(feature_names, indices)
 
-        return dict(feature_data=filtered_feature_data, feature_names=filtered_feature_names)
+        return dict(features=filtered_feature_data, feature_names=filtered_feature_names)

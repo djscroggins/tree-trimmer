@@ -55,6 +55,17 @@ def decision_tree():
     parameters = loads(request.form['parameters'])
     data = copy.deepcopy(data_dict)
 
+    feature_filter = parameters.get('filter_feature')
+
+    print('feature_filter\n', feature_filter)
+
+    if feature_filter:
+        dpp = DataPreprocessor()
+        filtered_feat_dict = dpp.filter_features(data=data, feature_filter=feature_filter)
+        data.update(filtered_feat_dict)
+
+    print('feature_names\n', data.get('feature_names'))
+
     try:
         dtw = DecisionTreeWrapper(data=data, parameters=parameters).fit()
         clf = dtw.get_classifier()

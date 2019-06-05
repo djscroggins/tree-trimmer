@@ -18,10 +18,10 @@ class DecisionTreeParser:
         self.feature_data = data.get('features')
         self.feature_names = data.get('feature_names')
         self.target_data = data.get('target')
-        self.feature_filter = parameters.get('filter_feature', None)
+        # self.feature_filter = parameters.get('filter_feature', None)
         self.criterion = parameters.get('criterion')
-        if self.feature_filter:
-            self._filter_features(self.feature_filter)
+        # if self.feature_filter:
+        #     self._filter_features(self.feature_filter)
         self.labels = data.get('labels').tolist()
 
     # Move to pre-processing

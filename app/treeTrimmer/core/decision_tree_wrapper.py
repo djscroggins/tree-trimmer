@@ -13,7 +13,9 @@ class DecisionTreeWrapper:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
         self.feature_data = data.get('features')
+        print('feature_data_sh', self.feature_data.shape)
         self.feature_names = data.get('feature_names')
+        print('feature_names_sh\n', self.feature_names.shape)
         self.target_data = data.get('target')
         self.labels = data.get('labels').tolist()
         self.criterion = parameters.get('criterion')
@@ -26,9 +28,9 @@ class DecisionTreeWrapper:
             if min_impurity_decrease == 0 \
             else min_impurity_decrease + 0.0001
         self.random_state = 7 if parameters.get('random_state') else None
-        self.feature_filter = parameters.get('filter_feature', None)
-        if self.feature_filter:
-            self._filter_features(self.feature_filter)
+        # self.feature_filter = parameters.get('filter_feature', None)
+        # if self.feature_filter:
+        #     self._filter_features(self.feature_filter)
         self.classifier = None
 
     # Move to pre-processing
