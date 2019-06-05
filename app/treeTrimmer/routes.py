@@ -1,6 +1,7 @@
 from json import loads
 import os
 import traceback
+import copy
 
 from flask import render_template, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
@@ -52,13 +53,14 @@ def load_data():
 @tree_trimmer.route('/decision_tree', methods=['POST'])
 def decision_tree():
     parameters = loads(request.form['parameters'])
+    data = copy.deepcopy(data_dict)
 
     try:
-        dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
+        dtw = DecisionTreeWrapper(data=data, parameters=parameters).fit()
         clf = dtw.get_classifier()
         result = dtw.get_summary()
 
-        dtp = DecisionTreeParser(clf=clf, data=data_dict, parameters=parameters)
+        dtp = DecisionTreeParser(clf=clf, data=data, parameters=parameters)
         parsed_tree = dtp.parse()
 
         result.update(parsed_tree)
