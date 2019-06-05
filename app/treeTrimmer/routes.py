@@ -41,8 +41,8 @@ def load_data():
         file.save(file_path)
 
         dpp = DataPreprocessor()
-        (data_dict['target'], data_dict['features'], data_dict['feature_names']) = dpp.file_to_numpy(file_path,
-                                                                                                     target_index)
+        numpy_dict = dpp.file_to_numpy(file_path, target_index)
+        data_dict.update(numpy_dict)
 
         return jsonify(message='File successfully loaded'), 201
 

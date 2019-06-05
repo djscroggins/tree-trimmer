@@ -1,7 +1,4 @@
-from typing import Tuple
-
 import pandas as pd
-import numpy as np
 from pytypes import typechecked
 
 
@@ -9,7 +6,7 @@ class DataPreprocessor:
 
     @typechecked
     @staticmethod
-    def file_to_numpy(file_path: str, target_index: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def file_to_numpy(file_path: str, target_index: int) -> dict:
         # TODO: Add labels?
         """
         Converts file to numpy arrays
@@ -19,7 +16,7 @@ class DataPreprocessor:
             target_index (int):
 
         Returns:
-            tuple(target, features, feature_names)
+            dict with numpy arrays containing target, features, feature names
 
         """
         df = pd.read_csv(file_path, header=0)
@@ -35,4 +32,4 @@ class DataPreprocessor:
         feature_names = features.columns.values
         features = features.values
 
-        return target, features, feature_names
+        return dict(target=target, features=features, feature_names=feature_names)
