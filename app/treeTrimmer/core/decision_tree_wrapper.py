@@ -27,22 +27,6 @@ class DecisionTreeWrapper:
         self.random_state = 7 if parameters.get('random_state') else None
         self.classifier = None
 
-    # Move to pre-processing
-    @typechecked
-    def _filter_features(self, feature_filter: List[str]) -> None:
-        """
-        Removes features in feature list from data set
-
-        Args:
-            feature_filter (list): list of features to be filtered
-
-        Returns:
-            None
-        """
-        indices = [self.feature_names.tolist().index(feature) for feature in feature_filter]
-        self.feature_values = np.delete(self.feature_values, indices, axis=1)
-        self.feature_names = np.delete(self.feature_names, indices)
-
     @typechecked
     def _get_top_features(self, limit: int = 10) -> List[Tuple[str, np.float64]]:
         """

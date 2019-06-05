@@ -65,6 +65,16 @@ class DataPreprocessor:
 
     @staticmethod
     def filter_features(data: dict, feature_filter: List[str]) -> Dict[str, np.ndarray]:
+        """
+        Removes features in feature list from data set
+
+        Args:
+            data (dict): copy of original data set
+            feature_filter (list): list of features to be filtered
+
+        Returns:
+            dict with filtered feature values and names
+        """
         feature_values = data.get('feature_values')
         feature_names = data.get('feature_names')
 

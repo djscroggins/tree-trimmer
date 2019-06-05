@@ -21,22 +21,6 @@ class DecisionTreeParser:
         self.criterion = parameters.get('criterion')
         self.labels = data.get('labels').tolist()
 
-    # Move to pre-processing
-    @typechecked
-    def _filter_features(self, feature_filter: List[str]) -> None:
-        """
-        Removes features in feature list from data set
-
-        Args:
-            feature_filter (list): list of features to be filtered
-
-        Returns:
-            None
-        """
-        indices = [self.feature_names.tolist().index(feature) for feature in feature_filter]
-        self.feature_values = np.delete(self.feature_values, indices, axis=1)
-        self.feature_names = np.delete(self.feature_names, indices)
-
     @typechecked
     def _get_node_data(self, node_index: int, leaf: bool = False) \
             -> Dict[str, Union[List[List[int]], List[Union[np.float64, str]], int]]:
