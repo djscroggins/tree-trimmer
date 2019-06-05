@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pandas as pd
 from pandas.core.frame import DataFrame
@@ -60,3 +62,14 @@ class DataPreprocessor:
         labels = self._get_labels(target)
 
         return dict(target=target, features=features, feature_names=feature_names, labels=labels)
+
+    @staticmethod
+    def filter_features(self, data: dict, feature_filter: List[str]):
+        feature_data = data.get('features')
+        feature_names = data.get('feature_names')
+
+        indices = [feature_names.tolist().index(feature) for feature in feature_filter]
+        filtered_feature_data = np.delete(feature_data, indices, axis=1)
+        filtered_feature_names = np.delete(feature_names, indices)
+
+        return dict(feature_data=filtered_feature_data, feature_names=filtered_feature_names)
