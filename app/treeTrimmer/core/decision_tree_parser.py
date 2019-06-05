@@ -54,11 +54,6 @@ class DecisionTreeParser:
             dict of summary data
 
         """
-        if not leaf:
-            split_feature = self.feature_names[self.classifier.tree_.feature[node_index]]
-            split_threshold = self.classifier.tree_.threshold[node_index]
-            split = [split_feature, round(split_threshold, 3)]
-
         impurity_score = self.classifier.tree_.impurity[node_index]
         impurity = [self.criterion, round(impurity_score, 3)]
 
@@ -70,6 +65,9 @@ class DecisionTreeParser:
         if leaf:
             return dict(impurity=impurity, n_node_samples=n_node_samples, node_class_counts=node_class_counts)
         else:
+            split_feature = self.feature_names[self.classifier.tree_.feature[node_index]]
+            split_threshold = self.classifier.tree_.threshold[node_index]
+            split = [split_feature, round(split_threshold, 3)]
             return dict(split=split, impurity=impurity, n_node_samples=n_node_samples,
                         node_class_counts=node_class_counts)
 
