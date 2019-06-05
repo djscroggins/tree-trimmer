@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from treeTrimmer.core.preprocessing import file_to_numpy
 from treeTrimmer.core.decision_tree_wrapper import DecisionTreeWrapper
+from treeTrimmer.core.decision_tree_parser import DecisionTreeParser
 
 tree_trimmer = Blueprint('tree_trimmer_namespace', __name__)
 
@@ -53,7 +54,14 @@ def decision_tree():
 
     try:
         dtw = DecisionTreeWrapper(data=data_dict, parameters=parameters).fit()
+        clf = dtw.get_classifier()
         result = dtw.get_decision_tree()
+
+        dtp = DecisionTreeParser(clf=clf, data=data_dict, parameters=parameters)
+        tree_dict = dtp.parse_to_dictionary()
+
+        assert(result.get('tree_json') == tree_dict)
+
         return jsonify(ml_results=result), 200
     except AssertionError as e:
         print(e)
