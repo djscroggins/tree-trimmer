@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union, Tuple, Any
 
 import numpy as np
 from sklearn.metrics import confusion_matrix as skl_confusion_matrix
@@ -30,20 +30,33 @@ class DecisionTreeWrapper:
         self.labels = np.unique(self.target_data).tolist()
         self.classifier = None
 
-    def filter_features(self, filter_features_in: list) -> None:
+    def filter_features(self, feature_filter: list) -> None:
         """
+        Removes features in feature list from data set
 
         Args:
-            filter_features_in (list): list of features to be filtered
+            feature_filter (list): list of features to be filtered
 
         Returns:
             None
         """
-        indices = [self.feature_names.tolist().index(feature) for feature in filter_features_in]
+        indices = [self.feature_names.tolist().index(feature) for feature in feature_filter]
         self.feature_data = np.delete(self.feature_data, indices, axis=1)
         self.feature_names = np.delete(self.feature_names, indices)
 
-    def get_node_data(self, node_index, leaf=False):
+    def get_node_data(self, node_index: np.int64, leaf=False) -> dict:
+        """
+        Gets summary data for tree node
+
+        Args:
+            node_index (np.int64): current node index
+            leaf (bool): leaf or not
+
+        Returns:
+            (tuple)
+            Either (list, int, list) or (list, list, int list)
+
+        """
         if not leaf:
             split_feature = self.feature_names[self.classifier.tree_.feature[node_index]]
             split_threshold = self.classifier.tree_.threshold[node_index]
@@ -58,9 +71,9 @@ class DecisionTreeWrapper:
         node_class_counts = [[label, int(count)] for count, label in node_class_zip]
 
         if leaf:
-            return impurity, n_node_samples, node_class_counts
+            return dict(impurity=impurity, n_node_samples=n_node_samples, node_class_counts=node_class_counts)
         else:
-            return split, impurity, n_node_samples, node_class_counts
+            return dict(split=split, impurity=impurity, n_node_samples=n_node_samples, node_class_counts=node_class_counts)
 
     def get_impurity_decrease_data(self, node_index, left_index, right_index, origin_impurity):
         """
@@ -91,7 +104,7 @@ class DecisionTreeWrapper:
 
         percentage_decrease = round(impurity_decrease / origin_impurity * 100, 2)
 
-        return impurity_decrease, percentage_decrease
+        return dict(weighted_impurity_decrease=impurity_decrease, percentage_impurity_decrease=percentage_decrease)
 
     def parse_to_dictionary(self, node_index=0, depth=0, origin_impurity_in=0):
         """
@@ -109,18 +122,17 @@ class DecisionTreeWrapper:
         Returns:
 
         """
-        tree_dict = {}
-        # criterion = self.classifier.criterion
+        test_dict = {}
 
         if self.classifier.tree_.children_left[node_index] == -1:  # see source code: TREE_LEAF = -1
 
             self.tree_depth.add(depth)
-            tree_dict['leaf'] = {}
-            tree_dict['leaf']['node_depth'] = depth
-            # Use tuple unpacking to load nested dictionary
-            (tree_dict['leaf']['impurity'],
-             tree_dict['leaf']['n_node_samples'],
-             tree_dict['leaf']['node_class_counts']) = self.get_node_data(node_index, True)
+            test_dict['leaf'] = {}
+
+            test_dict['leaf']['node_depth'] = depth
+
+            node_data = self.get_node_data(node_index, True)
+            test_dict['leaf'].update(node_data)
 
         else:
 
@@ -129,25 +141,21 @@ class DecisionTreeWrapper:
             left_index = self.classifier.tree_.children_left[node_index]
             right_index = self.classifier.tree_.children_right[node_index]
 
-            tree_dict['node'] = {}
-            tree_dict['node']['node_depth'] = depth
-            # Use tuple unpacking to load nested dictionary
-            (tree_dict['node']['split'],
-             tree_dict['node']['impurity'],
-             tree_dict['node']['n_node_samples'],
-             tree_dict['node']['node_class_counts']) = self.get_node_data(node_index)
+            test_dict['node'] = {}
 
-            (tree_dict['node']['weighted_impurity_decrease'],
-             tree_dict['node']['percentage_impurity_decrease']) = self.get_impurity_decrease_data(node_index,
-                                                                                                  left_index,
-                                                                                                  right_index,
-                                                                                                  origin_impurity)
+            test_dict['node']['node_depth'] = depth
 
-            tree_dict['children'] = [
+            node_data = self.get_node_data(node_index)
+            test_dict['node'].update(node_data)
+
+            impurity_data = self.get_impurity_decrease_data(node_index, left_index, right_index, origin_impurity)
+            test_dict['node'].update(impurity_data)
+
+            test_dict['children'] = [
                 self.parse_to_dictionary(node_index=right_index, depth=depth + 1, origin_impurity_in=origin_impurity),
                 self.parse_to_dictionary(node_index=left_index, depth=depth + 1, origin_impurity_in=origin_impurity)]
 
-        return tree_dict
+        return test_dict
 
     def _get_top_features(self, limit=10) -> List[tuple]:
         """
