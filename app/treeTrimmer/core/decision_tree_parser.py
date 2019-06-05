@@ -115,7 +115,6 @@ class DecisionTreeParser:
         if self.classifier.tree_.children_left[node_index] == -1:  # see source code: TREE_LEAF = -1
 
             self.tree_depth.add(depth)
-            print('tree depth DTP', self.tree_depth)
             test_dict['leaf'] = {}
 
             test_dict['leaf']['node_depth'] = depth
