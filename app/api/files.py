@@ -35,16 +35,16 @@ class FileManager(Resource):
         UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
 
         app_path = Path(__file__).parents[1]
-    #
+
         with open(os.path.join(app_path, UPLOAD_FOLDER + 'data-dict.pickle'), 'rb') as f:
             data_dict = pickle.load(f)
-    #
+
         file = request.files['file']
         target_index = loads((request.form['target_index']))
-    #
+
         if not os.path.isdir(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)
-    #
+
         if file and self.allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -61,5 +61,3 @@ class FileManager(Resource):
 
         else:
             abort(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted')
-
-        # return 0
