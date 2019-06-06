@@ -27,7 +27,6 @@ file_upload_response = files.model('file_upload_response', {
 
 
 
-
 @files.route('')
 class FileManager(Resource):
     @staticmethod
@@ -66,7 +65,7 @@ class FileManager(Resource):
 
             # return jsonify(message='File successfully loaded'), 201
 
-            return marshal(response, file_upload_response), HTTPStatus.CREATED
+            return marshal(dict(message='File successfully loaded'), file_upload_response), HTTPStatus.CREATED
 
         else:
             # return jsonify(message='Only .csv files currently accepted'), 403

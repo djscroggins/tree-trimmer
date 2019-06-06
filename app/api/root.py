@@ -2,15 +2,13 @@ from pathlib import Path
 import os
 
 from flask_restplus import Namespace, Resource
-from flask import render_template, send_from_directory, make_response
+from flask import render_template, send_from_directory, make_response, redirect, url_for, Blueprint
 
 root = Namespace(
     name='Root',
     description='Static root for Tree Trimmer',
     path='/'
 )
-
-# root = Namespace(name='root', description='Cats related operations', path='/')
 
 
 @root.route('/tree-trimmer')

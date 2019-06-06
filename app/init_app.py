@@ -24,7 +24,6 @@ def create_app(config_name: str) -> Flask:
                 # static_folder=os.path.join(base_dir, 'static')
                 )
     app.config.from_object(config_by_name[config_name])
-    # app.register_blueprint(tree_trimmer)
     tree_trimmer_api.init_app(app)
 
     return app
