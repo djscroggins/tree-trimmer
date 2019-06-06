@@ -84,10 +84,8 @@ class DecisionTreeManager(Resource):
             with open('file_storage/data-dict.pickle', 'wb') as f:
                 pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-            # return jsonify(ml_results=result), 201
             return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.CREATED
         except AssertionError as e:
             print(e)
             print(traceback.print_exc())
             abort(HTTPStatus.BAD_REQUEST, str(e))
-            # return jsonify(ml_results=str(e)), 500
