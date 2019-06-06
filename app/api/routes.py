@@ -20,13 +20,13 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 
-@tree_trimmer.route('/', defaults={'path': ''})
-def index(path):
+@tree_trimmer.route('/tree-trimmer')
+def get_index():
     return render_template('index.html')
 
 
-@tree_trimmer.route('/load_data', methods=['POST'])
-def load_data():
+@tree_trimmer.route('/files', methods=['POST'])
+def post_file():
     UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
 
     file = request.files['file']
@@ -50,8 +50,8 @@ def load_data():
         return jsonify(message='Only .csv files currently accepted'), 403
 
 
-@tree_trimmer.route('/decision_tree', methods=['POST'])
-def decision_tree():
+@tree_trimmer.route('/decision-trees', methods=['POST'])
+def post_decision_tree():
     parameters = loads(request.form['parameters'])
     data = copy.deepcopy(data_dict)
 

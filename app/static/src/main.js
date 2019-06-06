@@ -10,7 +10,7 @@ function updateInteractionParameters(key_to_update, value_to_update) {
 
 
 function getDecisionTree(paramsObject, onSuccess) {
-    $.post('decision_tree', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
+    $.post('decision-trees', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
         onSuccess(returnData);
     }).fail(function (jqXHR, textStatus) {
         //TODO: Add sensible error handling
@@ -30,7 +30,7 @@ function initializeTree(fileIn) {
     formData.append('file', fileIn);
     formData.append('target_index', targetIndex);
 
-    $.ajax({url: 'load_data', type: 'POST', data: formData, processData: false, contentType: false})
+    $.ajax({url: 'files', type: 'POST', data: formData, processData: false, contentType: false})
         .done(function (returnData, _, jqXHR) {
 
             console.log(jqXHR.status + ' (' + jqXHR.statusText + ') ' + returnData.message);
