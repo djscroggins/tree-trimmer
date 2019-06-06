@@ -3,7 +3,7 @@ import os
 from flask import Flask
 
 from config import config_by_name
-from treeTrimmer.routes import tree_trimmer
+from api.routes import tree_trimmer
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
