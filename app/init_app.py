@@ -4,7 +4,6 @@ import pickle
 from flask import Flask
 
 from config import config_by_name
-from api.routes import tree_trimmer
 from api import tree_trimmer_api
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
