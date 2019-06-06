@@ -137,4 +137,4 @@ dmypy.json
 # TreeTrimmer
 ####################
 **file_storage/
-**machine_learning.deprecated/
+**deprecated/
