@@ -17,14 +17,10 @@ files = Namespace(
     path='/files'
 )
 
-# files = Namespace('files', description='Cats related operations')
 
 file_upload_response = files.model('file_upload_response', {
     'message': fields.String
 })
-
-# file_upload_response = {'message': fields.String}
-
 
 
 @files.route('')
@@ -61,14 +57,9 @@ class FileManager(Resource):
             with open(UPLOAD_FOLDER + 'data-dict.pickle', 'wb') as f:
                 pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-            response = {'message': 'File successfully loaded'}
-
-            # return jsonify(message='File successfully loaded'), 201
-
             return marshal(dict(message='File successfully loaded'), file_upload_response), HTTPStatus.CREATED
 
         else:
-            # return jsonify(message='Only .csv files currently accepted'), 403
             abort(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted')
 
         # return 0
