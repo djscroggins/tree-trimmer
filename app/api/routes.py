@@ -2,8 +2,9 @@ from json import loads
 import os
 import traceback
 import copy
+from pathlib import Path
 
-from flask import render_template, request, jsonify, Blueprint, current_app
+from flask import render_template, request, jsonify, Blueprint, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 
 from core.decision_tree_wrapper import DecisionTreeWrapper
@@ -23,6 +24,12 @@ def allowed_file(filename):
 @tree_trimmer.route('/tree-trimmer')
 def get_index():
     return render_template('index.html')
+
+
+@tree_trimmer.route('/favicon.ico')
+def get_favicon():
+    app_path = Path(__file__).parents[1]
+    return send_from_directory(os.path.join(app_path, 'static'), 'favicon.ico')
 
 
 @tree_trimmer.route('/files', methods=['POST'])
@@ -72,7 +79,7 @@ def post_decision_tree():
 
         result.update(parsed_tree)
 
-        return jsonify(ml_results=result), 200
+        return jsonify(ml_results=result), 201
     except AssertionError as e:
         print(e)
         print(traceback.print_exc())

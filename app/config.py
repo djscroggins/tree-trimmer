@@ -3,7 +3,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config(object):
+class Config:
     UPLOAD_FOLDER = os.path.join(basedir, 'file_storage')
     ALLOWED_EXTENSIONS = {'csv'}
 
