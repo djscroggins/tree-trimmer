@@ -1,7 +1,8 @@
 {
   "name": "ui-tree-trimmer",
   "version": "1.0.0",
-  "description": "",
+  "description": "Interactive decision tree builder",
+  "repository": "https://github.com/djscroggins/tree-trimmer",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,12 +14,16 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
+    "grommet": "^2.7.6",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "polished": "^3.4.1",
     "prop-types": "^15.7.2",
+    "styled-components": "^4.3.2",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
     "webpack-dev-server": "^3.7.1",
