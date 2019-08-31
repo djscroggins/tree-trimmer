@@ -1,3 +1,4 @@
 .top-summary-container div {
-    width: 20vw;
+    /*max-width: 100%;*/
+    padding-left: 10px;
 }

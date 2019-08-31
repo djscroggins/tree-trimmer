@@ -14,7 +14,8 @@ export default class TreeTrimmer extends React.Component {
     this.state = {
       counter: 0,
       testMessage: "Original Message",
-      mlResults: {}
+      mlResults: {},
+      parameters: {}
     };
   }
 
@@ -31,7 +32,17 @@ export default class TreeTrimmer extends React.Component {
           mlResults: json["ml_results"]
         });
       });
+
+    fetch("http://localhost:5000/decision-trees/parameters")
+      .then(response => response.json())
+      .then(json => {
+        this.setState({parameters: json['parameters']})
+      })
   };
+
+  // componentDidMount() {
+  //   this.renderParameterTable()
+  // }
 
   render() {
     return (
@@ -48,7 +59,7 @@ export default class TreeTrimmer extends React.Component {
              flex='grow'
              justify='center'>
 
-          <TopSummaryContainer/>
+          <TopSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
 
           <Box direction='row'>
 

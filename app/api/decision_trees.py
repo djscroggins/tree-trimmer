@@ -20,7 +20,6 @@ decision_trees = Namespace(
     path='/decision-trees'
 )
 
-
 decision_trees_response = decision_trees.model('decision_trees_response', {
     'ml_results': fields.Raw
 })
@@ -39,12 +38,19 @@ post_body = decision_trees.model('post_body', {
 })
 
 results = {}
+_parameters = {}
+
+
+@decision_trees.route('/parameters')
+class DecisionTreeParameters(Resource):
+    def get(self):
+        return _parameters, HTTPStatus.OK
 
 
 @decision_trees.route('')
 class DecisionTreeManager(Resource):
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
         super().__init__(*args, **kwargs)
 
@@ -63,6 +69,7 @@ class DecisionTreeManager(Resource):
         print(request.form)
 
         parameters = json.loads(request.form['parameters'])
+        _parameters['parameters'] = parameters
 
         data_dict = self.get_data_set()
         data = copy.deepcopy(data_dict)
