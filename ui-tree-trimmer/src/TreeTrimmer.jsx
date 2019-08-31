@@ -32,8 +32,7 @@ export default class TreeTrimmer extends React.Component {
           </Box>
 
         </Box>
-
-      // </Box>
+       
     );
   }
 };
