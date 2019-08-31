@@ -1,9 +1,9 @@
 import React from "react";
 
 import AppHeader from "./js/components/AppHeader";
-import TopBar from "./js/components/TopBar";
-import SideSummary from "./js/components/SideSummary";
-import DecisionTreeContainer from "./js/components/DecisionTreeContainer";
+import TopSummaryContainer from "./js/components/containers/TopSummaryContainer";
+import SideSummaryContainer from "./js/components/containers/SideSummaryContainer";
+import DecisionTreeContainer from "./js/components/containers/DecisionTreeContainer";
 
 const Box = require("grommet/components/Box");
 
@@ -20,19 +20,19 @@ export default class TreeTrimmer extends React.Component {
              justify='around'
         >
 
-          <Box className='left-container'
+          <Box className='left-application-container'
                flex='grow'
                justify='center'
           >
-            <TopBar/>
+            <TopSummaryContainer/>
             <DecisionTreeContainer/>
           </Box>
 
-          <Box className='right-container'
+          <Box className='right-application-container'
                flex='grow'
                justify='center'
           >
-            <SideSummary/>
+            <SideSummaryContainer/>
           </Box>
         </Box>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class TopBar extends React.Component {
+export default class TopSummaryContainer extends React.Component {
     render() {
         return (
             <div>TopBar</div>
