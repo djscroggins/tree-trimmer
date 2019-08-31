@@ -17,7 +17,7 @@ export default class AppHeader extends React.Component {
                  margin='small'
                  strong={true}
                  tag='h4'>
-          TreeTrimmer
+          TreeTrimmer - React
         </Heading>
       </Header>
     );
