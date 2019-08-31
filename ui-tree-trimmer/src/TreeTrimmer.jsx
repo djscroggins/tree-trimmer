@@ -9,10 +9,38 @@ const Box = require("grommet/components/Box");
 
 
 export default class TreeTrimmer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      counter: 0,
+      testMessage: "Original Message",
+      mlResults: {}
+    };
+  }
+
+  resetTestingData = (e) => {
+    e.preventDefault();
+
+    fetch("http://localhost:5000/decision-trees")
+      .then(response => response.json())
+      .then(json => {
+        const _counter = this.state.counter;
+        this.setState({
+          counter: _counter + 1,
+          testMessage: "Received ML Results",
+          mlResults: json["ml_results"]
+        });
+      });
+  };
+
   render() {
     return (
-      <Box colorIndex='light-2'>
+      <Box className='page-container' colorIndex='light-2'>
 
+        <div>{this.state.testMessage + " " + this.state.counter}</div>
+        <form className='testing-form' onSubmit={this.resetTestingData}>
+          <button className='testing-button'>Reset decision tree data</button>
+        </form>
         <AppHeader/>
         <Box className='application-container'
              direction='column'
@@ -20,19 +48,19 @@ export default class TreeTrimmer extends React.Component {
              flex='grow'
              justify='center'>
 
-            <TopSummaryContainer/>
+          <TopSummaryContainer/>
 
-            <Box direction='row'>
+          <Box direction='row'>
 
-              <DecisionTreeContainer/>
-              <SideSummaryContainer/>
-
-            </Box>
+            <DecisionTreeContainer/>
+            <SideSummaryContainer/>
 
           </Box>
 
         </Box>
-       
+
+      </Box>
+
     );
   }
 };
