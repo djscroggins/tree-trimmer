@@ -20,10 +20,6 @@ export default class TreeTrimmer extends React.Component {
              flex='grow'
              justify='center'>
 
-          {/*<Box className='left-application-container'*/}
-               {/*flex='grow'*/}
-               {/*justify='center'>*/}
-
             <TopSummaryContainer/>
 
             <Box direction='row'>
