@@ -14,9 +14,9 @@ export default class TopSummaryContainer extends React.Component {
            direction='row'
            align='center'
            justify='around'>
-        <AccuracyReport/>
-        <ParameterTable/>
-        <TreeSummary/>
+        <ParameterTable parameters={this.props.parameters}/>
+        <AccuracyReport mlResults={this.props.mlResults}/>
+        <TreeSummary mlResults={this.props.mlResults}/>
       </Box>
       </div>
     );
