@@ -5,6 +5,7 @@ from http import HTTPStatus
 from pathlib import Path
 import os
 import pickle
+import logging
 
 from flask import request, current_app
 from flask_restplus import Namespace, Resource, fields, marshal, abort
@@ -36,6 +37,8 @@ parameter_fields = decision_trees.model('parameter_fields', {
 post_body = decision_trees.model('post_body', {
     'parameters': fields.Nested(parameter_fields)
 })
+
+results = {}
 
 
 @decision_trees.route('')
@@ -84,8 +87,14 @@ class DecisionTreeManager(Resource):
             with open('file_storage/data-dict.pickle', 'wb') as f:
                 pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
 
+            results['ml_results'] = result
+
             return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.CREATED
         except AssertionError as e:
             print(e)
             print(traceback.print_exc())
             abort(HTTPStatus.BAD_REQUEST, str(e))
+
+    def get(self):
+        result = results.get('ml_results')
+        return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.OK
