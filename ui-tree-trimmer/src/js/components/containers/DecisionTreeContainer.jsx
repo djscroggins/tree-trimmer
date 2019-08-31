@@ -3,7 +3,7 @@ import React from 'react';
 export default class DecisionTreeContainer extends React.Component {
     render() {
         return (
-            <div>DecisionTreeContainer</div>
+            <div className='decision-tree-container'>DecisionTreeContainer</div>
         )
     }
 };

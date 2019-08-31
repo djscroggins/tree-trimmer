@@ -12,31 +12,32 @@ export default class TreeTrimmer extends React.Component {
   render() {
     return (
       <Box colorIndex='light-2'>
+
         <AppHeader/>
         <Box className='application-container'
-             direction='row'
+             direction='column'
              align='start'
              flex='grow'
-             justify='around'
-        >
+             justify='center'>
 
-          <Box className='left-application-container'
-               flex='grow'
-               justify='center'
-          >
+          {/*<Box className='left-application-container'*/}
+               {/*flex='grow'*/}
+               {/*justify='center'>*/}
+
             <TopSummaryContainer/>
-            <DecisionTreeContainer/>
+
+            <Box direction='row'>
+
+              <DecisionTreeContainer/>
+              <SideSummaryContainer/>
+
+            </Box>
+
           </Box>
 
-          <Box className='right-application-container'
-               flex='grow'
-               justify='center'
-          >
-            <SideSummaryContainer/>
-          </Box>
         </Box>
 
-      </Box>
+      // </Box>
     );
   }
 };
