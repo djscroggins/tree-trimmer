@@ -15,6 +15,22 @@ export default class DecisionTree extends React.Component {
       d3.select("#retrain-button").remove();
     };
 
+  // A recursive helper function for performing some setup by walking through all nodes
+  _visit = (parent, visitFn, childrenFn) => {
+    console.log("VISIT");
+    if (!parent) return;
+
+    visitFn(parent);
+
+    let children = childrenFn(parent);
+    if (children) {
+      let count = children.length;
+      for (let i = 0; i < count; i++) {
+        this._visit(children[i], visitFn, childrenFn);
+      }
+    }
+  };
+
   _getPercentageImpurityDecreaseText = (node) => {
     return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
   };
@@ -42,6 +58,8 @@ export default class DecisionTree extends React.Component {
   };
 
     renderDecisionTree = () => {
+
+      console.log("RENDER DECISION TREE");
 
       const instance = this;
 
@@ -71,25 +89,8 @@ export default class DecisionTree extends React.Component {
           return [d.x, d.y];
         });
 
-
-      // A recursive helper function for performing some setup by walking through all nodes
-
-      function visit(parent, visitFn, childrenFn) {
-        if (!parent) return;
-
-        visitFn(parent);
-
-        let children = childrenFn(parent);
-        if (children) {
-          let count = children.length;
-          for (let i = 0; i < count; i++) {
-            visit(children[i], visitFn, childrenFn);
-          }
-        }
-      }
-
       // Call visit function to establish maxLabelLength
-      visit(data, function() {
+      this._visit(data, function() {
         totalNodes++;
         maxLabelLength = Math.max(20, maxLabelLength);
 
@@ -99,6 +100,7 @@ export default class DecisionTree extends React.Component {
 
       // Define the zoom function for the zoomable tree
       function zoom() {
+        console.log("ZOOM");
         svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
       }
 
@@ -132,6 +134,7 @@ export default class DecisionTree extends React.Component {
 
       // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
       function center_node(source) {
+        console.log("CENTER NODE");
         const scale = zoomListener.scale();
         let x = -source.y0;
         let y = -source.x0;
@@ -146,6 +149,7 @@ export default class DecisionTree extends React.Component {
 
       // Toggle children function
       function toggleChildren(d) {
+        console.log("TOGGLE CHILDREN");
         if (d.children) {
           d._children = d.children;
           d.children = null;
@@ -166,6 +170,7 @@ export default class DecisionTree extends React.Component {
       }
 
       function update(source) {
+        console.log("UPDATE");
         // Compute the new height, function counts total children of root node and sets tree height accordingly.
         // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
         // This makes the layout more consistent.
