@@ -13,6 +13,14 @@ export default class FeatureTable extends React.Component {
 
   };
 
+  _displayWarning = (div) => {
+    div.append("p")
+      .attr("id", "warning-message")
+      .append("text")
+      .text("Cannot train tree with no features")
+      .style("color", "red");
+  };
+
   renderFeatureTable = () => {
     resetFeatureTable();
 
@@ -66,6 +74,7 @@ export default class FeatureTable extends React.Component {
       });
 
     // build rows
+    const instance = this;
     const rows = tbody.selectAll("tr")
       .data(features)
       .enter()
@@ -80,7 +89,7 @@ export default class FeatureTable extends React.Component {
             // Removing all features will throw error on backend
           } else {
             removeWarning();
-            displayWarning();
+            instance._displayWarning(warning_message_div);
           }
         } else {
           // If row has been selected, remove from filtering array
@@ -134,14 +143,14 @@ export default class FeatureTable extends React.Component {
       .style("fill", "lightgreen")
       .attr("rx", 10)
       .attr("ry", 10)
-      // .on("click", function() {
-      //   // function in sdk_tree_demo; pass features to be filtered
-      //   params.updateInteractionParameters("filter_feature", featuresToFilterArray);
-      //   // update_interaction_parameters("filter_feature", features_to_filter_array);
-      //   // function in sdk_tree_demo
-      //   params.retrainTree();
-      //   // retrainTree();
-      // })
+    // .on("click", function() {
+    //   // function in sdk_tree_demo; pass features to be filtered
+    //   params.updateInteractionParameters("filter_feature", featuresToFilterArray);
+    //   // update_interaction_parameters("filter_feature", features_to_filter_array);
+    //   // function in sdk_tree_demo
+    //   params.retrainTree();
+    //   // retrainTree();
+    // })
     ;
 
     svg.append("text")
@@ -159,13 +168,13 @@ export default class FeatureTable extends React.Component {
     // })
     ;
 
-    function displayWarning() {
-      warning_message_div.append("p")
-        .attr("id", "warning-message")
-        .append("text")
-        .text("Cannot train tree with no features")
-        .style("color", "red");
-    }
+    // function displayWarning() {
+    //   warning_message_div.append("p")
+    //     .attr("id", "warning-message")
+    //     .append("text")
+    //     .text("Cannot train tree with no features")
+    //     .style("color", "red");
+    // }
 
     function resetFeatureTable() {
       // d3.selectAll("#features-hr").remove();
