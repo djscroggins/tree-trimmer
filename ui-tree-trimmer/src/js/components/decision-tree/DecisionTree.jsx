@@ -7,6 +7,11 @@ export default class DecisionTree extends React.Component {
     super(props);
     this.totalNodes = 0;
     this.maxLabelLength = 0;
+    this.viewerWidth = window.innerWidth - 400;
+    this.viewerHeight = window.innerHeight - 150;
+    this.zoomListener = this._getZoomListener();
+    this.baseSVG = undefined;
+    this.SVGGroup = undefined;
   }
 
   _resetContainer = () => {
@@ -28,12 +33,32 @@ export default class DecisionTree extends React.Component {
       });
   };
 
+  _zoom = () => {
+    this.SVGGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  };
+
+  _getZoomListener = () => {
+    return d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", this._zoom);
+  };
+
+  _getBaseSVG = () => {
+    return d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
+      .attr("width", this.viewerWidth)
+      .attr("height", this.viewerHeight)
+      .attr("class", "overlay")
+      .call(this.zoomListener);
+  };
+
+  _getSVGGroup = (baseSVG) => {
+    return baseSVG.append("g").attr("id", "");
+  };
+
   // A recursive helper function for performing some setup by walking through all nodes
   _visit = (node) => {
     if (!node) return;
     this._recordVisit();
     let children = this._getChildren(node);
-    if (children) children.forEach(child => this._visit(child))
+    if (children) children.forEach(child => this._visit(child));
   };
 
   _recordVisit = () => {
@@ -96,52 +121,56 @@ export default class DecisionTree extends React.Component {
     // Might want to take this out
     // let tree = d3.layout.tree()
     //   .size([viewerHeight, viewerWidth]);
-    let tree = this._getTree(viewerHeight, viewerWidth);
+    let tree = this._getTree(this.viewerHeight, this.viewerWidth);
 
     // define a d3 diagonal projection for use by the node paths later on.
     const diagonal = this._getDiagonal();
-    
+
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
-    // Define the zoom function for the zoomable tree
-    function zoom() {
-      console.log("ZOOM");
-      svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    }
-
-    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    const zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
     // define the baseSvg, attaching a class for styling and the zoomListener
-    const baseSvg = d3.select(containerNode).append("svg").attr("id", "base-svg")
-      .attr("width", viewerWidth)
-      .attr("height", viewerHeight)
-      .attr("class", "overlay")
-      .call(zoomListener);
+    // const baseSvg = d3.select(containerNode).append("svg").attr("id", "base-svg")
+    //   .attr("width", viewerWidth)
+    //   .attr("height", viewerHeight)
+    //   .attr("class", "overlay")
+    //   .call(zoomListener);
+    // Define the zoom function for the zoomable tree
+    // function zoom() {
+    //   console.log("ZOOM");
+    //   instance.SVGGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    // }
+
+    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+    // this.zoomListener = this._getZoomListener();
+
+    this.baseSVG = this._getBaseSVG();
+    this.SVGGroup = this._getSVGGroup(this.baseSVG);
+
 
     // Helper functions for collapsing and expanding nodes.
     //TODO: Keep for now. I might want to add back in expand and collapse
-    function collapse(d) {
-      if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null;
-      }
-    }
-
-    function expand(d) {
-      if (d._children) {
-        d.children = d._children;
-        d.children.forEach(expand);
-        d._children = null;
-      }
-    }
+    // function collapse(d) {
+    //   if (d.children) {
+    //     d._children = d.children;
+    //     d._children.forEach(collapse);
+    //     d.children = null;
+    //   }
+    // }
+    //
+    // function expand(d) {
+    //   if (d._children) {
+    //     d.children = d._children;
+    //     d.children.forEach(expand);
+    //     d._children = null;
+    //   }
+    // }
 
     // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
     function center_node(source) {
       console.log("CENTER NODE");
-      const scale = zoomListener.scale();
+      const scale = instance.zoomListener.scale();
       let x = -source.y0;
       let y = -source.x0;
       x = x * scale + viewerWidth / 2;
@@ -149,8 +178,8 @@ export default class DecisionTree extends React.Component {
       d3.select("g").transition()
         .duration(duration)
         .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
-      zoomListener.scale(scale);
-      zoomListener.translate([x, y]);
+      instance.zoomListener.scale(scale);
+      instance.zoomListener.translate([x, y]);
     }
 
     // Toggle children function
@@ -208,7 +237,7 @@ export default class DecisionTree extends React.Component {
       });
 
       // Update the nodes…
-      const node = svgGroup.selectAll("g.node")
+      const node = instance.SVGGroup.selectAll("g.node")
         .data(nodes, function(d) {
           return d.id || (d.id = ++i);
         });
@@ -305,7 +334,7 @@ export default class DecisionTree extends React.Component {
         .style("fill-opacity", 0);
 
       // Update the links…
-      const link = svgGroup.selectAll("path.link")
+      const link = instance.SVGGroup.selectAll("path.link")
         .data(links, function(d) {
           return d.target.id;
         });
@@ -352,7 +381,8 @@ export default class DecisionTree extends React.Component {
     }
 
 
-    const svgGroup = baseSvg.append("g").attr("id", "");
+    // const svgGroup = baseSvg.append("g").attr("id", "");
+
 
     // Define the root
     root = data;
