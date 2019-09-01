@@ -1,9 +1,9 @@
 import React from "react";
 
-import AppHeader from "./js/components/AppHeader";
-import TopSummaryContainer from "./js/components/containers/TopSummaryContainer";
-import SideSummaryContainer from "./js/components/containers/SideSummaryContainer";
-import DecisionTreeContainer from "./js/components/containers/DecisionTreeContainer";
+import AppHeader from "./AppHeader";
+import TopSummaryContainer from "./containers/TopSummaryContainer";
+import SideSummaryContainer from "./containers/SideSummaryContainer";
+import DecisionTreeContainer from "./containers/DecisionTreeContainer";
 
 const Box = require("grommet/components/Box");
 
