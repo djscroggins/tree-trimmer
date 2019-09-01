@@ -23,6 +23,12 @@ export default class FeatureTable extends React.Component {
       .text(title);
   };
 
+  _createWarningMessageDiv = (node, elementName = this.warningMessageDivClass) => {
+    return d3.select(node).append("div")
+      .attr("class", elementName)
+      .attr("display", "none");
+  };
+
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
     d3.selectAll("." + this.featuresTitleClass).remove();
@@ -77,11 +83,9 @@ export default class FeatureTable extends React.Component {
     //     .append("hr")
     //     .attr("id", "features-hr");
 
-    const title = this._createTitle('Important Features', containerNode);
+    const title = this._createTitle("Important Features", containerNode);
 
-    const warning_message_div = d3.select(containerNode).append("div")
-      .attr("class", this.warningMessageDivClass)
-      .attr("display", "none");
+    const warning_message_div = this._createWarningMessageDiv(containerNode);
 
     // set up table
     const table = d3.select(containerNode).append("table")
