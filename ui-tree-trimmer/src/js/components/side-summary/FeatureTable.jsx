@@ -12,6 +12,7 @@ export default class FeatureTable extends React.Component {
     this.featureTableButtonClass = "feature-table-button";
     this.warningMessage = "warning-message";
     this.warningMessageDivClass = "warning-message-div";
+    this.headerLabels = ["Feature", "Score"];
   }
 
   _createTitle = (title, node, elementName = this.featuresTitleClass) => {
@@ -23,19 +24,29 @@ export default class FeatureTable extends React.Component {
       .text(title);
   };
 
-  _createWarningMessageDiv = (node, elementName = this.warningMessageDivClass) => {
+  _createWarningMessageDiv = (node, elementName = this.warningMessageDivClass, display = "none") => {
     return d3.select(node).append("div")
       .attr("class", elementName)
-      .attr("display", "none");
+      .attr("display", display);
   };
 
-  _createTable = (node, elementName = this.featureTableClass) => {
+  _createTable = (node, elementName = this.featureTableClass, align = "center") => {
     const table = d3.select(node).append("table")
       .attr("class", elementName)
-      .attr("align", "center");
+      .attr("align", align);
     const thead = table.append("thead");
     const tbody = table.append("tbody");
-    return {'table': table, 'thead': thead, 'tbody': tbody}
+    return { "table": table, "thead": thead, "tbody": tbody };
+  };
+
+  _addHeaderLabels = (thead, labels = this.headerLabels) => {
+    thead.append("tr")
+      .selectAll("th")
+      .data(labels)
+      .enter().append("th")
+      .text(function(d) {
+        return d;
+      });
   };
 
   _resetContainer = () => {
@@ -98,14 +109,7 @@ export default class FeatureTable extends React.Component {
 
     const { table, thead, tbody } = this._createTable(containerNode);
 
-    // add column labels
-    thead.append("tr")
-      .selectAll("th")
-      .data(columnLabels)
-      .enter().append("th")
-      .text(function(d) {
-        return d;
-      });
+    this._addHeaderLabels(thead);
 
     // build rows
     const instance = this;
