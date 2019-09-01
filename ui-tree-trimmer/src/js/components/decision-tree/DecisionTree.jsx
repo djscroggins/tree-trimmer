@@ -17,6 +17,17 @@ export default class DecisionTree extends React.Component {
     d3.select("#retrain-button").remove();
   };
 
+  _getTree = (height, width) => {
+    return d3.layout.tree().size([height, width]);
+  };
+
+  _getDiagonal = () => {
+    return d3.svg.diagonal()
+      .projection(function(d) {
+        return [d.x, d.y];
+      });
+  };
+
   // A recursive helper function for performing some setup by walking through all nodes
   _visit = (node) => {
     if (!node) return;
@@ -72,8 +83,8 @@ export default class DecisionTree extends React.Component {
     this._resetContainer();
 
     // Calculate total nodes, max label length
-    let totalNodes = 0;
-    let maxLabelLength = 0;
+    // let totalNodes = 0;
+    // let maxLabelLength = 0;
 
     let i = 0;
     const duration = 750;
@@ -83,16 +94,13 @@ export default class DecisionTree extends React.Component {
     const viewerHeight = window.innerHeight - 150;
 
     // Might want to take this out
-    let tree = d3.layout.tree()
-      .size([viewerHeight, viewerWidth]);
+    // let tree = d3.layout.tree()
+    //   .size([viewerHeight, viewerWidth]);
+    let tree = this._getTree(viewerHeight, viewerWidth);
 
     // define a d3 diagonal projection for use by the node paths later on.
-    const diagonal = d3.svg.diagonal()
-      .projection(function(d) {
-        return [d.x, d.y];
-      });
-
-
+    const diagonal = this._getDiagonal();
+    
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
