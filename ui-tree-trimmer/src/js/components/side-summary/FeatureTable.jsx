@@ -133,8 +133,7 @@ export default class FeatureTable extends React.Component {
 
   renderFeatureTable = () => {
     this._resetContainer();
-
-
+    
     //TODO: Destructure once return type adjusted on backend
     const currentParameters = this.props.parameters;
     const features = this.props.mlResults.important_features;
@@ -143,11 +142,9 @@ export default class FeatureTable extends React.Component {
     this._setFeaturesToFilter(currentParameters);
     this._setFeatureCount(features);
 
-    
+
     const title = this._createTitle("Important Features", containerNode);
-
     const warningMessageDiv = this._createWarningMessageDiv(containerNode);
-
     const { table, thead, tbody } = this._createTable(containerNode);
 
     this._addHeaderLabels(thead);
@@ -155,7 +152,6 @@ export default class FeatureTable extends React.Component {
     const rows = this._createFeatureRows(tbody, features, warningMessageDiv);
 
     this._createCells(rows);
-
 
     // TODO: This should be a normal ass button
     const thisTable = document.getElementsByClassName(this.featureTableClass);
