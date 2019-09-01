@@ -12,7 +12,8 @@ export default class SideSummaryContainer extends React.Component {
       <Box className='side-summary-container'
            align='center'
            justify='center'>
-        <ConfusionMatrix/>
+        <ConfusionMatrix mlResults={this.props.mlResults}
+                         colorRange={{ "startColor": "#ffffff", "endColor": "#042E8D" }}/>
         <FeatureTable/>
         <NodeSummary/>
       </Box>

@@ -3,7 +3,7 @@ import React from "react";
 import AppHeader from "./AppHeader";
 import TopSummaryContainer from "./containers/TopSummaryContainer";
 import SideSummaryContainer from "./containers/SideSummaryContainer";
-import DecisionTreeContainer from "./containers/DecisionTreeContainer";
+import DecisionTree from "./decision-tree/DecisionTree";
 
 const Box = require("grommet/components/Box");
 
@@ -63,8 +63,8 @@ export default class TreeTrimmer extends React.Component {
 
           <Box direction='row'>
 
-            <DecisionTreeContainer/>
-            <SideSummaryContainer/>
+            <DecisionTree/>
+            <SideSummaryContainer mlResults={this.state.mlResults}/>
 
           </Box>
 
