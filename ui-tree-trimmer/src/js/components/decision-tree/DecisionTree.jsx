@@ -29,6 +29,18 @@ export default class DecisionTree extends React.Component {
     return "[" + accumulator.join(", ") + "]"
   };
 
+  _getNodeSamplesText = (node) => {
+    return "Samples: " + node.n_node_samples
+  };
+
+  _getCriterionText = (node) => {
+    return node.impurity[0] + " = " + node.impurity[1];
+  };
+
+  _getSplitterText = (node) => {
+    return node.split[0] + " >= " + node.split[1] + "\n";
+  };
+
     renderDecisionTree = () => {
 
       const instance = this;
@@ -223,13 +235,13 @@ export default class DecisionTree extends React.Component {
           .attr("x", 0)
           .text(function(d) {
             // console.log(d);
-            return d.node ? getSplitterText(d.node) : getCriterionText(d.leaf);
+            return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
           })
           .append("tspan")
           .attr("x", 0)
           .attr("dy", "1em")
           .text(function (d) {
-            return d.node ? getCriterionText(d.node) : getNodeSamplesText(d.leaf);
+            return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
           })
           .append("tspan")
           .attr("x", 0)
@@ -240,7 +252,7 @@ export default class DecisionTree extends React.Component {
           .attr("x", 0)
           .attr("dy", "1em")
           .text(function (d) {
-            return d.node ? getNodeSamplesText(d.node) : null;
+            return d.node ? instance._getNodeSamplesText(d.node) : null;
           })
           .append("tspan")
           .attr("x", 0)
@@ -327,19 +339,6 @@ export default class DecisionTree extends React.Component {
           d.y0 = d.y;
         });
       }
-
-      function getSplitterText(node) {
-        return node.split[0] + " >= " + node.split[1] + "\n";
-      }
-
-      function getCriterionText (node) {
-        return node.impurity[0] + " = " + node.impurity[1];
-      }
-
-      function getNodeSamplesText (node) {
-        return "Samples: " + node.n_node_samples
-      }
-
 
 
       const svgGroup = baseSvg.append("g").attr("id", "");
