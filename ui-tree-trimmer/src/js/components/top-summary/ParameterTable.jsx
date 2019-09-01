@@ -19,10 +19,6 @@ export default class ParameterTable extends React.Component {
     let parametersArray = Object.keys(parameters);
     const valuesArray = Object.values(parameters);
 
-    console.log("parametersArray: ", parametersArray);
-    console.log("valuesArray", valuesArray);
-
-
     //  Set up table
     const table = d3.select(containerNode).append("table").attr("class", this.tableName);
     const thead = table.append("thead");
@@ -51,12 +47,10 @@ export default class ParameterTable extends React.Component {
   };
 
   componentDidMount() {
-    console.log("ParameterTableMounting");
     this.renderParameterTable();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("ParameterTable Updating");
     this.renderParameterTable();
   }
 
