@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import TreeTrimmer from "./TreeTrimmer.jsx";
+import TreeTrimmer from "./js/components/TreeTrimmer.jsx";
 
 import '../css/top-summary.css'
 import '../css/side-summary.css'
