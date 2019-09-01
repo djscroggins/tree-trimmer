@@ -7,19 +7,28 @@ import "../../../css/feature-table.css";
 export default class FeatureTable extends React.Component {
   constructor(props) {
     super(props);
-    this.featuresTitle = "features-title";
-    this.featureTable = "feature-table";
-    this.featureTableButton = "feature-table-button";
+    this.featuresTitleClass = "features-title";
+    this.featureTableClass = "feature-table";
+    this.featureTableButtonClass = "feature-table-button";
     this.warningMessage = "warning-message";
-    this.warningMessageDiv = "warning-message-div";
+    this.warningMessageDivClass = "warning-message-div";
   }
+
+  _createTitle = (title, node, elementName = this.featuresTitleClass) => {
+    return d3.select(node)
+      .append("div")
+      .attr("class", elementName)
+      .append("h3")
+      .append("text")
+      .text(title);
+  };
 
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
-    d3.selectAll("." + this.featuresTitle).remove();
-    d3.selectAll("." + this.featureTable).remove();
-    d3.selectAll("." + this.featureTableButton).remove();
-    d3.selectAll("." + this.warningMessageDiv).remove();
+    d3.selectAll("." + this.featuresTitleClass).remove();
+    d3.selectAll("." + this.featureTableClass).remove();
+    d3.selectAll("." + this.featureTableButtonClass).remove();
+    d3.selectAll("." + this.warningMessageDivClass).remove();
     this._removeWarning();
   };
 
@@ -37,9 +46,9 @@ export default class FeatureTable extends React.Component {
 
   _toggleRetrainButton = (featuresToFilterArray) => {
     if (featuresToFilterArray.length > 0) {
-      d3.select("." + this.featureTableButton).attr("display", "block");
+      d3.select("." + this.featureTableButtonClass).attr("display", "block");
     } else {
-      d3.select("." + this.featureTableButton).attr("display", "none");
+      d3.select("." + this.featureTableButtonClass).attr("display", "none");
     }
   };
 
@@ -68,20 +77,15 @@ export default class FeatureTable extends React.Component {
     //     .append("hr")
     //     .attr("id", "features-hr");
 
-    const title = d3.select(containerNode)
-      .append("div")
-      .attr("class", this.featuresTitle)
-      .append("h3")
-      .append("text")
-      .text("Important Features");
+    const title = this._createTitle('Important Features', containerNode);
 
     const warning_message_div = d3.select(containerNode).append("div")
-      .attr("class", this.warningMessageDiv)
+      .attr("class", this.warningMessageDivClass)
       .attr("display", "none");
 
     // set up table
     const table = d3.select(containerNode).append("table")
-      .attr("class", this.featureTable)
+      .attr("class", this.featureTableClass)
       .attr("align", "center");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -138,7 +142,7 @@ export default class FeatureTable extends React.Component {
 
     //TODO: Make this a function, cf. NodeSummary.js
     // Draw retrain button
-    const thisTable = document.getElementsByClassName(this.featureTable);
+    const thisTable = document.getElementsByClassName(this.featureTableClass);
     // Set svg dimensions relative to table dimensions
     const svgWidth = thisTable[0].offsetWidth;
     const svgHeight = 60;
@@ -148,7 +152,7 @@ export default class FeatureTable extends React.Component {
     // Build svg
     const svg = d3.select(containerNode)
       .append("svg")
-      .attr("class", this.featureTableButton)
+      .attr("class", this.featureTableButtonClass)
       .attr("width", svgWidth)
       .attr("height", svgHeight)
       // Center svg in div
