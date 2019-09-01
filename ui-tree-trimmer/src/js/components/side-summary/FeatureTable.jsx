@@ -21,6 +21,10 @@ export default class FeatureTable extends React.Component {
     this.featuresToFilterArray = !("filter_feature" in parameters) ? [] : parameters.filter_feature;
   };
 
+  _setFeatureCount = (features) => {
+    this.featureCount = this.featuresToFilterArray.length + features.length;
+  };
+
   _createTitle = (title, node, elementName = this.featuresTitleClass) => {
     return d3.select(node)
       .append("div")
@@ -136,20 +140,10 @@ export default class FeatureTable extends React.Component {
     const features = this.props.mlResults.important_features;
     const containerNode = this.featureTableContainer;
 
-    // let featuresToFilterArray;
-
-    // TODO: Move this to method
-    // if (!("filter_feature" in currentParameters)) {
-    //   // console.log("Key wasn't there");
-    //   this.featuresToFilterArray = [];
-    // } else {
-    //   // console.log("Key was there");
-    //   this.featuresToFilterArray = currentParameters.filter_feature;
-    // }
     this._setFeaturesToFilter(currentParameters);
+    this._setFeatureCount(features);
 
-    this.featureCount = this.featuresToFilterArray.length + features.length;
-
+    
     const title = this._createTitle("Important Features", containerNode);
 
     const warningMessageDiv = this._createWarningMessageDiv(containerNode);
