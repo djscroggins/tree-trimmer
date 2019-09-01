@@ -7,39 +7,43 @@ import "../../../css/feature-table.css";
 export default class FeatureTable extends React.Component {
   constructor(props) {
     super(props);
+    this.featuresTitle = "features-title";
+    this.featureTable = "feature-table";
+    this.featureTableButton = "feature-table-button";
+    this.warningMessage = "warning-message";
+    this.warningMessageDiv = "warning-message-div";
   }
 
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
-    d3.selectAll("#features-title").remove();
-    d3.selectAll("#feature-table").remove();
-    d3.selectAll("#feature-table-button").remove();
-    d3.selectAll("#warning_message-div").remove();
-    this._removeWarning()
+    d3.selectAll("." + this.featuresTitle).remove();
+    d3.selectAll("#" + this.featureTable).remove();
+    d3.selectAll("." + this.featureTableButton).remove();
+    d3.selectAll("#" + this.warningMessageDiv).remove();
+    this._removeWarning();
   };
 
   _displayWarning = (div) => {
     div.append("p")
-      .attr("id", "warning-message")
+      .attr("class", this.warningMessage)
       .append("text")
       .text("Cannot train tree with no features")
       .style("color", "red");
   };
 
   _removeWarning = () => {
-    d3.selectAll("#warning-message").remove();
+    d3.selectAll("." + this.warningMessage).remove();
   };
 
   _toggleRetrainButton = (featuresToFilterArray) => {
     if (featuresToFilterArray.length > 0) {
-      d3.select("#feature-table-button").attr("display", "block");
+      d3.select("." + this.featureTableButton).attr("display", "block");
     } else {
-      d3.select("#feature-table-button").attr("display", "none");
+      d3.select("." + this.featureTableButton).attr("display", "none");
     }
   };
 
   renderFeatureTable = () => {
-    // resetFeatureTable();
     this._resetContainer();
 
     const columnLabels = ["Feature", "Score"];
@@ -66,18 +70,18 @@ export default class FeatureTable extends React.Component {
 
     const title = d3.select(containerNode)
       .append("div")
-      .attr("id", "features-title")
+      .attr("class", this.featuresTitle)
       .append("h3")
       .append("text")
       .text("Important Features");
 
     const warning_message_div = d3.select(containerNode).append("div")
-      .attr("id", "warning-message-div")
+      .attr("id", this.warningMessageDiv)
       .attr("display", "none");
 
     // set up table
     const table = d3.select(containerNode).append("table")
-      .attr("id", "feature-table")
+      .attr("id", this.featureTable)
       .attr("align", "center");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -134,7 +138,7 @@ export default class FeatureTable extends React.Component {
 
     //TODO: Make this a function, cf. NodeSummary.js
     // Draw retrain button
-    const thisTable = document.getElementById("feature-table");
+    const thisTable = document.getElementById(this.featureTable);
     // Set svg dimensions relative to table dimensions
     const svgWidth = thisTable.offsetWidth;
     const svgHeight = 60;
@@ -144,7 +148,7 @@ export default class FeatureTable extends React.Component {
     // Build svg
     const svg = d3.select(containerNode)
       .append("svg")
-      .attr("id", "feature-table-button")
+      .attr("class", this.featureTableButton)
       .attr("width", svgWidth)
       .attr("height", svgHeight)
       // Center svg in div
@@ -185,35 +189,6 @@ export default class FeatureTable extends React.Component {
     //   // retrainTree();
     // })
     ;
-
-    // function displayWarning() {
-    //   warning_message_div.append("p")
-    //     .attr("id", "warning-message")
-    //     .append("text")
-    //     .text("Cannot train tree with no features")
-    //     .style("color", "red");
-    // }
-
-    // function resetFeatureTable() {
-    //   // d3.selectAll("#features-hr").remove();
-    //   d3.selectAll("#features-title").remove();
-    //   d3.selectAll("#feature-table").remove();
-    //   d3.selectAll("#feature-table-button").remove();
-    //   d3.selectAll("#warning_message-div").remove();
-    //   removeWarning();
-    // }
-
-    function removeWarning() {
-      d3.selectAll("#warning-message").remove();
-    }
-
-    // function toggleRetrainButton() {
-    //   if (featuresToFilterArray.length > 0) {
-    //     d3.select("#feature-table-button").attr("display", "block");
-    //   } else {
-    //     d3.select("#feature-table-button").attr("display", "none");
-    //   }
-    // }
   };
 
   componentDidMount() {
