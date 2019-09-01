@@ -2,7 +2,7 @@ import React from "react";
 
 import * as d3 from "d3";
 
-import round from "../../utilities/round";
+import round from "../../../common/round";
 
 export default class AccuracyReport extends React.Component {
   constructor(props) {

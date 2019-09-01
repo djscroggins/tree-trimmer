@@ -1,8 +1,8 @@
 import React from "react";
 
-import AccuracyReport from "../top-summary/AccuracyReport";
-import ParameterTable from "../top-summary/ParameterTable";
-import TreeSummary from "../top-summary/TreeSummary";
+import AccuracyReport from "../decision-tree/tree-data-summaries/AccuracyReport";
+import ParameterTable from "../decision-tree/tree-data-summaries/ParameterTable";
+import TreeSummary from "../decision-tree/tree-data-summaries/TreeSummary";
 
 const Box = require("grommet/components/Box");
 
