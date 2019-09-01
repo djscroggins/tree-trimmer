@@ -21,6 +21,18 @@ export default class FeatureTable extends React.Component {
       .style("color", "red");
   };
 
+  _removeWarning = () => {
+    d3.selectAll("#warning-message").remove();
+  };
+
+  _toggleRetrainButton = (featuresToFilterArray) => {
+    if (featuresToFilterArray.length > 0) {
+      d3.select("#feature-table-button").attr("display", "block");
+    } else {
+      d3.select("#feature-table-button").attr("display", "none");
+    }
+  };
+
   renderFeatureTable = () => {
     resetFeatureTable();
 
@@ -85,10 +97,10 @@ export default class FeatureTable extends React.Component {
           if (feature_count - featuresToFilterArray.length > 1) {
             d3.select(this).style("background-color", "rgb(255, 179, 179)");
             featuresToFilterArray.push(d[0]);
-            toggleRetrainButton();
+            instance._toggleRetrainButton(featuresToFilterArray);
             // Removing all features will throw error on backend
           } else {
-            removeWarning();
+            instance._removeWarning();
             instance._displayWarning(warning_message_div);
           }
         } else {
@@ -98,8 +110,8 @@ export default class FeatureTable extends React.Component {
           if (index !== -1) {
             featuresToFilterArray.splice(index, 1);
           }
-          toggleRetrainButton();
-          removeWarning();
+          instance._toggleRetrainButton(featuresToFilterArray);
+          instance._removeWarning();
         }
       });
 
@@ -189,13 +201,13 @@ export default class FeatureTable extends React.Component {
       d3.selectAll("#warning-message").remove();
     }
 
-    function toggleRetrainButton() {
-      if (featuresToFilterArray.length > 0) {
-        d3.select("#feature-table-button").attr("display", "block");
-      } else {
-        d3.select("#feature-table-button").attr("display", "none");
-      }
-    }
+    // function toggleRetrainButton() {
+    //   if (featuresToFilterArray.length > 0) {
+    //     d3.select("#feature-table-button").attr("display", "block");
+    //   } else {
+    //     d3.select("#feature-table-button").attr("display", "none");
+    //   }
+    // }
   };
 
   componentDidMount() {
