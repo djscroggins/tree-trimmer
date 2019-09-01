@@ -133,7 +133,7 @@ export default class FeatureTable extends React.Component {
 
   renderFeatureTable = () => {
     this._resetContainer();
-    
+
     //TODO: Destructure once return type adjusted on backend
     const currentParameters = this.props.parameters;
     const features = this.props.mlResults.important_features;
