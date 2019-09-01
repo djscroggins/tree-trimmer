@@ -82,6 +82,18 @@ export default class FeatureTable extends React.Component {
       });
   };
 
+  _createCells = (rows) => {
+    rows.selectAll("td")
+      .data(function(d) {
+        return d;
+      })
+      .enter()
+      .append("td")
+      .text(function(d) {
+        return d;
+      });
+  };
+
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
     d3.selectAll("." + this.featuresTitleClass).remove();
@@ -133,10 +145,6 @@ export default class FeatureTable extends React.Component {
 
     this.featureCount = this.featuresToFilterArray.length + features.length;
 
-    // d3.select(params_in.container)
-    //     .append("hr")
-    //     .attr("id", "features-hr");
-
     const title = this._createTitle("Important Features", containerNode);
 
     const warningMessageDiv = this._createWarningMessageDiv(containerNode);
@@ -147,19 +155,10 @@ export default class FeatureTable extends React.Component {
 
     const rows = this._createFeatureRows(tbody, features, warningMessageDiv);
 
-    // build cells
-    rows.selectAll("td")
-      .data(function(d) {
-        return d;
-      })
-      .enter()
-      .append("td")
-      .text(function(d) {
-        return d;
-      });
+    this._createCells(rows);
 
-    //TODO: Make this a function, cf. NodeSummary.js
-    // Draw retrain button
+
+    // TODO: This should be a normal ass button
     const thisTable = document.getElementsByClassName(this.featureTableClass);
     // Set svg dimensions relative to table dimensions
     const svgWidth = thisTable[0].offsetWidth;
