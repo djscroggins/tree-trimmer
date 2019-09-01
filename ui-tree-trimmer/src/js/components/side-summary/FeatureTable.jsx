@@ -19,7 +19,7 @@ export default class FeatureTable extends React.Component {
     d3.selectAll("." + this.featuresTitle).remove();
     d3.selectAll("#" + this.featureTable).remove();
     d3.selectAll("." + this.featureTableButton).remove();
-    d3.selectAll("#" + this.warningMessageDiv).remove();
+    d3.selectAll("." + this.warningMessageDiv).remove();
     this._removeWarning();
   };
 
@@ -76,7 +76,7 @@ export default class FeatureTable extends React.Component {
       .text("Important Features");
 
     const warning_message_div = d3.select(containerNode).append("div")
-      .attr("id", this.warningMessageDiv)
+      .attr("class", this.warningMessageDiv)
       .attr("display", "none");
 
     // set up table
