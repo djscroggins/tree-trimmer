@@ -43,7 +43,6 @@ export default class AccuracyReport extends React.Component {
   };
 
   computeInstanceSum = (matrix) => {
-    console.log("Matrix: ", matrix);
     return matrix.reduce((a, b) => a.concat(b)).reduce((a, b) => a + b);
   };
 

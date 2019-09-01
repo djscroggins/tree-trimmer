@@ -17,6 +17,10 @@ export default class FeatureTable extends React.Component {
     this.featureCount = 0;
   }
 
+  _setFeaturesToFilter = (parameters) => {
+    this.featuresToFilterArray = !("filter_feature" in parameters) ? [] : parameters.filter_feature;
+  };
+
   _createTitle = (title, node, elementName = this.featuresTitleClass) => {
     return d3.select(node)
       .append("div")
@@ -135,13 +139,14 @@ export default class FeatureTable extends React.Component {
     // let featuresToFilterArray;
 
     // TODO: Move this to method
-    if (!("filter_feature" in currentParameters)) {
-      // console.log("Key wasn't there");
-      this.featuresToFilterArray = [];
-    } else {
-      // console.log("Key was there");
-      this.featuresToFilterArray = currentParameters.filter_feature;
-    }
+    // if (!("filter_feature" in currentParameters)) {
+    //   // console.log("Key wasn't there");
+    //   this.featuresToFilterArray = [];
+    // } else {
+    //   // console.log("Key was there");
+    //   this.featuresToFilterArray = currentParameters.filter_feature;
+    // }
+    this._setFeaturesToFilter(currentParameters);
 
     this.featureCount = this.featuresToFilterArray.length + features.length;
 
