@@ -17,7 +17,7 @@ export default class FeatureTable extends React.Component {
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
     d3.selectAll("." + this.featuresTitle).remove();
-    d3.selectAll("#" + this.featureTable).remove();
+    d3.selectAll("." + this.featureTable).remove();
     d3.selectAll("." + this.featureTableButton).remove();
     d3.selectAll("." + this.warningMessageDiv).remove();
     this._removeWarning();
@@ -81,7 +81,7 @@ export default class FeatureTable extends React.Component {
 
     // set up table
     const table = d3.select(containerNode).append("table")
-      .attr("id", this.featureTable)
+      .attr("class", this.featureTable)
       .attr("align", "center");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -138,9 +138,9 @@ export default class FeatureTable extends React.Component {
 
     //TODO: Make this a function, cf. NodeSummary.js
     // Draw retrain button
-    const thisTable = document.getElementById(this.featureTable);
+    const thisTable = document.getElementsByClassName(this.featureTable);
     // Set svg dimensions relative to table dimensions
-    const svgWidth = thisTable.offsetWidth;
+    const svgWidth = thisTable[0].offsetWidth;
     const svgHeight = 60;
     const buttonWidth = svgWidth - 10;
     const buttonHeight = svgHeight - 10;
