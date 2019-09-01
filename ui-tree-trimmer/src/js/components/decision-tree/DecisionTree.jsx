@@ -19,6 +19,16 @@ export default class DecisionTree extends React.Component {
     return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
   };
 
+  _getSampleDistributionText = (node) => {
+    const accumulator = [];
+    const class_counts = node.node_class_counts;
+    class_counts.forEach(function (cv) {
+      accumulator.push(cv[1]);
+    });
+
+    return "[" + accumulator.join(", ") + "]"
+  };
+
     renderDecisionTree = () => {
 
       const instance = this;
@@ -224,7 +234,7 @@ export default class DecisionTree extends React.Component {
           .append("tspan")
           .attr("x", 0)
           .attr("dy", "1em").text(function (d) {
-          return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : getSampleDistributionText(d.leaf)
+          return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf)
         })
           .append("tspan")
           .attr("x", 0)
@@ -236,7 +246,7 @@ export default class DecisionTree extends React.Component {
           .attr("x", 0)
           .attr("dy", "1em")
           .text(function (d) {
-            return d.node ? getSampleDistributionText(d.node) : null;
+            return d.node ? instance._getSampleDistributionText(d.node) : null;
           });
 
         // Change the circle fill depending on whether it has children and is collapsed
@@ -330,17 +340,6 @@ export default class DecisionTree extends React.Component {
         return "Samples: " + node.n_node_samples
       }
 
-      function getSampleDistributionText (node) {
-
-        const accumulator = [];
-        const class_counts = node.node_class_counts;
-        class_counts.forEach(function (cv) {
-          accumulator.push(cv[1]);
-        });
-
-        return "[" + accumulator.join(", ") + "]"
-
-      }
 
 
       const svgGroup = baseSvg.append("g").attr("id", "");
