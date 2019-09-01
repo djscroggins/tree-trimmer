@@ -15,11 +15,13 @@ export default class ConfusionMatrix extends React.Component {
 
   renderConfusionMatrix = () => {
     this._resetContainer();
-    console.log("renderConfusionMatrix");
-    const width = 250;
-    const height = 250;
-    const matrix = this.props.mlResults["confusion_matrix"];
-    const classLabels = this.props.mlResults["class_labels"];
+
+    const { mlResults, dimensions, colorRange } = this.props;
+    const { width, height } = dimensions;
+    //TODO: Change return types from backend to camel case
+    const matrix = mlResults["confusion_matrix"];
+    const classLabels = mlResults["class_labels"];
+    const { startColor, endColor } = colorRange;
 
     // Standard margins; if label is number returns fixed left margin else sets relative to length of longest label
     const margin = {
@@ -75,7 +77,7 @@ export default class ConfusionMatrix extends React.Component {
     const colorMap = d3.scale.linear()
       .domain([minValue, maxValue])
       //TODO: Props for colorRange
-      .range([this.props.colorRange.startColor, this.props.colorRange.endColor]);
+      .range([startColor, endColor]);
 
     // set up rows
     const row = svg.selectAll(".row")
