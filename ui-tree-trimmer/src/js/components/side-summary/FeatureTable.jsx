@@ -13,6 +13,8 @@ export default class FeatureTable extends React.Component {
     this.warningMessage = "warning-message";
     this.warningMessageDivClass = "warning-message-div";
     this.headerLabels = ["Feature", "Score"];
+    this.featuresToFilterArray = undefined;
+    this.featureCount = 0;
   }
 
   _createTitle = (title, node, elementName = this.featuresTitleClass) => {
@@ -49,6 +51,37 @@ export default class FeatureTable extends React.Component {
       });
   };
 
+  _createFeatureRows = (tbody, features, warningMessageNode) => {
+    const instance = this;
+    return tbody.selectAll("tr")
+      .data(features)
+      .enter()
+      .append("tr").on("click", function(d) {
+        // If row hasn't been selected for filtering
+        if (d3.select(this).style("background-color") !== "rgb(255, 179, 179)") {
+          // If filtering feature won't remove all features
+          if (instance.featureCount - instance.featuresToFilterArray.length > 1) {
+            d3.select(this).style("background-color", "rgb(255, 179, 179)");
+            instance.featuresToFilterArray.push(d[0]);
+            instance._toggleRetrainButton(instance.featuresToFilterArray);
+            // Removing all features will throw error on backend
+          } else {
+            instance._removeWarning();
+            instance._displayWarning(warningMessageNode);
+          }
+        } else {
+          // If row has been selected, remove from filtering array
+          d3.select(this).style("background-color", "transparent");
+          const index = instance.featuresToFilterArray.indexOf(d[0]);
+          if (index !== -1) {
+            instance.featuresToFilterArray.splice(index, 1);
+          }
+          instance._toggleRetrainButton(instance.featuresToFilterArray);
+          instance._removeWarning();
+        }
+      });
+  };
+
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
     d3.selectAll("." + this.featuresTitleClass).remove();
@@ -81,23 +114,24 @@ export default class FeatureTable extends React.Component {
   renderFeatureTable = () => {
     this._resetContainer();
 
-    const columnLabels = ["Feature", "Score"];
 
+    //TODO: Destructure once return type adjusted on backend
     const currentParameters = this.props.parameters;
     const features = this.props.mlResults.important_features;
     const containerNode = this.featureTableContainer;
 
-    let featuresToFilterArray;
+    // let featuresToFilterArray;
 
+    // TODO: Move this to method
     if (!("filter_feature" in currentParameters)) {
       // console.log("Key wasn't there");
-      featuresToFilterArray = [];
+      this.featuresToFilterArray = [];
     } else {
       // console.log("Key was there");
-      featuresToFilterArray = currentParameters.filter_feature;
+      this.featuresToFilterArray = currentParameters.filter_feature;
     }
 
-    const feature_count = featuresToFilterArray.length + features.length;
+    this.featureCount = this.featuresToFilterArray.length + features.length;
 
     // d3.select(params_in.container)
     //     .append("hr")
@@ -105,41 +139,13 @@ export default class FeatureTable extends React.Component {
 
     const title = this._createTitle("Important Features", containerNode);
 
-    const warning_message_div = this._createWarningMessageDiv(containerNode);
+    const warningMessageDiv = this._createWarningMessageDiv(containerNode);
 
     const { table, thead, tbody } = this._createTable(containerNode);
 
     this._addHeaderLabels(thead);
 
-    // build rows
-    const instance = this;
-    const rows = tbody.selectAll("tr")
-      .data(features)
-      .enter()
-      .append("tr").on("click", function(d) {
-        // If row hasn't been selected for filtering
-        if (d3.select(this).style("background-color") !== "rgb(255, 179, 179)") {
-          // If filtering feature won't remove all features
-          if (feature_count - featuresToFilterArray.length > 1) {
-            d3.select(this).style("background-color", "rgb(255, 179, 179)");
-            featuresToFilterArray.push(d[0]);
-            instance._toggleRetrainButton(featuresToFilterArray);
-            // Removing all features will throw error on backend
-          } else {
-            instance._removeWarning();
-            instance._displayWarning(warning_message_div);
-          }
-        } else {
-          // If row has been selected, remove from filtering array
-          d3.select(this).style("background-color", "transparent");
-          const index = featuresToFilterArray.indexOf(d[0]);
-          if (index !== -1) {
-            featuresToFilterArray.splice(index, 1);
-          }
-          instance._toggleRetrainButton(featuresToFilterArray);
-          instance._removeWarning();
-        }
-      });
+    const rows = this._createFeatureRows(tbody, features, warningMessageDiv);
 
     // build cells
     rows.selectAll("td")
