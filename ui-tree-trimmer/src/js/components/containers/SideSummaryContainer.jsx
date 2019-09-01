@@ -20,7 +20,6 @@ export default class SideSummaryContainer extends React.Component {
         <FeatureTable mlResults={this.props.mlResults} parameters={this.props.parameters}/>
         <NodeSummary/>
       </Box>
-
     );
   }
 };

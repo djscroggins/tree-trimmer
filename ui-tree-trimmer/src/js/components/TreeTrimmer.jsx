@@ -63,7 +63,7 @@ export default class TreeTrimmer extends React.Component {
 
           <Box direction='row'>
 
-            <DecisionTree/>
+            <DecisionTree data={this.state.mlResults}/>
             <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
 
           </Box>
