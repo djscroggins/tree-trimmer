@@ -9,6 +9,7 @@ export default class DecisionTree extends React.Component {
     this.maxLabelLength = 0;
     this.viewerWidth = window.innerWidth - 400;
     this.viewerHeight = window.innerHeight - 150;
+    this.duration = 750;
     this.zoomListener = this._getZoomListener();
     this.baseSVG = undefined;
     this.SVGGroup = undefined;
@@ -68,6 +69,20 @@ export default class DecisionTree extends React.Component {
 
   _getChildren = (node) => {
     return node.children && node.children.length > 0 ? node.children : null;
+  };
+
+  // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
+  _centerNode = (source) => {
+    const scale = this.zoomListener.scale();
+    let x = -source.y0;
+    let y = -source.x0;
+    x = x * scale + this.viewerWidth / 2;
+    y = y * scale + this.viewerHeight / 2;
+    d3.select("g").transition()
+      .duration(this.duration)
+      .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
+    this.zoomListener.scale(scale);
+    this.zoomListener.translate([x, y]);
   };
 
   _getPercentageImpurityDecreaseText = (node) => {
@@ -130,27 +145,13 @@ export default class DecisionTree extends React.Component {
     this._visit(data);
 
 
-    // define the baseSvg, attaching a class for styling and the zoomListener
-    // const baseSvg = d3.select(containerNode).append("svg").attr("id", "base-svg")
-    //   .attr("width", viewerWidth)
-    //   .attr("height", viewerHeight)
-    //   .attr("class", "overlay")
-    //   .call(zoomListener);
-    // Define the zoom function for the zoomable tree
-    // function zoom() {
-    //   console.log("ZOOM");
-    //   instance.SVGGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    // }
-
-    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    // this.zoomListener = this._getZoomListener();
-
     this.baseSVG = this._getBaseSVG();
     this.SVGGroup = this._getSVGGroup(this.baseSVG);
 
 
     // Helper functions for collapsing and expanding nodes.
     //TODO: Keep for now. I might want to add back in expand and collapse
+
     // function collapse(d) {
     //   if (d.children) {
     //     d._children = d.children;
@@ -168,19 +169,7 @@ export default class DecisionTree extends React.Component {
     // }
 
     // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
-    function center_node(source) {
-      console.log("CENTER NODE");
-      const scale = instance.zoomListener.scale();
-      let x = -source.y0;
-      let y = -source.x0;
-      x = x * scale + viewerWidth / 2;
-      y = y * scale + viewerHeight / 2;
-      d3.select("g").transition()
-        .duration(duration)
-        .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
-      instance.zoomListener.scale(scale);
-      instance.zoomListener.translate([x, y]);
-    }
+
 
     // Toggle children function
     function toggleChildren(d) {
@@ -201,7 +190,7 @@ export default class DecisionTree extends React.Component {
       if (d3.event.defaultPrevented) return; // click suppressed
       d = toggleChildren(d);
       update(d);
-      center_node(d);
+      instance._centerNode(d);
     }
 
     function update(source) {
@@ -396,7 +385,7 @@ export default class DecisionTree extends React.Component {
 
     // Layout the tree initially and center on the root node.
     update(root);
-    center_node(root);
+    this._centerNode(root);
 
   };
 
