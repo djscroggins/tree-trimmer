@@ -29,6 +29,15 @@ export default class FeatureTable extends React.Component {
       .attr("display", "none");
   };
 
+  _createTable = (node, elementName = this.featureTableClass) => {
+    const table = d3.select(node).append("table")
+      .attr("class", elementName)
+      .attr("align", "center");
+    const thead = table.append("thead");
+    const tbody = table.append("tbody");
+    return {'table': table, 'thead': thead, 'tbody': tbody}
+  };
+
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
     d3.selectAll("." + this.featuresTitleClass).remove();
@@ -87,12 +96,7 @@ export default class FeatureTable extends React.Component {
 
     const warning_message_div = this._createWarningMessageDiv(containerNode);
 
-    // set up table
-    const table = d3.select(containerNode).append("table")
-      .attr("class", this.featureTableClass)
-      .attr("align", "center");
-    const thead = table.append("thead");
-    const tbody = table.append("tbody");
+    const { table, thead, tbody } = this._createTable(containerNode);
 
     // add column labels
     thead.append("tr")
