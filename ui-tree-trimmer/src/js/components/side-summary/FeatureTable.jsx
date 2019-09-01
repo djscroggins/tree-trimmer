@@ -10,7 +10,12 @@ export default class FeatureTable extends React.Component {
   }
 
   _resetContainer = () => {
-
+    // d3.selectAll("#features-hr").remove();
+    d3.selectAll("#features-title").remove();
+    d3.selectAll("#feature-table").remove();
+    d3.selectAll("#feature-table-button").remove();
+    d3.selectAll("#warning_message-div").remove();
+    this._removeWarning()
   };
 
   _displayWarning = (div) => {
@@ -34,7 +39,8 @@ export default class FeatureTable extends React.Component {
   };
 
   renderFeatureTable = () => {
-    resetFeatureTable();
+    // resetFeatureTable();
+    this._resetContainer();
 
     const columnLabels = ["Feature", "Score"];
 
@@ -188,14 +194,14 @@ export default class FeatureTable extends React.Component {
     //     .style("color", "red");
     // }
 
-    function resetFeatureTable() {
-      // d3.selectAll("#features-hr").remove();
-      d3.selectAll("#features-title").remove();
-      d3.selectAll("#feature-table").remove();
-      d3.selectAll("#feature-table-button").remove();
-      d3.selectAll("#warning_message-div").remove();
-      removeWarning();
-    }
+    // function resetFeatureTable() {
+    //   // d3.selectAll("#features-hr").remove();
+    //   d3.selectAll("#features-title").remove();
+    //   d3.selectAll("#feature-table").remove();
+    //   d3.selectAll("#feature-table-button").remove();
+    //   d3.selectAll("#warning_message-div").remove();
+    //   removeWarning();
+    // }
 
     function removeWarning() {
       d3.selectAll("#warning-message").remove();
