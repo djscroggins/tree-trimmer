@@ -104,6 +104,42 @@ export default class DecisionTree extends React.Component {
     }
   };
 
+  _getTreeLayout = (tree, source) => {
+    const nodes = tree.nodes(source).reverse();
+    return { "nodes": nodes, "links": tree.links(nodes) };
+  };
+
+  // Stash the old positions for transition.
+  _stashNodeValues = (nodes) => {
+    nodes.forEach(function(d) {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  };
+
+  // Set widths between levels based on maxLabelLength.
+  _setWidths = (nodes) => {
+    const instance = this;
+    nodes.forEach(function(d) {
+      d.y = (d.depth * (instance.maxLabelLength * 10));
+    });
+  };
+
+  _bindNodeData = (nodes) => {
+    return this.SVGGroup.selectAll("g.node")
+      .data(nodes, function(d, i) {
+        return d.id || (d.id = ++i);
+      });
+  };
+
+  _enterNewNodes = (nodes, source) => {
+    nodes.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function() {
+        return "translate(" + source.x0 + "," + source.y0 + ")";
+      });
+  };
+
   _appendNodeCircles = (node) => {
     const instance = this;
     node
@@ -194,6 +230,55 @@ export default class DecisionTree extends React.Component {
 
   };
 
+  _bindLinksData = (links) => {
+    return this.SVGGroup.selectAll("path.link")
+      .data(links, function(d) {
+        return d.target.id;
+      });
+  };
+
+  // Enter any new links at the parent's previous position.
+  _enterNewLinks = (links, source) => {
+    const instance = this;
+    links.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function() {
+        const o = {
+          x: source.x0,
+          y: source.y0
+        };
+        return instance.diagonal({
+          source: o,
+          target: o
+        });
+      });
+  };
+
+  // Transition links to their new position.
+  _transitionLinks = (links) => {
+    links.transition()
+      .duration(this.duration)
+      .attr("d", this.diagonal);
+  };
+
+  // Transition exiting nodes to the parent's new position.
+  _transitionExitingLinks = (links, source) => {
+    const instance = this;
+    links.exit().transition()
+      .duration(this.duration)
+      .attr("d", function() {
+        const o = {
+          x: source.x,
+          y: source.y
+        };
+        return instance.diagonal({
+          source: o,
+          target: o
+        });
+      })
+      .remove();
+  };
+
   _update = (source) => {
     const instance = this;
     console.log("UPDATE");
@@ -210,80 +295,25 @@ export default class DecisionTree extends React.Component {
 
     let tree = this.tree.nodeSize([newHeight, this.viewerWidth]);
 
-    // Compute the new tree layout.
-    const nodes = tree.nodes(source).reverse(),
-      links = tree.links(nodes);
+    const { nodes, links } = this._getTreeLayout(tree, source);
 
-    // Set widths between levels based on maxLabelLength.
-    nodes.forEach(function(d) {
-      d.y = (d.depth * (instance.maxLabelLength * 10));
-    });
+    this._stashNodeValues(nodes);
+    this._setWidths(nodes);
 
-    // Update the nodes…
-    const node = this.SVGGroup.selectAll("g.node")
-      .data(nodes, function(d, i) {
-        return d.id || (d.id = ++i);
-      });
+    const gNodes = this._bindNodeData(nodes);
+    this._enterNewNodes(gNodes, source);
+    this._appendNodeCircles(gNodes);
+    this._appendNodeText(gNodes);
+    this._bindOnClickHandler(gNodes);
+    this._transitionNodes(gNodes);
+    this._transitionExitingNodes(gNodes);
 
-    // Enter any new nodes at the parent's previous position.
-    node.enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function() {
-        return "translate(" + source.x0 + "," + source.y0 + ")";
-      });
-
-    this._appendNodeCircles(node);
-    this._appendNodeText(node);
-    this._bindOnClickHandler(node);
-    this._transitionNodes(node);
-    this._transitionExitingNodes(node);
-
-    // Update the links…
-    const link = this.SVGGroup.selectAll("path.link")
-      .data(links, function(d) {
-        return d.target.id;
-      });
-
-    // Enter any new links at the parent's previous position.
-    link.enter().insert("path", "g")
-      .attr("class", "link")
-      .attr("d", function() {
-        const o = {
-          x: source.x0,
-          y: source.y0
-        };
-        return instance.diagonal({
-          source: o,
-          target: o
-        });
-      });
-
-    // Transition links to their new position.
-    link.transition()
-      .duration(this.duration)
-      .attr("d", this.diagonal);
-
-    // Transition exiting nodes to the parent's new position.
-    link.exit().transition()
-      .duration(this.duration)
-      .attr("d", function() {
-        const o = {
-          x: source.x,
-          y: source.y
-        };
-        return instance.diagonal({
-          source: o,
-          target: o
-        });
-      })
-      .remove();
-
-    // Stash the old positions for transition.
-    nodes.forEach(function(d) {
-      d.x0 = d.x;
-      d.y0 = d.y;
-    });
+    const linkPaths = this._bindLinksData(links);
+    this._enterNewLinks(linkPaths, source);
+    this._transitionLinks(linkPaths);
+    this._transitionExitingLinks(linkPaths, source);
   };
+
 
   _getPercentageImpurityDecreaseText = (node) => {
     // return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
@@ -350,6 +380,7 @@ export default class DecisionTree extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log("DecisionTree Updated");
+    console.log("prevProps", prevProps);
     if (this.props.data.tree_json) {
       this.renderDecisionTree();
     }
