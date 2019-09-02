@@ -12,6 +12,9 @@ export default class DecisionTree extends React.Component {
     this.viewerWidth = window.innerWidth - 400;
     this.viewerHeight = window.innerHeight - 150;
     this.duration = 750;
+    this.parentNodeColor = "lightsteelblue";
+    this.leafNodeColor = "#fff";
+    this.nodeOnClickColor = "red";
     this.tree = this._getTree(this.viewerHeight, this.viewerWidth);
     this.zoomListener = this._getZoomListener();
     this.diagonal = this._getDiagonal();
@@ -47,7 +50,6 @@ export default class DecisionTree extends React.Component {
   };
 
   _getBaseSVG = () => {
-    console.log('getBaseSVG')
     return d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
       .attr("width", this.viewerWidth)
       .attr("height", this.viewerHeight)
@@ -102,6 +104,95 @@ export default class DecisionTree extends React.Component {
     }
   };
 
+  _appendNodeCircles = (node) => {
+    const instance = this;
+    node
+      .append("circle")
+      .attr("class", "nodeCircle")
+      .attr("r", 4.5)
+      .style("fill", function(d) {
+        return d.children ? instance.parentNodeColor : instance.leafNodeColor;
+      });
+  };
+
+
+  _appendNodeText = (node) => {
+    const instance = this;
+    node.append("text")
+      .attr("y", function(d) {
+        return d.children || d._children ? 18 : 18;
+      })
+      .attr("dy", ".35em")
+      .attr("class", "nodeText")
+      .attr("text-anchor", "middle")
+      .append("tspan")
+      .attr("x", 0)
+      .text(function(d) {
+        return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf);
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getNodeSamplesText(d.node) : null;
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getSampleDistributionText(d.node) : null;
+      });
+  };
+
+  _bindOnClickHandler = (node) => {
+    const instance = this;
+    node
+      .on("click", function(d) {
+        d3.selectAll(".nodeCircle").style("fill", function(d) {
+          return d.children ? instance.parentNodeColor : instance.leafNodeColor;
+        });
+        d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
+        // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
+      });
+  };
+
+  _transitionNodes = (node) => {
+    node.transition()
+      .duration(this.duration)
+      .attr("transform", function(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+      });
+  };
+
+  // Transition exiting nodes to the parent's new position.
+  _transitionExitingNodes = (node) => {
+    // TODO: This doesn't seem to have any real effect in current implementation; nodeExist is empty, but maybe when nodes are actually removed
+    const nodeExit = node.exit().transition()
+      .duration(this.duration)
+      .attr("transform", function() {
+        return "translate(" + source.x + "," + source.y + ")";
+      })
+      .remove();
+
+    nodeExit.select("circle")
+      .attr("r", 0);
+
+    nodeExit.select("text")
+      .style("fill-opacity", 0);
+
+  };
 
   _update = (source) => {
     const instance = this;
@@ -121,7 +212,7 @@ export default class DecisionTree extends React.Component {
 
     // Compute the new tree layout.
     const nodes = tree.nodes(source).reverse(),
-          links = tree.links(nodes);
+      links = tree.links(nodes);
 
     // Set widths between levels based on maxLabelLength.
     nodes.forEach(function(d) {
@@ -135,96 +226,17 @@ export default class DecisionTree extends React.Component {
       });
 
     // Enter any new nodes at the parent's previous position.
-    const nodeEnter = node.enter().append("g")
+    node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function() {
         return "translate(" + source.x0 + "," + source.y0 + ")";
       });
 
-    nodeEnter.append("circle")
-      .attr("class", "nodeCircle")
-      .attr("r", 0)
-      .style("fill", function(d) {
-        return d._children ? "lightsteelblue" : "#fff";
-      })
-    //   .on('click', function (d) {
-    //   d3.selectAll(".nodeCircle").style("fill", function (d) {
-    //     return d._children ? "lightsteelblue" : "#fff";
-    //   });
-    //   d3.select(this).style("fill", "red");
-    //   d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
-    // })
-    ;
-
-    nodeEnter.append("text")
-      .attr("y", function(d) {
-        return d.children || d._children ? 18 : 18;
-      })
-      .attr("dy", ".35em")
-      .attr("class", "nodeText")
-      .attr("text-anchor", "middle")
-      .append("tspan")
-      .attr("x", 0)
-      .text(function(d) {
-        // console.log(d);
-        return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
-      })
-      .append("tspan")
-      .attr("x", 0)
-      .attr("dy", "1em")
-      .text(function(d) {
-        return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
-      })
-      .append("tspan")
-      .attr("x", 0)
-      .attr("dy", "1em")
-      .text(function(d) {
-      return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf);
-    })
-      .append("tspan")
-      .attr("x", 0)
-      .attr("dy", "1em")
-      .text(function(d) {
-        return d.node ? instance._getNodeSamplesText(d.node) : null;
-      })
-      .append("tspan")
-      .attr("x", 0)
-      .attr("dy", "1em")
-      .text(function(d) {
-        return d.node ? instance._getSampleDistributionText(d.node) : null;
-      });
-
-    // Change the circle fill depending on whether it has children and is collapsed
-    node.select("circle.nodeCircle")
-      .attr("r", 4.5)
-      .style("fill", function(d) {
-        return d._children ? "lightsteelblue" : "#fff";
-      });
-
-    // Transition nodes to their new position.
-    const nodeUpdate = node.transition()
-      .duration(this.duration)
-      .attr("transform", function(d) {
-        return "translate(" + d.x + "," + d.y + ")";
-      });
-
-    // Fade the text in
-    nodeUpdate.select("text")
-      .style("fill-opacity", 1);
-
-    // Transition exiting nodes to the parent's new position.
-    const nodeExit = node.exit().transition()
-      .duration(this.duration)
-      .attr("transform", function() {
-        return "translate(" + source.x + "," + source.y + ")";
-      })
-      .remove();
-
-    nodeExit.select("circle")
-      .attr("r", 0);
-
-    nodeExit.select("text")
-      .style("fill-opacity", 0);
+    this._appendNodeCircles(node);
+    this._appendNodeText(node);
+    this._bindOnClickHandler(node);
+    this._transitionNodes(node);
+    this._transitionExitingNodes(node);
 
     // Update the links…
     const link = this.SVGGroup.selectAll("path.link")
@@ -285,7 +297,7 @@ export default class DecisionTree extends React.Component {
       accumulator.push(cv[1]);
     });
 
-    return `[ ${accumulator.join(", ")} ]`
+    return `[ ${accumulator.join(", ")} ]`;
   };
 
   _getNodeSamplesText = (node) => {
