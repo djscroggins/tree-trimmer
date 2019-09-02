@@ -1,3 +1,131 @@
 .decision-tree-container {
     width: 65vw;
 }
+
+.node {
+    cursor: pointer;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node text {
+    font: 10px sans-serif;
+}
+
+.link {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+#decision-tree {
+    position: relative;
+}
+
+.cell text {
+    font: 10px sans-serif;
+}
+
+
+/*!*Confusion matrix labels etc*!*/
+/*.labels {*/
+    /*font: 10px Sans-Serif;*/
+/*}*/
+
+/*.axis line, .axis path {*/
+    /*fill: none;*/
+    /*stroke: #000;*/
+    /*shape-rendering: crispEdges;*/
+/*}*/
+
+/*td, th, tr {*/
+    /*padding: 4px;*/
+    /*border: 1px solid black;*/
+
+/*}*/
+
+/*th {*/
+    /*background-color: #042E8D;*/
+    /*color: white;*/
+/*}*/
+
+/*table{*/
+    /*border-collapse: collapse;*/
+/*}*/
+
+#dataView{
+    margin-top:50px;
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    /*justify-content: center;*/
+    margin-bottom: 10px;
+}
+
+.box-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box-elements {
+    display: inline-block;
+    float: left;
+}
+
+.top-box-elements {
+    margin-right: 30px;
+}
+
+/*New tree display stuff*/
+
+.overlay{
+    background-color:#EEE;
+}
+
+.templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+}
+
+.ghostCircle.show{
+    display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+    display: none;
+}
+
+/*!*d3_feature_table.js*!*/
+
+/*#important-features {*/
+    /*margin-top: 20px;*/
+    /*border-top: 1px solid black;*/
+/*}*/
+
+/*#features-title {*/
+    /*text-align: center;*/
+/*}*/
+
+/*!*d3_node_summary.js*!*/
+
+/*#node-summary {*/
+    /*margin-top: 20px;*/
+    /*border-top: 1px solid black;*/
+/*}*/
+
+
+/*#summary {*/
+    /*text-align: center;*/
+/*}*/
+
+/*#warning-message-div {*/
+    /*text-align: center;*/
+/*}*/
