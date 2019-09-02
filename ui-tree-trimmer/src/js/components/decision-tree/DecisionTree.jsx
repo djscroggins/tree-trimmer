@@ -1,5 +1,7 @@
 import React from "react";
 
+import _ from "lodash";
+
 import * as d3 from "d3";
 
 export default class DecisionTree extends React.Component {
@@ -10,7 +12,9 @@ export default class DecisionTree extends React.Component {
     this.viewerWidth = window.innerWidth - 400;
     this.viewerHeight = window.innerHeight - 150;
     this.duration = 750;
+    this.tree = this._getTree(this.viewerHeight, this.viewerWidth);
     this.zoomListener = this._getZoomListener();
+    this.diagonal = this._getDiagonal();
     this.baseSVG = undefined;
     this.SVGGroup = undefined;
   }
@@ -43,6 +47,7 @@ export default class DecisionTree extends React.Component {
   };
 
   _getBaseSVG = () => {
+    console.log('getBaseSVG')
     return d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
       .attr("width", this.viewerWidth)
       .attr("height", this.viewerHeight)
@@ -85,6 +90,184 @@ export default class DecisionTree extends React.Component {
     this.zoomListener.translate([x, y]);
   };
 
+  _update = (source) => {
+    let i = 0;
+    const instance = this;
+    console.log("UPDATE");
+    // Compute the new height, function counts total children of root node and sets tree height accordingly.
+    // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
+    // This makes the layout more consistent.
+    const levelWidth = [1];
+    const childCount = function(level, n) {
+
+      if (n.children && n.children.length > 0) {
+        if (levelWidth.length <= level + 1) levelWidth.push(0);
+
+        levelWidth[level + 1] += n.children.length;
+        n.children.forEach(function(d) {
+          childCount(level + 1, d);
+        });
+      }
+    };
+    childCount(0, source);
+    const maxHeight = d3.max(levelWidth) * 25; // 25 pixels per line
+    const newHeight = maxHeight >= 75 ? maxHeight : 75;
+
+    let tree = this.tree.nodeSize([newHeight, this.viewerWidth]);
+
+    // Compute the new tree layout.
+    const nodes = tree.nodes(source).reverse(),
+      links = tree.links(nodes);
+
+    // Set widths between levels based on maxLabelLength.
+    nodes.forEach(function(d) {
+      d.y = (d.depth * (instance.maxLabelLength * 10));
+    });
+
+    // Update the nodes…
+    const node = this.SVGGroup.selectAll("g.node")
+      .data(nodes, function(d) {
+        return d.id || (d.id = ++i);
+      });
+
+    // Enter any new nodes at the parent's previous position.
+    const nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function() {
+        return "translate(" + source.x0 + "," + source.y0 + ")";
+      });
+
+    nodeEnter.append("circle")
+      .attr("class", "nodeCircle")
+      .attr("r", 0)
+      .style("fill", function(d) {
+        return d._children ? "lightsteelblue" : "#fff";
+      })
+    //   .on('click', function (d) {
+    //   d3.selectAll(".nodeCircle").style("fill", function (d) {
+    //     return d._children ? "lightsteelblue" : "#fff";
+    //   });
+    //   d3.select(this).style("fill", "red");
+    //   d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
+    // })
+    ;
+
+    nodeEnter.append("text")
+      .attr("y", function(d) {
+        return d.children || d._children ? 18 : 18;
+      })
+      .attr("dy", ".35em")
+      .attr("class", "nodeText")
+      .attr("text-anchor", "middle")
+      .append("tspan")
+      .attr("x", 0)
+      .text(function(d) {
+        // console.log(d);
+        return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em").text(function(d) {
+      return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf);
+    })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getNodeSamplesText(d.node) : null;
+      })
+      .append("tspan")
+      .attr("x", 0)
+      .attr("dy", "1em")
+      .text(function(d) {
+        return d.node ? instance._getSampleDistributionText(d.node) : null;
+      });
+
+    // Change the circle fill depending on whether it has children and is collapsed
+    node.select("circle.nodeCircle")
+      .attr("r", 4.5)
+      .style("fill", function(d) {
+        return d._children ? "lightsteelblue" : "#fff";
+      });
+
+    // Transition nodes to their new position.
+    const nodeUpdate = node.transition()
+      .duration(this.duration)
+      .attr("transform", function(d) {
+        return "translate(" + d.x + "," + d.y + ")";
+      });
+
+    // Fade the text in
+    nodeUpdate.select("text")
+      .style("fill-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    const nodeExit = node.exit().transition()
+      .duration(this.duration)
+      .attr("transform", function() {
+        return "translate(" + source.x + "," + source.y + ")";
+      })
+      .remove();
+
+    nodeExit.select("circle")
+      .attr("r", 0);
+
+    nodeExit.select("text")
+      .style("fill-opacity", 0);
+
+    // Update the links…
+    const link = this.SVGGroup.selectAll("path.link")
+      .data(links, function(d) {
+        return d.target.id;
+      });
+
+    // Enter any new links at the parent's previous position.
+    link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function() {
+        const o = {
+          x: source.x0,
+          y: source.y0
+        };
+        return instance.diagonal({
+          source: o,
+          target: o
+        });
+      });
+
+    // Transition links to their new position.
+    link.transition()
+      .duration(this.duration)
+      .attr("d", this.diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    link.exit().transition()
+      .duration(this.duration)
+      .attr("d", function() {
+        const o = {
+          x: source.x,
+          y: source.y
+        };
+        return instance.diagonal({
+          source: o,
+          target: o
+        });
+      })
+      .remove();
+
+    // Stash the old positions for transition.
+    nodes.forEach(function(d) {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  };
+
   _getPercentageImpurityDecreaseText = (node) => {
     return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
   };
@@ -113,280 +296,28 @@ export default class DecisionTree extends React.Component {
 
   renderDecisionTree = () => {
 
-    console.log("RENDER DECISION TREE");
-
-    const instance = this;
-
     const data = this.props.data.tree_json;
-    const containerNode = this.decisionTreeContainer;
 
     this._resetContainer();
 
-    // Calculate total nodes, max label length
-    // let totalNodes = 0;
-    // let maxLabelLength = 0;
-
-    let i = 0;
-    const duration = 750;
     let root;
 
-    const viewerWidth = window.innerWidth - 400;
-    const viewerHeight = window.innerHeight - 150;
-
-    // Might want to take this out
-    // let tree = d3.layout.tree()
-    //   .size([viewerHeight, viewerWidth]);
-    let tree = this._getTree(this.viewerHeight, this.viewerWidth);
-
-    // define a d3 diagonal projection for use by the node paths later on.
-    const diagonal = this._getDiagonal();
 
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
-
     this.baseSVG = this._getBaseSVG();
     this.SVGGroup = this._getSVGGroup(this.baseSVG);
 
-
-    // Helper functions for collapsing and expanding nodes.
-    //TODO: Keep for now. I might want to add back in expand and collapse
-
-    // function collapse(d) {
-    //   if (d.children) {
-    //     d._children = d.children;
-    //     d._children.forEach(collapse);
-    //     d.children = null;
-    //   }
-    // }
-    //
-    // function expand(d) {
-    //   if (d._children) {
-    //     d.children = d._children;
-    //     d.children.forEach(expand);
-    //     d._children = null;
-    //   }
-    // }
-
-    // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
-
-
-    // Toggle children function
-    function toggleChildren(d) {
-      console.log("TOGGLE CHILDREN");
-      if (d.children) {
-        d._children = d.children;
-        d.children = null;
-      } else if (d._children) {
-        d.children = d._children;
-        d._children = null;
-      }
-      return d;
-    }
-
-    // Toggle children on click.
-    // TODO: Leave in for now. Might want to resume collapse and expand functionality
-    function click(d) {
-      if (d3.event.defaultPrevented) return; // click suppressed
-      d = toggleChildren(d);
-      update(d);
-      instance._centerNode(d);
-    }
-
-    function update(source) {
-      console.log("UPDATE");
-      // Compute the new height, function counts total children of root node and sets tree height accordingly.
-      // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
-      // This makes the layout more consistent.
-      const levelWidth = [1];
-      const childCount = function(level, n) {
-
-        if (n.children && n.children.length > 0) {
-          if (levelWidth.length <= level + 1) levelWidth.push(0);
-
-          levelWidth[level + 1] += n.children.length;
-          n.children.forEach(function(d) {
-            childCount(level + 1, d);
-          });
-        }
-      };
-      childCount(0, root);
-      const maxHeight = d3.max(levelWidth) * 25; // 25 pixels per line
-      const newHeight = maxHeight >= 75 ? maxHeight : 75;
-
-      tree = tree.nodeSize([newHeight, viewerWidth]);
-
-      // Compute the new tree layout.
-      const nodes = tree.nodes(root).reverse(),
-        links = tree.links(nodes);
-
-      // Set widths between levels based on maxLabelLength.
-      nodes.forEach(function(d) {
-        d.y = (d.depth * (instance.maxLabelLength * 10));
-      });
-
-      // Update the nodes…
-      const node = instance.SVGGroup.selectAll("g.node")
-        .data(nodes, function(d) {
-          return d.id || (d.id = ++i);
-        });
-
-      // Enter any new nodes at the parent's previous position.
-      const nodeEnter = node.enter().append("g")
-        .attr("class", "node")
-        .attr("transform", function() {
-          return "translate(" + source.x0 + "," + source.y0 + ")";
-        });
-
-      nodeEnter.append("circle")
-        .attr("class", "nodeCircle")
-        .attr("r", 0)
-        .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
-        })
-      //   .on('click', function (d) {
-      //   d3.selectAll(".nodeCircle").style("fill", function (d) {
-      //     return d._children ? "lightsteelblue" : "#fff";
-      //   });
-      //   d3.select(this).style("fill", "red");
-      //   d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
-      // })
-      ;
-
-      nodeEnter.append("text")
-        .attr("y", function(d) {
-          return d.children || d._children ? 18 : 18;
-        })
-        .attr("dy", ".35em")
-        .attr("class", "nodeText")
-        .attr("text-anchor", "middle")
-        .append("tspan")
-        .attr("x", 0)
-        .text(function(d) {
-          // console.log(d);
-          return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
-        })
-        .append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1em")
-        .text(function(d) {
-          return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
-        })
-        .append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1em").text(function(d) {
-        return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf);
-      })
-        .append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1em")
-        .text(function(d) {
-          return d.node ? instance._getNodeSamplesText(d.node) : null;
-        })
-        .append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1em")
-        .text(function(d) {
-          return d.node ? instance._getSampleDistributionText(d.node) : null;
-        });
-
-      // Change the circle fill depending on whether it has children and is collapsed
-      node.select("circle.nodeCircle")
-        .attr("r", 4.5)
-        .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
-        });
-
-      // Transition nodes to their new position.
-      const nodeUpdate = node.transition()
-        .duration(duration)
-        .attr("transform", function(d) {
-          return "translate(" + d.x + "," + d.y + ")";
-        });
-
-      // Fade the text in
-      nodeUpdate.select("text")
-        .style("fill-opacity", 1);
-
-      // Transition exiting nodes to the parent's new position.
-      const nodeExit = node.exit().transition()
-        .duration(duration)
-        .attr("transform", function() {
-          return "translate(" + source.x + "," + source.y + ")";
-        })
-        .remove();
-
-      nodeExit.select("circle")
-        .attr("r", 0);
-
-      nodeExit.select("text")
-        .style("fill-opacity", 0);
-
-      // Update the links…
-      const link = instance.SVGGroup.selectAll("path.link")
-        .data(links, function(d) {
-          return d.target.id;
-        });
-
-      // Enter any new links at the parent's previous position.
-      link.enter().insert("path", "g")
-        .attr("class", "link")
-        .attr("d", function() {
-          const o = {
-            x: source.x0,
-            y: source.y0
-          };
-          return diagonal({
-            source: o,
-            target: o
-          });
-        });
-
-      // Transition links to their new position.
-      link.transition()
-        .duration(duration)
-        .attr("d", diagonal);
-
-      // Transition exiting nodes to the parent's new position.
-      link.exit().transition()
-        .duration(duration)
-        .attr("d", function() {
-          const o = {
-            x: source.x,
-            y: source.y
-          };
-          return diagonal({
-            source: o,
-            target: o
-          });
-        })
-        .remove();
-
-      // Stash the old positions for transition.
-      nodes.forEach(function(d) {
-        d.x0 = d.x;
-        d.y0 = d.y;
-      });
-    }
-
-
-    // const svgGroup = baseSvg.append("g").attr("id", "");
-
-
     // Define the root
     root = data;
-    root.x0 = viewerHeight / 2;
+    root.x0 = this.viewerHeight / 2;
     root.y0 = 0;
 
-    // Collapse all children of roots children before rendering.
-    // root.children.forEach(function(child){
-    // 	collapse(child);
-    // });
 
     // Layout the tree initially and center on the root node.
-    update(root);
+    this._update(root);
     this._centerNode(root);
-
   };
 
   componentDidMount() {
@@ -396,6 +327,7 @@ export default class DecisionTree extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log("DecisionTree Updated");
     if (this.props.data.tree_json) {
       this.renderDecisionTree();
     }
