@@ -90,26 +90,30 @@ export default class DecisionTree extends React.Component {
     this.zoomListener.translate([x, y]);
   };
 
+  _getChildCount = (level, node, levelWidth) => {
+    const instance = this;
+    if (node.children && node.children.length > 0) {
+      if (levelWidth.length <= level + 1) levelWidth.push(0);
+
+      levelWidth[level + 1] += node.children.length;
+      node.children.forEach(function(_node) {
+        instance._getChildCount(level + 1, _node, levelWidth);
+      });
+    }
+  };
+
+
   _update = (source) => {
-    let i = 0;
     const instance = this;
     console.log("UPDATE");
+
     // Compute the new height, function counts total children of root node and sets tree height accordingly.
     // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
     // This makes the layout more consistent.
     const levelWidth = [1];
-    const childCount = function(level, n) {
 
-      if (n.children && n.children.length > 0) {
-        if (levelWidth.length <= level + 1) levelWidth.push(0);
+    this._getChildCount(0, source, levelWidth);
 
-        levelWidth[level + 1] += n.children.length;
-        n.children.forEach(function(d) {
-          childCount(level + 1, d);
-        });
-      }
-    };
-    childCount(0, source);
     const maxHeight = d3.max(levelWidth) * 25; // 25 pixels per line
     const newHeight = maxHeight >= 75 ? maxHeight : 75;
 
@@ -117,7 +121,7 @@ export default class DecisionTree extends React.Component {
 
     // Compute the new tree layout.
     const nodes = tree.nodes(source).reverse(),
-      links = tree.links(nodes);
+          links = tree.links(nodes);
 
     // Set widths between levels based on maxLabelLength.
     nodes.forEach(function(d) {
@@ -126,7 +130,7 @@ export default class DecisionTree extends React.Component {
 
     // Update the nodes…
     const node = this.SVGGroup.selectAll("g.node")
-      .data(nodes, function(d) {
+      .data(nodes, function(d, i) {
         return d.id || (d.id = ++i);
       });
 
@@ -173,7 +177,8 @@ export default class DecisionTree extends React.Component {
       })
       .append("tspan")
       .attr("x", 0)
-      .attr("dy", "1em").text(function(d) {
+      .attr("dy", "1em")
+      .text(function(d) {
       return d.node ? instance._getPercentageImpurityDecreaseText(d.node) : instance._getSampleDistributionText(d.leaf);
     })
       .append("tspan")
@@ -269,7 +274,8 @@ export default class DecisionTree extends React.Component {
   };
 
   _getPercentageImpurityDecreaseText = (node) => {
-    return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
+    // return "Impurity Decrease: " + node.percentage_impurity_decrease + "%";
+    return `Impurity Decrease: ${node.percentage_impurity_decrease} %`;
   };
 
   _getSampleDistributionText = (node) => {
@@ -279,19 +285,23 @@ export default class DecisionTree extends React.Component {
       accumulator.push(cv[1]);
     });
 
-    return "[" + accumulator.join(", ") + "]";
+    return `[ ${accumulator.join(", ")} ]`
   };
 
   _getNodeSamplesText = (node) => {
-    return "Samples: " + node.n_node_samples;
+    return `Samples: ${node.n_node_samples}`;
   };
 
   _getCriterionText = (node) => {
-    return node.impurity[0] + " = " + node.impurity[1];
+    const criterion = node.impurity[0];
+    const value = node.impurity[1];
+    return `${criterion} = ${value}`;
   };
 
   _getSplitterText = (node) => {
-    return node.split[0] + " >= " + node.split[1] + "\n";
+    const feature = node.split[0];
+    const value = node.split[1];
+    return `${feature} >= ${value}`;
   };
 
   renderDecisionTree = () => {
