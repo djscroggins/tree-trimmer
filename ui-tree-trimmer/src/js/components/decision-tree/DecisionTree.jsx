@@ -1,3 +1,4 @@
+//TODO: Move container names to config object
 import React from "react";
 
 import _ from "lodash";
@@ -9,8 +10,10 @@ export default class DecisionTree extends React.Component {
     super(props);
     this.totalNodes = 0;
     this.maxLabelLength = 0;
-    this.viewerWidth = window.innerWidth - 400;
-    this.viewerHeight = window.innerHeight - 150;
+    // this.viewerWidth = window.innerWidth - 400;
+    // this.viewerHeight = window.innerHeight - 150;
+    this.viewerWidth = undefined;
+    this.viewerHeight = undefined;
     this.duration = 750;
     this.parentNodeColor = "lightsteelblue";
     this.leafNodeColor = "#fff";
@@ -21,6 +24,30 @@ export default class DecisionTree extends React.Component {
     this.baseSVG = undefined;
     this.SVGGroup = undefined;
   }
+
+  _setViewerWidth = () => {
+    this.viewerWidth = document.getElementById("base-svg").parentElement.clientWidth;
+  };
+
+  _setViewerHeight = () => {
+    this.viewerHeight = document.getElementById("base-svg").parentElement.clientHeight;
+  };
+
+  _setBaseSVG = () => {
+    this.baseSVG = d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
+      .attr("width", this.viewerWidth)
+      .attr("height", this.viewerHeight)
+      .attr("class", "overlay")
+      .call(this.zoomListener);
+  };
+
+  _setSVGGroup = () => {
+    this.SVGGroup = this._getSVGGroup(this.baseSVG);
+  };
+
+  _getSVGGroup = (baseSVG) => {
+    return baseSVG.append("g").attr("id", "");
+  };
 
   _resetContainer = () => {
     d3.selectAll("#base-svg").remove();
@@ -49,17 +76,6 @@ export default class DecisionTree extends React.Component {
     return d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", this._zoom);
   };
 
-  _getBaseSVG = () => {
-    return d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
-      .attr("width", this.viewerWidth)
-      .attr("height", this.viewerHeight)
-      .attr("class", "overlay")
-      .call(this.zoomListener);
-  };
-
-  _getSVGGroup = (baseSVG) => {
-    return baseSVG.append("g").attr("id", "");
-  };
 
   // A recursive helper function for performing some setup by walking through all nodes
   _visit = (node) => {
@@ -358,8 +374,10 @@ export default class DecisionTree extends React.Component {
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
-    this.baseSVG = this._getBaseSVG();
-    this.SVGGroup = this._getSVGGroup(this.baseSVG);
+    this._setBaseSVG();
+    this._setSVGGroup();
+    this._setViewerHeight();
+    this._setViewerWidth();
 
     // Define the root
     root = data;
