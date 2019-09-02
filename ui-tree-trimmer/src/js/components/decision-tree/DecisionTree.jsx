@@ -27,10 +27,12 @@ export default class DecisionTree extends React.Component {
 
   _setViewerWidth = () => {
     this.viewerWidth = document.getElementById("base-svg").parentElement.clientWidth;
+    // console.log("viewWidth ", this.viewerWidth);
   };
 
   _setViewerHeight = () => {
     this.viewerHeight = document.getElementById("base-svg").parentElement.clientHeight;
+    // console.log("viewerheight, ", this.viewerHeight);
   };
 
   _setBaseSVG = () => {
@@ -216,8 +218,14 @@ export default class DecisionTree extends React.Component {
           return d.children ? instance.parentNodeColor : instance.leafNodeColor;
         });
         d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
+        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true)
         // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
       });
+  };
+
+  _displayNodeSummary = (node, leaf = false) => {
+    this.props.toggleNodeSummary(true);
+    this.props.setNodeData(node, leaf)
   };
 
   _transitionNodes = (node) => {
@@ -364,6 +372,8 @@ export default class DecisionTree extends React.Component {
 
   renderDecisionTree = () => {
 
+    console.log("renderDecisionTree");
+
     const data = this.props.data.tree_json;
 
     this._resetContainer();
@@ -373,6 +383,8 @@ export default class DecisionTree extends React.Component {
 
     // Call visit function to establish maxLabelLength
     this._visit(data);
+
+    console.log('container', this.decisionTreeContainer);
 
     this._setBaseSVG();
     this._setSVGGroup();
@@ -397,16 +409,20 @@ export default class DecisionTree extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("DecisionTree Updated");
-    console.log("prevProps", prevProps);
-    if (this.props.data.tree_json) {
+    // console.log("DecisionTree Updated");
+    // console.log("prevProps", prevProps.data.tree_json);
+    // console.log("new data, ", this.props.data.tree_json);
+    const prevData = prevProps.data.tree_json;
+    const newData = this.props.data.tree_json;
+    if (!_.isEqual(prevData, newData)) {
+      // console.log("Re-rendering decision tree");
       this.renderDecisionTree();
     }
   }
 
   render() {
     return (
-      <div ref={node => this.decisionTreeContainer = node} className='decision-tree-container'>Decision Tree</div>
+      <div ref={node => this.decisionTreeContainer = node} className='decision-tree-container'/>
     );
   }
 };
