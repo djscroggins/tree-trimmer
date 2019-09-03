@@ -217,7 +217,7 @@ export default class NodeSummary extends React.Component {
         instance._showTrimOptions(data_in, leaf);
       });
     }
-    
+
 
     function getSampleDistributionText(array_in) {
       const accumulator = [];
