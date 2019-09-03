@@ -18,6 +18,137 @@ export default class NodeSummary extends React.Component {
     d3.select("#retrain-button").remove();
   };
 
+  _showTrimOptions = (data_in, leaf_status_in) => {
+
+    const instance = this;
+
+    console.log("showTrimOptions");
+
+    this._toggleRetrainButton();
+
+    d3.select("#trim-options").remove();
+    d3.select("#trim-options-table").remove();
+    d3.select("#retrain-button").remove();
+
+    // console.log(data_in);
+
+    const label = ["Why do you want to trim this node?"];
+
+    const node_options = ["Not enough samples to split", "I want to limit the tree to this depth", "This node doesn't improve the tree enough"];
+    const leaf_options = ["Not enough samples in leaf", "I want to limit the tree to this depth"];
+
+    const div = d3.select(instance.nodeSummaryContainer).append("div").attr("id", "trim-options");
+
+    const table = d3.select("#trim-options").append("table").attr("id", "trim-options-table").attr("align", "center");
+    const thead = table.append("thead");
+    const tbody = table.append("tbody");
+
+    thead.append("tr").selectAll("th").data(label).enter().append("th").text(function(d) {
+      return d;
+    });
+
+    let rows;
+
+    if (!leaf_status_in) {
+      rows = tbody.selectAll("tr").data(node_options).enter().append("tr").text(function(d) {
+        return d;
+      });
+    } else {
+      rows = tbody.selectAll("tr").data(leaf_options).enter().append("tr").text(function(d) {
+        return d;
+      });
+    }
+
+    this._drawRetrainButton();
+
+    rows.on("click", function(d) {
+      console.log(d);
+      d3.selectAll("tr").style("background-color", "transparent");
+      d3.select(this).style("background-color", "rgb(255, 179, 179)");
+      instance._adjustUpdateArray(data_in, d);
+      instance._toggleRetrainButton();
+    });
+  };
+
+  _drawRetrainButton = () => {
+    const instance = this;
+    const thisTable = document.getElementById("trim-options-table");
+    const retrainSVGWidth = thisTable.offsetWidth;
+    const retrainSVGHeight = 60;
+    const retrainButtonWidth = retrainSVGWidth - 10;
+    const retrainButtonHeight = retrainSVGHeight - 10;
+
+    const retrainButton = d3.select("#trim-options")
+      .append("svg")
+      .attr("id", "retrain-button")
+      .attr("width", retrainSVGWidth)
+      .attr("height", retrainSVGHeight)
+      // Center svg in div
+      .style("margin", "0 auto")
+      .attr("display", "none");
+
+    retrainButton.append("g")
+      .append("rect")
+      .attr("x", (retrainSVGWidth - retrainButtonWidth) / 2)
+      .attr("y", (retrainSVGHeight - retrainButtonHeight) / 2)
+      .attr("width", retrainButtonWidth)
+      .attr("height", retrainButtonHeight)
+      .style("fill", "lightgreen")
+      .attr("rx", 10)
+      .attr("ry", 10)
+      .on("click", function() {
+        console.log("Retraining tree: ", instance.updateArray);
+        // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
+        // retrainTree();
+        // resetNodeSummary();
+        instance._resetContainer();
+      });
+
+    retrainButton.append("text")
+      .attr("x", retrainSVGWidth / 2)
+      .attr("y", retrainSVGHeight / 2)
+      .attr("dy", ".35em")
+      .attr("text-anchor", "middle")
+      // Ensure clicking on rectangle and text appear as single event to user
+      .text("Re-train tree").on("click", function() {
+      console.log("Retraining tree: ", instance.updateArray);
+      // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
+      // retrainTree();
+      // resetNodeSummary();
+      instance._resetContainer();
+    });
+  };
+
+  _adjustUpdateArray = (data_in, option_selected) => {
+    if (option_selected === "Not enough samples to split") {
+      const nNodeSamples = data_in.n_node_samples;
+      this.updateArray.splice(0, this.updateArray.length, "min_samples_split", nNodeSamples + 1);
+      // update_array.push("min_samples_split", n_node_samples);
+      console.log(this.updateArray);
+    } else if (option_selected === "I want to limit the tree to this depth") {
+      const nodeDepth = data_in.node_depth;
+      // update_array.push("max_depth", node_depth);
+      this.updateArray.splice(0, this.updateArray.length, "max_depth", nodeDepth);
+      console.log(this.updateArray);
+    } else if (option_selected === "This node doesn't improve the tree enough") {
+      const impurityDecrease = data_in.weighted_impurity_decrease;
+      this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
+      console.log(this.updateArray);
+    } else if (option_selected === "Not enough samples in leaf") {
+      const nNodeSamples = data_in.n_node_samples;
+      this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
+      console.log(this.updateArray);
+    }
+  };
+
+  _toggleRetrainButton = () => {
+    if (this.updateArray.length > 0) {
+      d3.select("#retrain-button").attr("display", "block");
+    } else {
+      d3.select("#retrain-button").attr("display", "none");
+    }
+  };
+
   _renderNodeSummary = (data_in, leaf = false) => {
 
     const instance = this;
@@ -72,8 +203,8 @@ export default class NodeSummary extends React.Component {
         .attr("rx", 10)
         .attr("ry", 10)
         .on("click", function() {
-        showTrimOptions(data_in, leaf);
-      })
+          instance._showTrimOptions(data_in, leaf);
+        })
       ;
 
       svg.append("text")
@@ -83,148 +214,10 @@ export default class NodeSummary extends React.Component {
         .attr("text-anchor", "middle")
         // Ensure clicking on rectangle and text appear as single event to user
         .text("Trim node options").on("click", function() {
-        showTrimOptions(data_in, leaf);
+        instance._showTrimOptions(data_in, leaf);
       });
     }
-
-
-
-    function showTrimOptions(data_in, leaf_status_in) {
-
-      console.log("showTrimOptions");
-
-      toggleRetrainButton();
-
-      d3.select("#trim-options").remove();
-      d3.select("#trim-options-table").remove();
-      d3.select("#retrain-button").remove();
-
-      // console.log(data_in);
-
-      const label = ["Why do you want to trim this node?"];
-
-      const node_options = ["Not enough samples to split", "I want to limit the tree to this depth", "This node doesn't improve the tree enough"];
-      const leaf_options = ["Not enough samples in leaf", "I want to limit the tree to this depth"];
-
-      const div = d3.select(instance.nodeSummaryContainer).append("div").attr("id", "trim-options");
-
-      const table = d3.select("#trim-options").append("table").attr("id", "trim-options-table").attr("align", "center");
-      const thead = table.append("thead");
-      const tbody = table.append("tbody");
-
-      thead.append("tr").selectAll("th").data(label).enter().append("th").text(function(d) {
-        return d;
-      });
-
-      let rows;
-
-      if (!leaf_status_in) {
-        rows = tbody.selectAll("tr").data(node_options).enter().append("tr").text(function(d) {
-          return d;
-        });
-      } else {
-        rows = tbody.selectAll("tr").data(leaf_options).enter().append("tr").text(function(d) {
-          return d;
-        });
-      }
-
-      drawRetrainButton();
-
-      rows.on("click", function(d) {
-        console.log(d);
-        d3.selectAll("tr").style("background-color", "transparent");
-        d3.select(this).style("background-color", "rgb(255, 179, 179)");
-        adjustUpdateArray(data_in, d);
-        toggleRetrainButton();
-      });
-    }
-
-    function drawRetrainButton() {
-      const thisTable = document.getElementById("trim-options-table");
-      const retrainSVGWidth = thisTable.offsetWidth;
-      const retrainSVGHeight = 60;
-      const retrainButtonWidth = retrainSVGWidth - 10;
-      const retrainButtonHeight = retrainSVGHeight - 10;
-
-      const retrainButton = d3.select("#trim-options")
-        .append("svg")
-        .attr("id", "retrain-button")
-        .attr("width", retrainSVGWidth)
-        .attr("height", retrainSVGHeight)
-        // Center svg in div
-        .style("margin", "0 auto")
-        .attr("display", "none");
-
-      retrainButton.append("g")
-        .append("rect")
-        .attr("x", (retrainSVGWidth - retrainButtonWidth) / 2)
-        .attr("y", (retrainSVGHeight - retrainButtonHeight) / 2)
-        .attr("width", retrainButtonWidth)
-        .attr("height", retrainButtonHeight)
-        .style("fill", "lightgreen")
-        .attr("rx", 10)
-        .attr("ry", 10)
-        .on("click", function() {
-          console.log("Retraining tree: ", instance.updateArray);
-          // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
-          // retrainTree();
-          // resetNodeSummary();
-          instance._resetContainer();
-        });
-
-      retrainButton.append("text")
-        .attr("x", retrainSVGWidth / 2)
-        .attr("y", retrainSVGHeight / 2)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "middle")
-        // Ensure clicking on rectangle and text appear as single event to user
-        .text("Re-train tree").on("click", function() {
-        console.log("Retraining tree: ", instance.updateArray);
-        // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
-        // retrainTree();
-        // resetNodeSummary();
-        instance._resetContainer();
-      });
-    }
-
-    function adjustUpdateArray(data_in, option_selected) {
-
-      if (option_selected === "Not enough samples to split") {
-        const nNodeSamples = data_in.n_node_samples;
-        instance.updateArray.splice(0, instance.updateArray.length, "min_samples_split", nNodeSamples + 1);
-        // update_array.push("min_samples_split", n_node_samples);
-        console.log(instance.updateArray);
-      } else if (option_selected === "I want to limit the tree to this depth") {
-        const nodeDepth = data_in.node_depth;
-        // update_array.push("max_depth", node_depth);
-        instance.updateArray.splice(0, instance.updateArray.length, "max_depth", nodeDepth);
-        console.log(instance.updateArray);
-      } else if (option_selected === "This node doesn't improve the tree enough") {
-        const impurityDecrease = data_in.weighted_impurity_decrease;
-        instance.updateArray.splice(0, instance.updateArray.length, "min_impurity_decrease", impurityDecrease);
-        console.log(instance.updateArray);
-      } else if (option_selected === "Not enough samples in leaf") {
-        const nNodeSamples = data_in.n_node_samples;
-        instance.updateArray.splice(0, instance.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
-        console.log(instance.updateArray);
-      }
-    }
-
-    function toggleRetrainButton() {
-      if (instance.updateArray.length > 0) {
-        d3.select("#retrain-button").attr("display", "block");
-      } else {
-        d3.select("#retrain-button").attr("display", "none");
-      }
-    }
-
-    function resetNodeSummary() {
-      // d3.select("#node-hr").remove();
-      d3.select("#summary").remove();
-      d3.select("#trim-button").remove();
-      d3.select("#trim-options-table").remove();
-      d3.select("#retrain-button").remove();
-    }
+    
 
     function getSampleDistributionText(array_in) {
       const accumulator = [];
@@ -241,7 +234,7 @@ export default class NodeSummary extends React.Component {
     console.log(this.props.nodeData);
     console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
-    if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf)
+    if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -249,7 +242,7 @@ export default class NodeSummary extends React.Component {
     console.log(this.props.nodeData);
     console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
-    if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf)
+    if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
   }
 
   render() {
