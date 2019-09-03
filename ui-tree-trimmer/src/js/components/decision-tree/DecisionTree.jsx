@@ -1,3 +1,4 @@
+//TODO: Move container names to config object
 import React from "react";
 
 import _ from "lodash";
@@ -9,8 +10,10 @@ export default class DecisionTree extends React.Component {
     super(props);
     this.totalNodes = 0;
     this.maxLabelLength = 0;
-    this.viewerWidth = window.innerWidth - 400;
-    this.viewerHeight = window.innerHeight - 150;
+    // this.viewerWidth = window.innerWidth - 400;
+    // this.viewerHeight = window.innerHeight - 150;
+    this.viewerWidth = undefined;
+    this.viewerHeight = undefined;
     this.duration = 750;
     this.parentNodeColor = "lightsteelblue";
     this.leafNodeColor = "#fff";
@@ -21,6 +24,32 @@ export default class DecisionTree extends React.Component {
     this.baseSVG = undefined;
     this.SVGGroup = undefined;
   }
+
+  _setViewerWidth = () => {
+    this.viewerWidth = document.getElementById("base-svg").parentElement.clientWidth;
+    // console.log("viewWidth ", this.viewerWidth);
+  };
+
+  _setViewerHeight = () => {
+    this.viewerHeight = document.getElementById("base-svg").parentElement.clientHeight;
+    // console.log("viewerheight, ", this.viewerHeight);
+  };
+
+  _setBaseSVG = () => {
+    this.baseSVG = d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
+      .attr("width", this.viewerWidth)
+      .attr("height", this.viewerHeight)
+      .attr("class", "overlay")
+      .call(this.zoomListener);
+  };
+
+  _setSVGGroup = () => {
+    this.SVGGroup = this._getSVGGroup(this.baseSVG);
+  };
+
+  _getSVGGroup = (baseSVG) => {
+    return baseSVG.append("g").attr("id", "");
+  };
 
   _resetContainer = () => {
     d3.selectAll("#base-svg").remove();
@@ -49,17 +78,6 @@ export default class DecisionTree extends React.Component {
     return d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", this._zoom);
   };
 
-  _getBaseSVG = () => {
-    return d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
-      .attr("width", this.viewerWidth)
-      .attr("height", this.viewerHeight)
-      .attr("class", "overlay")
-      .call(this.zoomListener);
-  };
-
-  _getSVGGroup = (baseSVG) => {
-    return baseSVG.append("g").attr("id", "");
-  };
 
   // A recursive helper function for performing some setup by walking through all nodes
   _visit = (node) => {
@@ -200,8 +218,14 @@ export default class DecisionTree extends React.Component {
           return d.children ? instance.parentNodeColor : instance.leafNodeColor;
         });
         d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
+        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true)
         // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
       });
+  };
+
+  _displayNodeSummary = (node, leaf = false) => {
+    this.props.toggleNodeSummary(true);
+    this.props.setNodeData(node, leaf)
   };
 
   _transitionNodes = (node) => {
@@ -348,6 +372,8 @@ export default class DecisionTree extends React.Component {
 
   renderDecisionTree = () => {
 
+    console.log("renderDecisionTree");
+
     const data = this.props.data.tree_json;
 
     this._resetContainer();
@@ -358,8 +384,12 @@ export default class DecisionTree extends React.Component {
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
-    this.baseSVG = this._getBaseSVG();
-    this.SVGGroup = this._getSVGGroup(this.baseSVG);
+    console.log('container', this.decisionTreeContainer);
+
+    this._setBaseSVG();
+    this._setSVGGroup();
+    this._setViewerHeight();
+    this._setViewerWidth();
 
     // Define the root
     root = data;
@@ -379,16 +409,20 @@ export default class DecisionTree extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("DecisionTree Updated");
-    console.log("prevProps", prevProps);
-    if (this.props.data.tree_json) {
+    // console.log("DecisionTree Updated");
+    // console.log("prevProps", prevProps.data.tree_json);
+    // console.log("new data, ", this.props.data.tree_json);
+    const prevData = prevProps.data.tree_json;
+    const newData = this.props.data.tree_json;
+    if (!_.isEqual(prevData, newData)) {
+      // console.log("Re-rendering decision tree");
       this.renderDecisionTree();
     }
   }
 
   render() {
     return (
-      <div ref={node => this.decisionTreeContainer = node} className='decision-tree-container'>Decision Tree</div>
+      <div ref={node => this.decisionTreeContainer = node} className='decision-tree-container'/>
     );
   }
 };

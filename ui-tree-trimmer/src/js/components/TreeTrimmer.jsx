@@ -15,9 +15,20 @@ export default class TreeTrimmer extends React.Component {
       counter: 0,
       testMessage: "Original Message",
       mlResults: {},
-      parameters: {}
+      parameters: {},
+      showNodeSummary: false,
+      nodeData: undefined,
+      nodeIsLeaf: false
     };
   }
+
+  toggleNodeSummary = (bool) => {
+    this.setState({ showNodeSummary: bool });
+  };
+
+  setNodeData = (node, leaf = false) => {
+    this.setState({ nodeData: node, nodeIsLeaf: leaf });
+  };
 
   resetTestingData = (e) => {
     e.preventDefault();
@@ -36,8 +47,8 @@ export default class TreeTrimmer extends React.Component {
     fetch("http://localhost:5000/decision-trees/parameters")
       .then(response => response.json())
       .then(json => {
-        this.setState({parameters: json['parameters']})
-      })
+        this.setState({ parameters: json["parameters"] });
+      });
   };
 
   // componentDidMount() {
@@ -63,8 +74,10 @@ export default class TreeTrimmer extends React.Component {
 
           <Box direction='row'>
 
-            <DecisionTree data={this.state.mlResults}/>
-            <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
+            <DecisionTree data={this.state.mlResults} toggleNodeSummary={this.toggleNodeSummary}
+                          setNodeData={this.setNodeData}/>
+            <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}
+                                  showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData} nodeIsLeaf={this.state.nodeIsLeaf}/>
 
           </Box>
 

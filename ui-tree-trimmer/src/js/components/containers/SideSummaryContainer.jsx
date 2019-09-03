@@ -18,7 +18,7 @@ export default class SideSummaryContainer extends React.Component {
                          dimensions={{ "width": width, "height": height }}
                          colorRange={{ "startColor": startColor, "endColor": endColor }}/>
         <FeatureTable mlResults={this.props.mlResults} parameters={this.props.parameters}/>
-        <NodeSummary/>
+        {this.props.showNodeSummary ? <NodeSummary nodeData={this.props.nodeData} nodeIsLeaf={this.props.nodeIsLeaf}/> : null}
       </Box>
     );
   }
