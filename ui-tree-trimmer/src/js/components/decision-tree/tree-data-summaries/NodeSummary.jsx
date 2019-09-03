@@ -127,7 +127,7 @@ export default class NodeSummary extends React.Component {
       instance._resetContainer();
     });
   };
-  
+
 
   _adjustUpdateArray = (node, option) => {
     switch (option) {
