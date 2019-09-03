@@ -18,15 +18,15 @@ export default class NodeSummary extends React.Component {
     d3.select("#retrain-button").remove();
   };
 
-  _getSampleDistributionText = (array_in) => {
+  _getSampleDistributionText = (nodeClassCounts) => {
     const accumulator = [];
-    array_in.forEach(function(cv) {
+    nodeClassCounts.forEach(function(cv) {
       accumulator.push(cv[0].toString() + ": " + cv[1].toString());
     });
     return accumulator.join(", ");
   };
 
-  _showTrimOptions = (data_in, leaf_status_in) => {
+  _showTrimOptions = (node, leaf) => {
 
     const instance = this;
 
@@ -57,7 +57,7 @@ export default class NodeSummary extends React.Component {
 
     let rows;
 
-    if (!leaf_status_in) {
+    if (!leaf) {
       rows = tbody.selectAll("tr").data(node_options).enter().append("tr").text(function(d) {
         return d;
       });
@@ -73,7 +73,7 @@ export default class NodeSummary extends React.Component {
       console.log(d);
       d3.selectAll("tr").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
-      instance._adjustUpdateArray(data_in, d);
+      instance._adjustUpdateArray(node, d);
       instance._toggleRetrainButton();
     });
   };
@@ -127,23 +127,23 @@ export default class NodeSummary extends React.Component {
     });
   };
 
-  _adjustUpdateArray = (data_in, option_selected) => {
-    if (option_selected === "Not enough samples to split") {
-      const nNodeSamples = data_in.n_node_samples;
+  _adjustUpdateArray = (node, option) => {
+    if (option === "Not enough samples to split") {
+      const nNodeSamples = node.n_node_samples;
       this.updateArray.splice(0, this.updateArray.length, "min_samples_split", nNodeSamples + 1);
       // update_array.push("min_samples_split", n_node_samples);
       console.log(this.updateArray);
-    } else if (option_selected === "I want to limit the tree to this depth") {
-      const nodeDepth = data_in.node_depth;
+    } else if (option === "I want to limit the tree to this depth") {
+      const nodeDepth = node.node_depth;
       // update_array.push("max_depth", node_depth);
       this.updateArray.splice(0, this.updateArray.length, "max_depth", nodeDepth);
       console.log(this.updateArray);
-    } else if (option_selected === "This node doesn't improve the tree enough") {
-      const impurityDecrease = data_in.weighted_impurity_decrease;
+    } else if (option === "This node doesn't improve the tree enough") {
+      const impurityDecrease = node.weighted_impurity_decrease;
       this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
       console.log(this.updateArray);
-    } else if (option_selected === "Not enough samples in leaf") {
-      const nNodeSamples = data_in.n_node_samples;
+    } else if (option === "Not enough samples in leaf") {
+      const nNodeSamples = node.n_node_samples;
       this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
       console.log(this.updateArray);
     }
@@ -157,7 +157,7 @@ export default class NodeSummary extends React.Component {
     }
   };
 
-  _renderNodeSummary = (data_in, leaf = false) => {
+  _renderNodeSummary = (node, leaf = false) => {
 
     const instance = this;
 
@@ -170,24 +170,24 @@ export default class NodeSummary extends React.Component {
 
     div.append("h3").append("text").text("Node Summary");
 
-    div.append("p").append("text").text("Depth: " + data_in.node_depth);
+    div.append("p").append("text").text("Depth: " + node.node_depth);
 
     if (!leaf) {
-      div.append("p").append("text").text(data_in.split[0] + " >= " + data_in.split[1]);
+      div.append("p").append("text").text(node.split[0] + " >= " + node.split[1]);
     }
 
-    div.append("p").append("text").text(data_in.impurity[0] + " = " + data_in.impurity[1]);
+    div.append("p").append("text").text(node.impurity[0] + " = " + node.impurity[1]);
 
     if (!leaf) {
-      div.append("p").append("text").text("Impurity decrease: " + round(data_in.weighted_impurity_decrease, 5) + " (" + data_in.percentage_impurity_decrease + "%)");
+      div.append("p").append("text").text("Impurity decrease: " + round(node.weighted_impurity_decrease, 5) + " (" + node.percentage_impurity_decrease + "%)");
     }
 
-    div.append("p").append("text").text("Number of samples: " + data_in.n_node_samples);
+    div.append("p").append("text").text("Number of samples: " + node.n_node_samples);
 
-    div.append("p").append("text").text("[" + this._getSampleDistributionText(data_in.node_class_counts) + "]");
+    div.append("p").append("text").text("[" + this._getSampleDistributionText(node.node_class_counts) + "]");
 
     // If not first node, draw trim button
-    if (data_in.node_depth > 0) {
+    if (node.node_depth > 0) {
       const svg_height = 50;
       const svg_width = 150;
       const button_height = svg_height - 10;
@@ -211,7 +211,7 @@ export default class NodeSummary extends React.Component {
         .attr("rx", 10)
         .attr("ry", 10)
         .on("click", function() {
-          instance._showTrimOptions(data_in, leaf);
+          instance._showTrimOptions(node, leaf);
         })
       ;
 
@@ -222,7 +222,7 @@ export default class NodeSummary extends React.Component {
         .attr("text-anchor", "middle")
         // Ensure clicking on rectangle and text appear as single event to user
         .text("Trim node options").on("click", function() {
-        instance._showTrimOptions(data_in, leaf);
+        instance._showTrimOptions(node, leaf);
       });
     }
 
