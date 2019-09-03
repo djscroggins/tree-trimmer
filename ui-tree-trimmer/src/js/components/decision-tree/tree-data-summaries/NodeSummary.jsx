@@ -18,6 +18,14 @@ export default class NodeSummary extends React.Component {
     d3.select("#retrain-button").remove();
   };
 
+  _getSampleDistributionText = (array_in) => {
+    const accumulator = [];
+    array_in.forEach(function(cv) {
+      accumulator.push(cv[0].toString() + ": " + cv[1].toString());
+    });
+    return accumulator.join(", ");
+  };
+
   _showTrimOptions = (data_in, leaf_status_in) => {
 
     const instance = this;
@@ -176,7 +184,7 @@ export default class NodeSummary extends React.Component {
 
     div.append("p").append("text").text("Number of samples: " + data_in.n_node_samples);
 
-    div.append("p").append("text").text("[" + getSampleDistributionText(data_in.node_class_counts) + "]");
+    div.append("p").append("text").text("[" + this._getSampleDistributionText(data_in.node_class_counts) + "]");
 
     // If not first node, draw trim button
     if (data_in.node_depth > 0) {
@@ -219,13 +227,13 @@ export default class NodeSummary extends React.Component {
     }
 
 
-    function getSampleDistributionText(array_in) {
-      const accumulator = [];
-      array_in.forEach(function(cv) {
-        accumulator.push(cv[0].toString() + ": " + cv[1].toString());
-      });
-      return accumulator.join(", ");
-    }
+    // function getSampleDistributionText(array_in) {
+    //   const accumulator = [];
+    //   array_in.forEach(function(cv) {
+    //     accumulator.push(cv[0].toString() + ": " + cv[1].toString());
+    //   });
+    //   return accumulator.join(", ");
+    // }
 
   };
 
