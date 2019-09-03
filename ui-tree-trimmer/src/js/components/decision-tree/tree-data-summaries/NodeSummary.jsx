@@ -78,6 +78,7 @@ export default class NodeSummary extends React.Component {
     });
   };
 
+  // TODO Convert to normal ass button
   _drawRetrainButton = () => {
     const instance = this;
     const thisTable = document.getElementById("trim-options-table");
@@ -126,26 +127,27 @@ export default class NodeSummary extends React.Component {
       instance._resetContainer();
     });
   };
+  
 
   _adjustUpdateArray = (node, option) => {
-    if (option === "Not enough samples to split") {
-      const nNodeSamples = node.n_node_samples;
-      this.updateArray.splice(0, this.updateArray.length, "min_samples_split", nNodeSamples + 1);
-      // update_array.push("min_samples_split", n_node_samples);
-      console.log(this.updateArray);
-    } else if (option === "I want to limit the tree to this depth") {
-      const nodeDepth = node.node_depth;
-      // update_array.push("max_depth", node_depth);
-      this.updateArray.splice(0, this.updateArray.length, "max_depth", nodeDepth);
-      console.log(this.updateArray);
-    } else if (option === "This node doesn't improve the tree enough") {
-      const impurityDecrease = node.weighted_impurity_decrease;
-      this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
-      console.log(this.updateArray);
-    } else if (option === "Not enough samples in leaf") {
-      const nNodeSamples = node.n_node_samples;
-      this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
-      console.log(this.updateArray);
+    switch (option) {
+      case "Not enough samples to split":
+        let nNodeSamples = node.n_node_samples;
+        this.updateArray.splice(0, this.updateArray.length, "min_samples_split", nNodeSamples + 1);
+        break;
+      case "I want to limit the tree to this depth":
+        const nodeDepth = node.node_depth;
+        this.updateArray.splice(0, this.updateArray.length, "max_depth", nodeDepth);
+        break;
+      case "This node doesn't improve the tree enough":
+        const impurityDecrease = node.weighted_impurity_decrease;
+        this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
+        break;
+      case "Not enough samples in leaf":
+        this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
+        break;
+      default:
+        console.log("Invalid option");
     }
   };
 
@@ -186,6 +188,7 @@ export default class NodeSummary extends React.Component {
 
     div.append("p").append("text").text("[" + this._getSampleDistributionText(node.node_class_counts) + "]");
 
+    // TODO: Convert to regular ass button
     // If not first node, draw trim button
     if (node.node_depth > 0) {
       const svg_height = 50;
@@ -225,16 +228,6 @@ export default class NodeSummary extends React.Component {
         instance._showTrimOptions(node, leaf);
       });
     }
-
-
-    // function getSampleDistributionText(array_in) {
-    //   const accumulator = [];
-    //   array_in.forEach(function(cv) {
-    //     accumulator.push(cv[0].toString() + ": " + cv[1].toString());
-    //   });
-    //   return accumulator.join(", ");
-    // }
-
   };
 
   componentDidMount() {
