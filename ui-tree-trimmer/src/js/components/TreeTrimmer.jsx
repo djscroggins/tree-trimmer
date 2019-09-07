@@ -1,3 +1,4 @@
+//{criterion: "gini", max_depth: "20", min_samples_split: "2", min_samples_leaf: "1", random_state: true}
 import React from "react";
 
 import AppHeader from "./AppHeader";
@@ -37,6 +38,7 @@ export default class TreeTrimmer extends React.Component {
       .then(response => response.json())
       .then(json => {
         const _counter = this.state.counter;
+        console.log("mlResults, ", json["ml_results"]);
         this.setState({
           counter: _counter + 1,
           testMessage: "Received ML Results",
@@ -47,8 +49,16 @@ export default class TreeTrimmer extends React.Component {
     fetch("http://localhost:5000/decision-trees/parameters")
       .then(response => response.json())
       .then(json => {
+        console.log("parameters, ", json["parameters"]);
         this.setState({ parameters: json["parameters"] });
       });
+  };
+
+  updateParameters = (param, value) => {
+    console.log(`updateParameters(${param}, ${value})`);
+    const _parameters = this.state.parameters; // Should I clone this?
+    _parameters[param] = value;
+    this.setState({ parameters: _parameters });
   };
 
   // componentDidMount() {
@@ -77,7 +87,8 @@ export default class TreeTrimmer extends React.Component {
             <DecisionTree data={this.state.mlResults} toggleNodeSummary={this.toggleNodeSummary}
                           setNodeData={this.setNodeData}/>
             <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}
-                                  showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData} nodeIsLeaf={this.state.nodeIsLeaf}/>
+                                  showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData}
+                                  nodeIsLeaf={this.state.nodeIsLeaf} updateParameters={this.updateParameters}/>
 
           </Box>
 
