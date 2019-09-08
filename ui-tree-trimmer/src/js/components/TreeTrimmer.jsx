@@ -1,18 +1,12 @@
 //{criterion: "gini", max_depth: "20", min_samples_split: "2", min_samples_leaf: "1", random_state: true}
 import React from "react";
 
-import arrayClone from "../common/cloneArray";
 import _ from "lodash";
+const Box = require("grommet/components/Box");
 
 import AppHeader from "./AppHeader";
-import FileLoadForm from "./forms/FileLoadForm";
 import TreeTrimmerView from "./views/TreeTrimmerView";
 import TreeInitView from "./views/TreeInitView";
-import TopSummaryContainer from "./containers/TopSummaryContainer";
-import SideSummaryContainer from "./containers/SideSummaryContainer";
-import DecisionTree from "./decision-tree/DecisionTree";
-
-const Box = require("grommet/components/Box");
 
 
 export default class TreeTrimmer extends React.Component {
@@ -96,7 +90,7 @@ export default class TreeTrimmer extends React.Component {
 
 
   render() {
-    const { appInitialized, mlResults,parameters,  showNodeSummary , nodeIsLeaf, nodeData} = this.state;
+    const { appInitialized, mlResults, parameters, showNodeSummary, nodeIsLeaf, nodeData } = this.state;
     return (
       <Box className='page-container' colorIndex='light-2'>
 
@@ -106,31 +100,12 @@ export default class TreeTrimmer extends React.Component {
         </form>
         <AppHeader/>
         {appInitialized ?
-          <Box className='application-container'
-               direction='column'
-               align='start'
-               flex='grow'
-               justify='center'>
-
-            <TopSummaryContainer mlResults={mlResults} parameters={parameters}/>
-
-            <Box direction='row'>
-
-              <DecisionTree data={mlResults} toggleNodeSummary={this.toggleNodeSummary}
-                            setNodeData={this.setNodeData}/>
-              <SideSummaryContainer mlResults={mlResults} parameters={parameters}
-                                    showNodeSummary={showNodeSummary} nodeData={nodeData}
-                                    nodeIsLeaf={nodeIsLeaf} updateParameters={this.updateParameters}/>
-
-            </Box>
-
-          </Box>
+          <TreeTrimmerView mlResults={mlResults} parameters={parameters} showNodeSummary={showNodeSummary}
+                           nodeData={nodeData} nodeIsLeaf={nodeIsLeaf} toggleNodeSummary={this.toggleNodeSummary}
+                           setNodeData={this.setNodeData} updateParameters={this.updateParameters}/>
           : <TreeInitView initParameters={this.initParameters} initMLResults={this.initMLResults}
-                                 showInitializedApp={this.showInitializedApp}/>}
-
-
+                          showInitializedApp={this.showInitializedApp}/>}
       </Box>
-
     );
   }
 };
