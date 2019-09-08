@@ -1,9 +1,6 @@
 import React from "react";
 
 const NumberInput = require("grommet/components/NumberInput");
-const Select = require("grommet/components/Select");
-const CheckBox = require("grommet/components/CheckBox");
-const Button = require("grommet/components/Button");
 
 import "../../../css/file-form.css";
 
@@ -28,11 +25,10 @@ export default class FileLoadForm extends React.Component {
       method: "POST",
       body: formData
     }).then(response => {
-      console.log(`${response.status}: ${response.statusText}`);
+      console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
       this.props.setFileUploaded(true);
       return response.json();
     })
-    // .then(json => console.log(json["message"]))
       .catch(error => console.log(error));
   };
 

@@ -4,10 +4,12 @@ const NumberInput = require("grommet/components/NumberInput");
 const Select = require("grommet/components/Select");
 const CheckBox = require("grommet/components/CheckBox");
 const Button = require("grommet/components/Button");
+const Label = require("grommet/components/Label");
 
 export default class TreeInitForm extends React.Component {
   constructor(props) {
     super(props);
+    this.options = [{ "label": "Gini", "value": "gini" }, { "label": "Entropy", "value": "entropy" }];
     this.state = {
       criterion: { label: "Gini", value: "gini" },
       maxDepth: 20,
@@ -35,7 +37,7 @@ export default class TreeInitForm extends React.Component {
       body: JSON.stringify({ "parameters": payload })
     })
       .then(response => {
-        console.log(`${response.status}: ${response.statusText}`);
+        console.log(`_initializeTree -> ${response.status}: ${response.statusText}`);
         return response.json();
       })
       .then(json => {
@@ -60,19 +62,22 @@ export default class TreeInitForm extends React.Component {
   render() {
     return (
       <form className='file-load-form' onSubmit={this._initializeTree}>
-        <div>Selection Criterion</div>
-        <Select options={[{ "label": "Gini", "value": "gini" }, { "label": "Entropy", "value": "entropy" }]}
-                value={this.state.criterion.label}
+        <Label>Selection Criterion</Label>
+        <Select options={this.options} value={this.state.criterion.label}
                 placeHolder={"Gini"} name='selectionCriterion' onChange={this._setCriterion}/>
-        <div>Max Depth</div>
+
+        <Label>Max Depth</Label>
         <NumberInput defaultValue={20} min={1} name='maxDepth' onChange={this._setMaxDepth}/>
-        <div>Minimum Samples to Split On</div>
+
+        <Label>Min Samples to Split On</Label>
         <NumberInput defaultValue={2} min={2} name='minSamplesSplit' onChange={this._setMinSamplesSplit}/>
-        <div>Minimum Samples Required in Leaf Nodes</div>
+
+        <Label>Min Samples Required in Leaf Nodes</Label>
         <NumberInput defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
-        {/*<div>Random State</div>*/}
+
         <CheckBox defaultChecked={true} label='Random State' name='randomState' toggle={true}
                   onChange={this._toggleRandomState}/>
+
         <Button label='Initialize Tree' type='submit'/>
       </form>
     );
