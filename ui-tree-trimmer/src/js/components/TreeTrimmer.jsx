@@ -56,7 +56,7 @@ export default class TreeTrimmer extends React.Component {
       .then(response => response.json())
       .then(json => {
         const _counter = this.state.counter;
-        console.log("mlResults, ", json["ml_results"]);
+        // console.log("mlResults, ", json["ml_results"]);
         this.setState({
           counter: _counter + 1,
           testMessage: "Received ML Results",
@@ -67,13 +67,13 @@ export default class TreeTrimmer extends React.Component {
     fetch("http://localhost:5000/decision-trees/parameters")
       .then(response => response.json())
       .then(json => {
-        console.log("parameters, ", json["parameters"]);
+        // console.log("parameters, ", json["parameters"]);
         this.setState({ parameters: json["parameters"] });
       });
   };
 
   updateParameters = (param, value) => {
-    console.log(`updateParameters(${param}, ${value})`);
+    // console.log(`updateParameters(${param}, ${value})`);
     const _parameters = _.cloneDeep(this.state.parameters); // Should I clone this?
     _parameters[param] = value;
     // this.setState({ parameters: _parameters });
