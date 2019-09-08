@@ -6,6 +6,7 @@ import _ from "lodash";
 
 import AppHeader from "./AppHeader";
 import FileLoadForm from "./forms/FileLoadForm";
+import TreeTrimmerView from "./views/TreeTrimmerView";
 import TreeInitView from "./views/TreeInitView";
 import TopSummaryContainer from "./containers/TopSummaryContainer";
 import SideSummaryContainer from "./containers/SideSummaryContainer";
@@ -123,7 +124,8 @@ export default class TreeTrimmer extends React.Component {
 
             </Box>
 
-          </Box> : <TreeInitView initParameters={this.initParameters} initMLResults={this.initMLResults}
+          </Box>
+          : <TreeInitView initParameters={this.initParameters} initMLResults={this.initMLResults}
                                  showInitializedApp={this.showInitializedApp}/>}
 
 
