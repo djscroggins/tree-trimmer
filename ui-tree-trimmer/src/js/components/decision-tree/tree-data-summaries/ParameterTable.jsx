@@ -17,7 +17,10 @@ export default class ParameterTable extends React.Component {
     const containerNode = this.parameterTableContainer;
     const parameters = this.props.parameters;
     let parametersArray = Object.keys(parameters);
-    const valuesArray = Object.values(parameters);
+    const valuesArray = Object.values(parameters)
+      .filter((value, index, array) =>
+        parametersArray.indexOf("filter_feature") !== array.indexOf(value)
+      );
 
     //  Set up table
     const table = d3.select(containerNode).append("table").attr("class", this.tableName);
@@ -56,7 +59,7 @@ export default class ParameterTable extends React.Component {
 
   render() {
     return (
-        <div ref={node => this.parameterTableContainer = node} className='parameter-table-container' />
+      <div ref={node => this.parameterTableContainer = node} className='parameter-table-container'/>
     );
   }
 };
