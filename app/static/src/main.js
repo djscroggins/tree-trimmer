@@ -31,6 +31,8 @@ function initializeTree(fileIn) {
     formData.append('file', fileIn);
     formData.append('target_index', targetIndex);
 
+    console.log('formData ', formData);
+
     $.ajax({url: 'files', type: 'POST', data: formData, processData: false, contentType: false})
         .done(function (returnData, _, jqXHR) {
 

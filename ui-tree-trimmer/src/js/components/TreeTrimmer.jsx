@@ -5,6 +5,8 @@ import arrayClone from "../common/cloneArray";
 import _ from "lodash";
 
 import AppHeader from "./AppHeader";
+import FileLoadForm from "./forms/FileLoadForm";
+import TreeInitView from "./views/TreeInitView";
 import TopSummaryContainer from "./containers/TopSummaryContainer";
 import SideSummaryContainer from "./containers/SideSummaryContainer";
 import DecisionTree from "./decision-tree/DecisionTree";
@@ -22,7 +24,8 @@ export default class TreeTrimmer extends React.Component {
       parameters: {},
       showNodeSummary: false,
       nodeData: undefined,
-      nodeIsLeaf: false
+      nodeIsLeaf: false,
+      appInitialized: false
     };
   }
 
@@ -80,6 +83,7 @@ export default class TreeTrimmer extends React.Component {
 
 
   render() {
+    const { appInitialized } = this.state;
     return (
       <Box className='page-container' colorIndex='light-2'>
 
@@ -88,25 +92,27 @@ export default class TreeTrimmer extends React.Component {
           <button className='testing-button'>Reset decision tree data</button>
         </form>
         <AppHeader/>
-        <Box className='application-container'
-             direction='column'
-             align='start'
-             flex='grow'
-             justify='center'>
+        {appInitialized ?
+          <Box className='application-container'
+               direction='column'
+               align='start'
+               flex='grow'
+               justify='center'>
 
-          <TopSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
+            <TopSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
 
-          <Box direction='row'>
+            <Box direction='row'>
 
-            <DecisionTree data={this.state.mlResults} toggleNodeSummary={this.toggleNodeSummary}
-                          setNodeData={this.setNodeData}/>
-            <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}
-                                  showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData}
-                                  nodeIsLeaf={this.state.nodeIsLeaf} updateParameters={this.updateParameters}/>
+              <DecisionTree data={this.state.mlResults} toggleNodeSummary={this.toggleNodeSummary}
+                            setNodeData={this.setNodeData}/>
+              <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}
+                                    showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData}
+                                    nodeIsLeaf={this.state.nodeIsLeaf} updateParameters={this.updateParameters}/>
 
-          </Box>
+            </Box>
 
-        </Box>
+          </Box> : <TreeInitView/>}
+
 
       </Box>
 
