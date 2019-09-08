@@ -9,6 +9,7 @@ from flask_restplus import Namespace, Resource, fields, marshal, abort
 from werkzeug.utils import secure_filename
 
 from core.data_preprocessor import DataPreprocessor
+
 # from api import data_dict
 
 files = Namespace(
@@ -16,7 +17,6 @@ files = Namespace(
     description='API for file management',
     path='/files'
 )
-
 
 file_upload_response = files.model('file_upload_response', {
     'message': fields.String
@@ -43,8 +43,14 @@ class FileManager(Resource):
         with open(os.path.join(app_path, self.UPLOAD_FOLDER + 'data-dict.pickle'), 'rb') as f:
             data_dict = pickle.load(f)
 
+        print(request.headers)
+        print(request.form)
+        print(request.files)
+
         file = request.files['file']
+        print(file)
         target_index = loads((request.form['target_index']))
+        print(target_index)
 
         if not os.path.isdir(self.UPLOAD_FOLDER):
             os.makedirs(self.UPLOAD_FOLDER)
@@ -65,3 +71,18 @@ class FileManager(Resource):
 
         else:
             abort(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted')
+
+
+@files.route('/test')
+class FileTestManager(Resource):
+    def post(self):
+        print('File Upload Test Post')
+        print(request)
+        print(request.headers)
+        print(request.form)
+        print(request.files)
+        # file = request.files['file']
+        # target_index = loads((request.form['target_index']))
+        # print('file, ', file)
+        # print('target_index, ', target_index)
+        return marshal(dict(message='File successfully loaded'), file_upload_response), HTTPStatus.CREATED

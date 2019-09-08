@@ -27,18 +27,24 @@ export default class DecisionTree extends React.Component {
 
   _setViewerWidth = () => {
     this.viewerWidth = document.getElementById("base-svg").parentElement.clientWidth;
-    // console.log("viewWidth ", this.viewerWidth);
   };
 
   _setViewerHeight = () => {
     this.viewerHeight = document.getElementById("base-svg").parentElement.clientHeight;
-    // console.log("viewerheight, ", this.viewerHeight);
   };
 
   _setBaseSVG = () => {
+    const instance = this;
+
     this.baseSVG = d3.select(this.decisionTreeContainer).append("svg").attr("id", "base-svg")
-      .attr("width", this.viewerWidth)
-      .attr("height", this.viewerHeight)
+      .attr("width", function() {
+        instance._setViewerWidth();
+        return instance.viewerWidth;
+      })
+      .attr("height", function() {
+        instance._setViewerHeight();
+        return instance.viewerHeight;
+      })
       .attr("class", "overlay")
       .call(this.zoomListener);
   };
@@ -218,14 +224,14 @@ export default class DecisionTree extends React.Component {
           return d.children ? instance.parentNodeColor : instance.leafNodeColor;
         });
         d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
-        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true)
+        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true);
         // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
       });
   };
 
   _displayNodeSummary = (node, leaf = false) => {
     this.props.toggleNodeSummary(true);
-    this.props.setNodeData(node, leaf)
+    this.props.setNodeData(node, leaf);
   };
 
   _transitionNodes = (node) => {
@@ -384,12 +390,10 @@ export default class DecisionTree extends React.Component {
     // Call visit function to establish maxLabelLength
     this._visit(data);
 
-    console.log('container', this.decisionTreeContainer);
+    // console.log("container", this.decisionTreeContainer);
 
     this._setBaseSVG();
     this._setSVGGroup();
-    this._setViewerHeight();
-    this._setViewerWidth();
 
     // Define the root
     root = data;
