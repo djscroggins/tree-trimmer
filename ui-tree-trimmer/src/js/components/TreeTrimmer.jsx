@@ -1,6 +1,9 @@
 //{criterion: "gini", max_depth: "20", min_samples_split: "2", min_samples_leaf: "1", random_state: true}
 import React from "react";
 
+import arrayClone from "../common/cloneArray";
+import _ from "lodash";
+
 import AppHeader from "./AppHeader";
 import TopSummaryContainer from "./containers/TopSummaryContainer";
 import SideSummaryContainer from "./containers/SideSummaryContainer";
@@ -56,14 +59,25 @@ export default class TreeTrimmer extends React.Component {
 
   updateParameters = (param, value) => {
     console.log(`updateParameters(${param}, ${value})`);
-    const _parameters = this.state.parameters; // Should I clone this?
+    const _parameters = _.cloneDeep(this.state.parameters); // Should I clone this?
     _parameters[param] = value;
-    this.setState({ parameters: _parameters });
+    // this.setState({ parameters: _parameters });
+    fetch("http://localhost:5000/decision-trees", {
+      mode: "cors",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "parameters": _parameters })
+    })
+      .then(response => response.json())
+      .then(json => {
+        // console.log("updateParameters json, ", json["ml_results"]);
+        this.setState({ parameters: _parameters, mlResults: json["ml_results"] });
+      })
+      .catch(error => {
+        console.log("ERROR: ", error);
+      });
   };
 
-  // componentDidMount() {
-  //   this.renderParameterTable()
-  // }
 
   render() {
     return (
