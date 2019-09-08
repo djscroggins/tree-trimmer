@@ -40,6 +40,9 @@ export default class TreeInitForm extends React.Component {
       })
       .then(json => {
         console.log(json);
+        this.props.initParameters(payload);
+        this.props.initMLResults(json["ml_results"]);
+        this.props.showInitializedApp()
       });
   };
 

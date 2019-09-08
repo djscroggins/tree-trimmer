@@ -29,6 +29,18 @@ export default class TreeTrimmer extends React.Component {
     };
   }
 
+  initParameters = (params) => {
+    this.setState({ parameters: params });
+  };
+
+  initMLResults = (results) => {
+    this.setState({ mlResults: results });
+  };
+
+  showInitializedApp = () => {
+    this.setState({ appInitialized: true });
+  };
+
   toggleNodeSummary = (bool) => {
     this.setState({ showNodeSummary: bool });
   };
@@ -111,7 +123,8 @@ export default class TreeTrimmer extends React.Component {
 
             </Box>
 
-          </Box> : <TreeInitView/>}
+          </Box> : <TreeInitView initParameters={this.initParameters} initMLResults={this.initMLResults}
+                                 showInitializedApp={this.showInitializedApp}/>}
 
 
       </Box>

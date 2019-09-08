@@ -14,7 +14,7 @@ export default class TreeInitView extends React.Component {
   }
 
   setFileUploaded = (bool) => {
-    this.setState({fileUploaded: bool})
+    this.setState({ fileUploaded: bool });
   };
 
   render() {
@@ -22,7 +22,9 @@ export default class TreeInitView extends React.Component {
     return (
       <Box className='tree-init-view'>
         <FileLoadForm setFileUploaded={this.setFileUploaded} fileUploaded={fileUploaded}/>
-        {fileUploaded ? <TreeInitForm/> : null}
+        {fileUploaded ?
+          <TreeInitForm initParameters={this.props.initParameters} initMLResults={this.props.initMLResults}
+                        showInitializedApp={this.props.showInitializedApp}/> : null}
       </Box>
     );
   }
