@@ -132,6 +132,7 @@ export default class FeatureTable extends React.Component {
   };
 
   renderFeatureTable = () => {
+    const instance = this;
     this._resetContainer();
 
     //TODO: Destructure once return type adjusted on backend
@@ -181,15 +182,9 @@ export default class FeatureTable extends React.Component {
       .style("fill", "lightgreen")
       .attr("rx", 10)
       .attr("ry", 10)
-    // .on("click", function() {
-    //   // function in sdk_tree_demo; pass features to be filtered
-    //   params.updateInteractionParameters("filter_feature", featuresToFilterArray);
-    //   // update_interaction_parameters("filter_feature", features_to_filter_array);
-    //   // function in sdk_tree_demo
-    //   params.retrainTree();
-    //   // retrainTree();
-    // })
-    ;
+      .on("click", function() {
+        instance.props.updateParameters("filter_feature", instance.featuresToFilterArray);
+      });
 
     svg.append("text")
       .attr("x", svgWidth / 2)
@@ -198,13 +193,9 @@ export default class FeatureTable extends React.Component {
       .attr("text-anchor", "middle")
       // Ensure clicking on rectangle and text appear as single event to user
       .text("Re-train tree")
-    //   .on("click", function() {
-    //   params.updateInteractionParameters("filter_feature", featuresToFilterArray);
-    //   // update_interaction_parameters("filter_feature", features_to_filter_array);
-    //   params.retrainTree();
-    //   // retrainTree();
-    // })
-    ;
+      .on("click", function() {
+        instance.props.updateParameters("filter_feature", instance.featuresToFilterArray);
+      });
   };
 
   componentDidMount() {
