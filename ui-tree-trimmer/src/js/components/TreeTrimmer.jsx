@@ -96,7 +96,7 @@ export default class TreeTrimmer extends React.Component {
 
 
   render() {
-    const { appInitialized } = this.state;
+    const { appInitialized, mlResults,parameters,  showNodeSummary , nodeIsLeaf, nodeData} = this.state;
     return (
       <Box className='page-container' colorIndex='light-2'>
 
@@ -112,15 +112,15 @@ export default class TreeTrimmer extends React.Component {
                flex='grow'
                justify='center'>
 
-            <TopSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}/>
+            <TopSummaryContainer mlResults={mlResults} parameters={parameters}/>
 
             <Box direction='row'>
 
-              <DecisionTree data={this.state.mlResults} toggleNodeSummary={this.toggleNodeSummary}
+              <DecisionTree data={mlResults} toggleNodeSummary={this.toggleNodeSummary}
                             setNodeData={this.setNodeData}/>
-              <SideSummaryContainer mlResults={this.state.mlResults} parameters={this.state.parameters}
-                                    showNodeSummary={this.state.showNodeSummary} nodeData={this.state.nodeData}
-                                    nodeIsLeaf={this.state.nodeIsLeaf} updateParameters={this.updateParameters}/>
+              <SideSummaryContainer mlResults={mlResults} parameters={parameters}
+                                    showNodeSummary={showNodeSummary} nodeData={nodeData}
+                                    nodeIsLeaf={nodeIsLeaf} updateParameters={this.updateParameters}/>
 
             </Box>
 
