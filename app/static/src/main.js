@@ -11,6 +11,7 @@ function updateInteractionParameters(key_to_update, value_to_update) {
 
 function getDecisionTree(paramsObject, onSuccess) {
     $.post('decision-trees', {'parameters': JSON.stringify(paramsObject)}, function (returnData) {
+        console.log('Old Decision Tree, ', paramsObject)
         onSuccess(returnData);
     }).fail(function (jqXHR, textStatus) {
         //TODO: Add sensible error handling

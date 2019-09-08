@@ -107,6 +107,7 @@ export default class NodeSummary extends React.Component {
       .attr("ry", 10)
       .on("click", function() {
         console.log("Retraining tree: ", instance.updateArray);
+        instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
         // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
         // retrainTree();
         // resetNodeSummary();
@@ -121,6 +122,7 @@ export default class NodeSummary extends React.Component {
       // Ensure clicking on rectangle and text appear as single event to user
       .text("Re-train tree").on("click", function() {
       console.log("Retraining tree: ", instance.updateArray);
+      instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
       // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
       // retrainTree();
       // resetNodeSummary();
