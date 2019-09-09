@@ -1,0 +1,18 @@
+/*Override width for Grommet NumberInput*/
+.grommetux-number-input__input {
+    width: var(--default-number-input-width);
+}
+
+button {
+    border-radius: 4px;
+    border: 2px solid var(--primary-accent-color);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+

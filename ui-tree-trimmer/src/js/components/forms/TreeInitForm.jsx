@@ -6,6 +6,8 @@ const CheckBox = require("grommet/components/CheckBox");
 const Button = require("grommet/components/Button");
 const Label = require("grommet/components/Label");
 
+import "../../../css/forms/tree-init-form.css";
+
 export default class TreeInitForm extends React.Component {
   constructor(props) {
     super(props);
@@ -61,22 +63,22 @@ export default class TreeInitForm extends React.Component {
 
   render() {
     return (
-      <form className='file-load-form' onSubmit={this._initializeTree}>
-        <Label>Selection Criterion</Label>
+      <form className='tree-init-form' onSubmit={this._initializeTree}>
+        <Label margin='small'>Selection Criterion</Label>
         <Select options={this.options} value={this.state.criterion.label}
                 placeHolder={"Gini"} name='selectionCriterion' onChange={this._setCriterion}/>
 
-        <Label>Max Depth</Label>
+        <Label margin='small'>Max Depth</Label>
         <NumberInput defaultValue={20} min={1} name='maxDepth' onChange={this._setMaxDepth}/>
 
-        <Label>Min Samples to Split On</Label>
+        <Label margin='small'>Min Samples to Split On</Label>
         <NumberInput defaultValue={2} min={2} name='minSamplesSplit' onChange={this._setMinSamplesSplit}/>
 
-        <Label>Min Samples Required in Leaf Nodes</Label>
+        <Label margin='small'>Min Samples Required in Leaf Nodes</Label>
         <NumberInput defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
 
-        <CheckBox defaultChecked={true} label='Random State' name='randomState' toggle={true}
-                  onChange={this._toggleRandomState}/>
+        <CheckBox className='random-state-checkbox' defaultChecked={true} label='Random State' name='randomState'
+                  toggle={true} onChange={this._toggleRandomState}/>
 
         <Button label='Initialize Tree' type='submit'/>
       </form>

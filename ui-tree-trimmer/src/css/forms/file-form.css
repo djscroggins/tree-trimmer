@@ -1,0 +1,22 @@
+.file-inputs {
+    margin-top: 10px;
+    position: relative;
+}
+
+.file-picker {
+    position: relative;
+    text-align: right;
+    opacity: 0;
+    z-index: 2;
+}
+
+.file-picker-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.upload-file-button {
+    margin-top: 20px;
+}
