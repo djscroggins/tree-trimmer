@@ -5,6 +5,8 @@ import _ from "lodash";
 
 import * as d3 from "d3";
 
+import "../../../css/decision-tree/decision-tree.css";
+
 export default class DecisionTree extends React.Component {
   constructor(props) {
     super(props);

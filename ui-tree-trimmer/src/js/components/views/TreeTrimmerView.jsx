@@ -21,7 +21,7 @@ export default class TreeTrimmerView extends React.Component {
         <Box className='tree-trimmer-view-column-1'>
           <TopSummaryContainer mlResults={mlResults} parameters={parameters}/>
 
-          <Box direction='row'>
+          <Box className='tree-trimmer-view-row-2' direction='row'>
             <DecisionTree data={mlResults} toggleNodeSummary={this.props.toggleNodeSummary}
                           setNodeData={this.props.setNodeData}/>
             <SideSummaryContainer mlResults={mlResults} parameters={parameters}

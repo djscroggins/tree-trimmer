@@ -1,3 +1,7 @@
+.top-summary-container {
+    min-height: 10%;
+}
+
 .top-summary-container div {
     padding-left: 10px;
 }
