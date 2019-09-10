@@ -22,7 +22,7 @@ export default class AccuracyReport extends React.Component {
 
     const accuracyScore = [round(this.sumTruePositives(confusionMatrix) / this.computeInstanceSum(confusionMatrix), 4) * 100];
 
-    const table = d3.select(containerNode).append("table").attr("class", "accuracy-table");
+    const table = d3.select(containerNode).append("table").attr("class", "accuracy-table table table-bordered");
     const thead = table.append("body");
     const tbody = table.append("tbody");
 

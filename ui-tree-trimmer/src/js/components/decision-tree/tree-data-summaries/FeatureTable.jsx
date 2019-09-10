@@ -42,7 +42,7 @@ export default class FeatureTable extends React.Component {
 
   _createTable = (node, elementName = this.featureTableClass, align = "center") => {
     const table = d3.select(node).append("table")
-      .attr("class", elementName)
+      .attr("class", `${elementName} table table-bordered`)
       .attr("align", align);
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -212,7 +212,7 @@ export default class FeatureTable extends React.Component {
 
   render() {
     return (
-      <div ref={node => this.featureTableContainer = node}/>
+      <div className='feature-table-container' ref={node => this.featureTableContainer = node}/>
     );
   }
 };

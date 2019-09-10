@@ -21,9 +21,10 @@ export default class ParameterTable extends React.Component {
       .filter((value, index, array) =>
         parametersArray.indexOf("filter_feature") !== array.indexOf(value)
       );
+    parametersArray = parametersArray.filter(key => key !== 'filter_feature');
 
     //  Set up table
-    const table = d3.select(containerNode).append("table").attr("class", this.tableName);
+    const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered`);
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 

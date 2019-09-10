@@ -1,8 +1,8 @@
 import React from "react";
+import * as d3 from "d3";
 
 import round from "../../../common/round";
 
-import * as d3 from "d3";
 
 export default class NodeSummary extends React.Component {
   constructor(props) {
