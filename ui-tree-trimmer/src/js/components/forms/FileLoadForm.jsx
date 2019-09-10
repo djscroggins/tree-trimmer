@@ -80,7 +80,7 @@ export default class FileLoadForm extends React.Component {
         {!fileUploaded ?
           <Box align='center'>
             <Label labelFor='targetIndex' margin='small'>Target Index</Label>
-            <div>
+            <div className='target-index-container form-input'>
               <NumberInput defaultValue={0} min={0} name='targetIndex' onChange={this._setIndex}/>
             </div>
             <button className='upload-file-button' type='submit' disabled={!selectedFile}>Upload File</button>
