@@ -20,9 +20,6 @@ export default class DecisionTree extends React.Component {
     this.viewerWidth = undefined;
     this.viewerHeight = undefined;
     this.duration = 750;
-    this.parentNodeColor = "lightsteelblue";
-    this.leafNodeColor = "#fff";
-    this.nodeOnClickColor = "red";
     this.tree = this._getTree(this.viewerHeight, this.viewerWidth);
     this.zoomListener = this._getZoomListener();
     this.diagonal = this._getDiagonal();

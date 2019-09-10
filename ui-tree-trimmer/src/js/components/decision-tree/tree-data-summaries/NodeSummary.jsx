@@ -147,10 +147,11 @@ export default class NodeSummary extends React.Component {
         this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
         break;
       case "Not enough samples in leaf":
-        this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
+        const nLeafSamples = node.n_node_samples;
+        this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nLeafSamples + 1);
         break;
       default:
-        // console.log("Invalid option");
+        console.log("Invalid option");
     }
   };
 
