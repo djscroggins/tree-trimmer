@@ -4,7 +4,7 @@ const Box = require("grommet/components/Box");
 const NumberInput = require("grommet/components/NumberInput");
 const Label = require("grommet/components/Label");
 
-import "../../../css/forms/file-form.css";
+import "../../../css/forms/file-load-form.css";
 
 export default class FileLoadForm extends React.Component {
   constructor(props) {

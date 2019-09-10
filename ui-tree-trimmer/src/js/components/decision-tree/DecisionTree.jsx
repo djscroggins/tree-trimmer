@@ -222,13 +222,25 @@ export default class DecisionTree extends React.Component {
     const instance = this;
     node
       .on("click", function(d) {
-        d3.selectAll(".nodeCircle").style("fill", function(d) {
-          return d.children ? instance.parentNodeColor : instance.leafNodeColor;
-        });
-        d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
-        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true);
-        // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
+        const element = d3.select(this).select(".nodeCircle");
+        const nodeCircles = d3.selectAll(".nodeCircle");
+
+        if (element.style("fill") === "rgb(255, 0, 0)") {
+          instance.props.toggleNodeSummary(false);
+          instance._resetAllNodeColor(nodeCircles);
+        } else {
+          instance._resetAllNodeColor(nodeCircles);
+          element.style("fill", instance.nodeOnClickColor);
+          d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(d.leaf, true);
+        }
       });
+  };
+
+  _resetAllNodeColor = (nodeCircles) => {
+    const instance = this;
+    nodeCircles.style("fill", function(d) {
+      return d.children ? instance.parentNodeColor : instance.leafNodeColor;
+    });
   };
 
   _displayNodeSummary = (node, leaf = false) => {

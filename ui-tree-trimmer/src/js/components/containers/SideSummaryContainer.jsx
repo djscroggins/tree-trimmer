@@ -13,7 +13,7 @@ export default class SideSummaryContainer extends React.Component {
     return (
       <Box className='side-summary-container'
            align='center'
-           justify='center'>
+           justify='center' pad={{horizontal: 'large'}}>
         <ConfusionMatrix mlResults={this.props.mlResults}
                          dimensions={{ "width": width, "height": height }}
                          colorRange={{ "startColor": startColor, "endColor": endColor }}/>

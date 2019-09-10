@@ -2,7 +2,7 @@ import React from "react";
 
 import * as d3 from "d3";
 
-import "../../../../css/feature-table.css";
+import "../../../../css/decision-tree/tree-data-summaries/feature-table.css";
 
 export default class FeatureTable extends React.Component {
   constructor(props) {

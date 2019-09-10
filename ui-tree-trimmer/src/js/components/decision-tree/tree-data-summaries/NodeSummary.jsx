@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 import round from "../../../common/round";
 
+import "../../../../css/decision-tree/tree-data-summaries/node-summary.css";
 
 export default class NodeSummary extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ export default class NodeSummary extends React.Component {
 
     const instance = this;
 
-    console.log("showTrimOptions");
+    // console.log("showTrimOptions");
 
     this._toggleRetrainButton();
 
@@ -70,7 +71,7 @@ export default class NodeSummary extends React.Component {
     this._drawRetrainButton();
 
     rows.on("click", function(d) {
-      console.log(d);
+      // console.log(d);
       d3.selectAll("tr").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
       instance._adjustUpdateArray(node, d);
@@ -106,7 +107,7 @@ export default class NodeSummary extends React.Component {
       .attr("rx", 10)
       .attr("ry", 10)
       .on("click", function() {
-        console.log("Retraining tree: ", instance.updateArray);
+        // console.log("Retraining tree: ", instance.updateArray);
         instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
         // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
         // retrainTree();
@@ -121,7 +122,7 @@ export default class NodeSummary extends React.Component {
       .attr("text-anchor", "middle")
       // Ensure clicking on rectangle and text appear as single event to user
       .text("Re-train tree").on("click", function() {
-      console.log("Retraining tree: ", instance.updateArray);
+      // console.log("Retraining tree: ", instance.updateArray);
       instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
       // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
       // retrainTree();
@@ -149,7 +150,7 @@ export default class NodeSummary extends React.Component {
         this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nNodeSamples + 1);
         break;
       default:
-        console.log("Invalid option");
+        // console.log("Invalid option");
     }
   };
 
@@ -233,17 +234,17 @@ export default class NodeSummary extends React.Component {
   };
 
   componentDidMount() {
-    console.log("NodeSummaryDidMount");
-    console.log(this.props.nodeData);
-    console.log(this.props.nodeIsLeaf);
+    // console.log("NodeSummaryDidMount");
+    // console.log(this.props.nodeData);
+    // console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
     if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log("NodeSummaryDidUpdate");
-    console.log(this.props.nodeData);
-    console.log(this.props.nodeIsLeaf);
+    // console.log("NodeSummaryDidUpdate");
+    // console.log(this.props.nodeData);
+    // console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
     if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
   }
