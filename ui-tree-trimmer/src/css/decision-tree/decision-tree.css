@@ -1,3 +1,5 @@
+@value secondaryAccent: var(--secondary-accent-color);
+
 .decision-tree-container {
     height: 100%;
     min-width: 80%;
@@ -7,11 +9,28 @@
     cursor: pointer;
 }
 
-.node circle {
-    fill: #fff;
-    stroke: steelblue;
+/*.node circle {*/
+/*    fill: #fff;*/
+/*    stroke: steelblue;*/
+/*    stroke-width: 1.5px;*/
+/*}*/
+
+.parent-node {
+    stroke: var(--primary-accent-color);
+    fill: var(--secondary-accent-color);
     stroke-width: 1.5px;
 }
+
+.leaf-node {
+    stroke: var(--primary-accent-color);
+    fill: whitesmoke;
+}
+
+.selected-node {
+    stroke: var(--primary-accent-color);
+    fill: red;
+}
+
 
 .node text {
     font: 10px sans-serif;

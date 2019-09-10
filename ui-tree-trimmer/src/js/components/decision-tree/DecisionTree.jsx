@@ -12,8 +12,11 @@ export default class DecisionTree extends React.Component {
     super(props);
     this.totalNodes = 0;
     this.maxLabelLength = 0;
-    // this.viewerWidth = window.innerWidth - 400;
-    // this.viewerHeight = window.innerHeight - 150;
+    this.circleNodeBaseClass = "node-circle";
+    this.parentNodeClasses = `${this.circleNodeBaseClass} parent-node`;
+    this.leafNodeClasses = `${this.circleNodeBaseClass} leaf-node`;
+    this.selectedNodeClass = "selected-node";
+    this.selectedNodeClasses = `${this.circleNodeBaseClass} ${this.selectedNodeClass}`;
     this.viewerWidth = undefined;
     this.viewerHeight = undefined;
     this.duration = 750;
@@ -166,14 +169,23 @@ export default class DecisionTree extends React.Component {
       });
   };
 
+  _setNodeClass = (node) => {
+    return node.children ? this.parentNodeClasses : this.leafNodeClasses;
+  };
+
   _appendNodeCircles = (node) => {
     const instance = this;
     node
       .append("circle")
-      .attr("class", "nodeCircle")
-      .attr("r", 4.5)
-      .style("fill", function(d) {
-        return d.children ? instance.parentNodeColor : instance.leafNodeColor;
+      .attr("class", function(d) {
+        return instance._setNodeClass(d);
+      })
+      .attr("r", 6)
+      .on("mouseover", function() {
+        d3.select(this).attr("r", 9);
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("r", 6);
       });
   };
 
@@ -218,19 +230,24 @@ export default class DecisionTree extends React.Component {
       });
   };
 
+  _setNodeAsSelected = (node) => {
+    node.attr("class", this.selectedNodeClasses);
+  };
+
   _bindOnClickHandler = (node) => {
     const instance = this;
     node
       .on("click", function(d) {
-        const element = d3.select(this).select(".nodeCircle");
-        const nodeCircles = d3.selectAll(".nodeCircle");
+        const baseClass = `.${instance.circleNodeBaseClass}`;
+        const element = d3.select(this).select(baseClass);
+        const nodeCircles = d3.selectAll(baseClass);
 
-        if (element.style("fill") === "rgb(255, 0, 0)") {
+        if (element.attr("class").includes(instance.selectedNodeClass)) {
           instance.props.toggleNodeSummary(false);
           instance._resetAllNodeColor(nodeCircles);
         } else {
           instance._resetAllNodeColor(nodeCircles);
-          element.style("fill", instance.nodeOnClickColor);
+          instance._setNodeAsSelected(element);
           d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(d.leaf, true);
         }
       });
@@ -238,9 +255,10 @@ export default class DecisionTree extends React.Component {
 
   _resetAllNodeColor = (nodeCircles) => {
     const instance = this;
-    nodeCircles.style("fill", function(d) {
-      return d.children ? instance.parentNodeColor : instance.leafNodeColor;
-    });
+    nodeCircles
+      .attr("class", function(d) {
+        return instance._setNodeClass(d);
+      });
   };
 
   _displayNodeSummary = (node, leaf = false) => {
