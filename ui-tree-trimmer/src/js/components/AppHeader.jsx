@@ -6,7 +6,7 @@ const Heading = require("grommet/components/Heading");
 export default class AppHeader extends React.Component {
   render() {
     return (
-      <Header colorIndex='grey-4'
+      <Header className='app-header' colorIndex='grey-4'
               full='horizontal'
               justify='center'
               alignContent='center'
