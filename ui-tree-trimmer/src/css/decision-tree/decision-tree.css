@@ -38,7 +38,7 @@
 
 .link {
     fill: none;
-    stroke: steelblue;
+    stroke: var(--grey-accent-color);
     stroke-width: 1.5px;
 }
 
