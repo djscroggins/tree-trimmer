@@ -340,7 +340,7 @@ export default class DecisionTree extends React.Component {
 
   _update = (source) => {
     const instance = this;
-    console.log("UPDATE");
+    // console.log("UPDATE");
 
     // Compute the new height, function counts total children of root node and sets tree height accordingly.
     // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
@@ -407,7 +407,7 @@ export default class DecisionTree extends React.Component {
 
   renderDecisionTree = () => {
 
-    console.log("renderDecisionTree");
+    // console.log("renderDecisionTree");
 
     const data = this.props.data.tree_json;
 

@@ -1,6 +1,7 @@
 @value secondaryAccent: var(--secondary-accent-color);
 
 .decision-tree-container {
+    margin-left: 10px;
     height: 100%;
     min-width: 80%;
 }

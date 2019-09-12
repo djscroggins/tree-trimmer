@@ -16,7 +16,7 @@ export default class TopSummaryContainer extends React.Component {
       <Box className='top-summary-container'
            direction='row'
            align='start'
-           justify='start' pad={{vertical: 'small', between: 'small'}}>
+           justify='start' pad={{ vertical: "small", between: "small" }}>
         <ParameterTable parameters={this.props.parameters}/>
         <AccuracyReport mlResults={this.props.mlResults}/>
         <TreeSummary mlResults={this.props.mlResults}/>
