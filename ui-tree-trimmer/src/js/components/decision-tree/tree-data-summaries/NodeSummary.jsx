@@ -48,7 +48,7 @@ export default class NodeSummary extends React.Component {
 
     const div = d3.select(instance.nodeSummaryContainer).append("div").attr("id", "trim-options");
 
-    const table = d3.select("#trim-options").append("table").attr("id", "trim-options-table").attr("align", "center");
+    const table = d3.select("#trim-options").append("table").attr("id", "trim-options-table").attr("class", "table tabled-borderd").attr("align", "center");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
@@ -56,23 +56,23 @@ export default class NodeSummary extends React.Component {
       return d;
     });
 
-    let rows;
 
     if (!leaf) {
-      rows = tbody.selectAll("tr").data(node_options).enter().append("tr").text(function(d) {
-        return d;
-      });
+      node_options.forEach((_, i, arr) =>
+        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").text(function(d) {
+          return d;
+        }));
     } else {
-      rows = tbody.selectAll("tr").data(leaf_options).enter().append("tr").text(function(d) {
-        return d;
-      });
+      leaf_options.forEach((_, i, arr) =>
+        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").text(function(d) {
+          return d;
+        }));
     }
 
     this._drawRetrainButton();
 
-    rows.on("click", function(d) {
-      // console.log(d);
-      d3.selectAll("tr").style("background-color", "transparent");
+    tbody.selectAll("td").on("click", function(d) {
+      d3.selectAll("td").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
       instance._adjustUpdateArray(node, d);
       instance._toggleRetrainButton();
