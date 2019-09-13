@@ -5,6 +5,7 @@ import _ from "lodash";
 
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
+const Title = require("grommet/components/Tile");
 
 import "../../../../css/decision-tree/tree-data-summaries/feature-table.css";
 
@@ -113,9 +114,9 @@ export default class FeatureTable extends React.Component {
 
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
-    d3.selectAll("." + this.featuresTitleClass).remove();
+    // d3.selectAll("." + this.featuresTitleClass).remove();
     d3.selectAll("." + this.featureTableClass).remove();
-    d3.selectAll("." + this.featureTableButtonClass).remove();
+    // d3.selectAll("." + this.featureTableButtonClass).remove();
     d3.selectAll("." + this.warningMessageDivClass).remove();
     this._removeWarning();
   };
@@ -198,6 +199,7 @@ export default class FeatureTable extends React.Component {
     const { retrainButtonStyle } = this.state;
     return (
       <Box className='feature-label-box' align='center'>
+        <h3 className='features-title'>Important Features</h3>
         <div className='feature-table-container' ref={node => this.featureTableContainer = node}/>
         <Button className='feature-table-retrain-tree-button' label='Retrain Tree' onClick={this._updateParameters}
                 style={retrainButtonStyle}/>
