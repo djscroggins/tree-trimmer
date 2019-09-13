@@ -35,14 +35,6 @@ export default class FeatureTable extends React.Component {
     this.featureCount = this.featuresToFilterArray.length + features.length;
   };
 
-  _createTitle = (title, node, elementName = this.featuresTitleClass) => {
-    return d3.select(node)
-      .append("div")
-      .attr("class", elementName)
-      .append("h3")
-      .append("text")
-      .text(title);
-  };
 
   _createWarningMessageDiv = (node, elementName = this.warningMessageDivClass, display = "none") => {
     return d3.select(node).append("div")
@@ -156,7 +148,6 @@ export default class FeatureTable extends React.Component {
     this._setFeatureCount(features);
 
 
-    const title = this._createTitle("Important Features", containerNode);
     const warningMessageDiv = this._createWarningMessageDiv(containerNode);
     const { table, thead, tbody } = this._createTable(containerNode);
 
@@ -199,7 +190,6 @@ export default class FeatureTable extends React.Component {
     const { retrainButtonStyle } = this.state;
     return (
       <Box className='feature-label-box' align='center'>
-        <h3 className='features-title'>Important Features</h3>
         <div className='feature-table-container' ref={node => this.featureTableContainer = node}/>
         <Button className='feature-table-retrain-tree-button' label='Retrain Tree' onClick={this._updateParameters}
                 style={retrainButtonStyle}/>

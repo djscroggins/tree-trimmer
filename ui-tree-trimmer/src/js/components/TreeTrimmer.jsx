@@ -42,7 +42,7 @@ export default class TreeTrimmer extends React.Component {
 
 
   toggleNodeSummary = (bool) => {
-    this.setState({ showNodeSummary: bool });
+    this.setState({ showNodeSummary: bool});
   };
 
 
