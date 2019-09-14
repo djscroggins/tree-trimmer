@@ -1,0 +1,7 @@
+.selected-td {
+    background-color: rgb(255, 179, 179);
+}
+
+.unselected-td {
+    background-color: transparent;
+}

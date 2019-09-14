@@ -5,6 +5,8 @@ import _ from "lodash";
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
 
+import "../../../../../css/decision-tree/tree-data-summaries/node-summary/node-trim-options.css";
+
 export default class NodeTrimOptions extends React.Component {
   constructor(props) {
     super(props);
@@ -18,10 +20,14 @@ export default class NodeTrimOptions extends React.Component {
     console.log("NodeTrimOptions _toggleRetrainButton");
     // this.setState({showRetrainTreeButton: !this.state.showRetrainTreeButton})
     if (this.updateArray.length > 0) {
-      this.setState({showRetrainTreeButton: true});
+      this.setState({ showRetrainTreeButton: true });
     } else {
-     this.setState({showRetrainTreeButton: false});
+      this.setState({ showRetrainTreeButton: false });
     }
+  };
+
+  _resetUpdateArray = () => {
+    this.updateArray.length = 0;
   };
 
   adjustUpdateArray = (node, option) => {
@@ -45,9 +51,6 @@ export default class NodeTrimOptions extends React.Component {
       default:
         console.log("Invalid option");
     }
-
-    console.log("adjustUpdateArray");
-    console.log("updateArray ", this.updateArray);
   };
 
   _renderNodeTrimOptions = (node, leaf) => {
@@ -88,12 +91,12 @@ export default class NodeTrimOptions extends React.Component {
 
     if (leaf) {
       leaf_options.forEach((_, i, arr) =>
-        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").text(function(d) {
+        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").attr('class', 'unselected-td').text(function(d) {
           return d;
         }));
     } else {
       node_options.forEach((_, i, arr) =>
-        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").text(function(d) {
+        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").attr('class', 'unselected-td').text(function(d) {
           return d;
         }));
     }
@@ -101,10 +104,28 @@ export default class NodeTrimOptions extends React.Component {
     // this._drawRetrainButton();
 
     tbody.selectAll("td").on("click", function(d) {
-      d3.selectAll("td").style("background-color", "transparent");
-      d3.select(this).style("background-color", "rgb(255, 179, 179)");
-      instance.adjustUpdateArray(node, d);
-      instance._toggleRetrainButton();
+      const clickedElement = d3.select(this);
+      const clickedElementBacgroundColor = clickedElement.style("background-color");
+      const clickedElementClass = clickedElement.attr("class");
+      console.log("Table Cell on Click Handler");
+      console.log("clickedElement: ", clickedElement);
+      console.log("clickedElement background-color ", clickedElementBacgroundColor);
+      console.log("clickedElement class", clickedElementClass);
+      d3.selectAll("td").attr("class", "unselected-td");
+      if (clickedElementClass === "unselected-td") {
+        // d3.select(this).style("background-color", "rgb(255, 179, 179)");
+        d3.select(this).attr("class", "selected-td");
+        instance.adjustUpdateArray(node, d);
+        instance._toggleRetrainButton();
+      } else if (clickedElementClass === 'selected-td') {
+        d3.select(this).attr("class", "unselected-td");
+        instance._resetUpdateArray();
+        instance._toggleRetrainButton();
+      }
+
+      // const unselected = d3.selectAll("td.unselected-td");
+      // console.log("unselected td ", unselected);
+      // d3.select(this).style("background-color", "rgb(255, 179, 179)");
     });
   };
 
