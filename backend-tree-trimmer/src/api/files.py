@@ -4,11 +4,11 @@ from http import HTTPStatus
 from pathlib import Path
 import pickle
 
-from flask import current_app, request, jsonify
+from flask import current_app, request
 from flask_restplus import Namespace, Resource, fields, marshal, abort
 from werkzeug.utils import secure_filename
 
-from core.data_preprocessor import DataPreprocessor
+from ..core.data_preprocessor import DataPreprocessor
 
 # from api import data_dict
 

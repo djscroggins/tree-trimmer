@@ -5,14 +5,13 @@ from http import HTTPStatus
 from pathlib import Path
 import os
 import pickle
-import logging
 
 from flask import request, current_app
 from flask_restplus import Namespace, Resource, fields, marshal, abort
 
-from core.data_preprocessor import DataPreprocessor
-from core.decision_tree_wrapper import DecisionTreeWrapper
-from core.decision_tree_parser import DecisionTreeParser
+from ..core.data_preprocessor import DataPreprocessor
+from ..core.decision_tree_wrapper import DecisionTreeWrapper
+from ..core.decision_tree_parser import DecisionTreeParser
 
 decision_trees = Namespace(
     name='Decision Trees',
@@ -41,12 +40,6 @@ results = {}
 _parameters = {}
 
 
-@decision_trees.route('/parameters')
-class DecisionTreeParameters(Resource):
-    def get(self):
-        return _parameters, HTTPStatus.OK
-
-
 @decision_trees.route('')
 class DecisionTreeManager(Resource):
 
@@ -66,18 +59,9 @@ class DecisionTreeManager(Resource):
     @decision_trees.response(HTTPStatus.BAD_REQUEST, 'Bad Request', decision_trees_response)
     def post(self):
 
-        print(request.form)
-
         parameters = request.get_json()
 
-        if not parameters:  # Hack to get around two front ends sending different data types
-            parameters = json.loads(request.form.get('parameters'))
-        else:
-            parameters = parameters.get('parameters')
-
         _parameters['parameters'] = parameters
-
-        print('testing out request form vs get json, ', request.get_json())
 
         data_dict = self.get_data_set()
         data = copy.deepcopy(data_dict)
@@ -109,19 +93,3 @@ class DecisionTreeManager(Resource):
             print(e)
             print(traceback.print_exc())
             abort(HTTPStatus.BAD_REQUEST, str(e))
-
-    def get(self):
-        result = results.get('ml_results')
-        return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.OK
-
-
-@decision_trees.route('/test')
-class TestManager(Resource):
-    def post(self):
-        print('Got the post!')
-        print(request.form)
-        # print(json.loads(request.form['parameters']))
-        print(type(request.get_json()))
-        print(request.get_json())
-        result = results.get('ml_results')
-        return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.OK

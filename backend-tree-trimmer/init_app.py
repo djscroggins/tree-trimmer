@@ -5,7 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from config import config_by_name
-from api import tree_trimmer_api
+from src.api import tree_trimmer_api
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
