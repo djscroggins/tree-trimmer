@@ -20,7 +20,7 @@ export default class NodeSummary extends React.Component {
         node: { node_depth: undefined },
         isLeaf: undefined
       },
-      showNodeTrimOptions: false
+      showNodeTrimOptions: true
     };
   }
 
@@ -52,9 +52,14 @@ export default class NodeSummary extends React.Component {
 
     this._toggleRetrainButton();
 
-    d3.select("#trim-options").remove();
-    d3.select("#trim-options-table").remove();
-    d3.select("#retrain-button").remove();
+    const optionsContainer = "#trim-options";
+    const optionsTable = "#trim-options-table";
+    const retrainButton = "#retrain-button";
+
+    //TODO: This is interacting pretty weirdly with state reset
+    d3.select(optionsContainer).remove();
+    d3.select(optionsTable).remove();
+    d3.select(retrainButton).remove();
 
     // console.log(data_in);
 
@@ -65,7 +70,7 @@ export default class NodeSummary extends React.Component {
 
     const div = d3.select(instance.nodeSummaryContainer).append("div").attr("id", "trim-options");
 
-    const table = d3.select("#trim-options").append("table").attr("id", "trim-options-table").attr("class", "table tabled-borderd").attr("align", "center");
+    const table = d3.select(optionsContainer).append("table").attr("id", optionsTable).attr("class", "table tabled-borderd").attr("align", "center");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
@@ -195,7 +200,7 @@ export default class NodeSummary extends React.Component {
 
     const div = d3.select(this.nodeSummaryContainer).append("div").attr("id", "summary");
 
-    div.append("h3").append("text").text("Node Summary");
+    // div.append("h3").append("text").text("Node Summary");
 
     div.append("p").append("text").text("Depth: " + node.node_depth);
 
@@ -263,13 +268,16 @@ export default class NodeSummary extends React.Component {
     console.log(this.state.nodeData.isLeaf);
     const { nodeData } = this.state;
     const { node, isLeaf } = nodeData;
-    this._showTrimOptions(node, isLeaf, "Button");
+    // this._showTrimOptions(node, isLeaf, "Button");
+    // this.setState({ showNodeTrimOptions: true });
+
   };
 
   componentDidMount() {
     console.log("NodeSummaryDidMount");
     console.log(this.props.nodeData);
     // console.log(this.props.nodeIsLeaf);
+    // this.setState({ showNodeTrimOptions: true });
     const { nodeData, nodeIsLeaf } = this.props;
     if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
   }
@@ -298,8 +306,7 @@ export default class NodeSummary extends React.Component {
         {nodeData.node.node_depth > 0 ?
           <Button className='node-summary-button' label='Show Trim Options' onClick={this._onClick}/>
           : null}
-        {false ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray}/> : null}
-        {showNodeTrimOptions ? <div>Your Mom is a Node Trim</div> : null}
+        {showNodeTrimOptions ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray}/> : null}
 
 
       </Box>
