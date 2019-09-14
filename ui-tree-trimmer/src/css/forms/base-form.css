@@ -8,6 +8,10 @@ button {
     border: 2px solid var(--primary-accent-color);
 }
 
+button:hover:enabled {
+    border: 4px solid var(--primary-accent-color);
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -15,4 +19,8 @@ form {
     align-items: center;
 }
 
-
+.form-input {
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid grey;
+}

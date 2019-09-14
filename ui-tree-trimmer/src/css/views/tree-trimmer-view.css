@@ -1,0 +1,11 @@
+.tree-trimmer-view, .tree-trimmer-view-column-1 {
+    height: 100%;
+}
+
+.tree-trimmer-view-column-1 {
+    width: 100%;
+}
+
+.tree-trimmer-view-row-2 {
+    height: 80%
+}

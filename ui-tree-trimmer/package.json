@@ -32,7 +32,10 @@
     "webpackbar": "^3.2.0"
   },
   "dependencies": {
+    "bootstrap": "^4.3.1",
     "d3": "^3.5.17",
+    "jquery": "^3.2.1",
+    "popper.js": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "underscore": "^1.9.1"

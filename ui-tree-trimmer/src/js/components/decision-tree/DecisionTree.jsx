@@ -5,19 +5,21 @@ import _ from "lodash";
 
 import * as d3 from "d3";
 
+import "../../../css/decision-tree/decision-tree.css";
+
 export default class DecisionTree extends React.Component {
   constructor(props) {
     super(props);
     this.totalNodes = 0;
     this.maxLabelLength = 0;
-    // this.viewerWidth = window.innerWidth - 400;
-    // this.viewerHeight = window.innerHeight - 150;
+    this.circleNodeBaseClass = "node-circle";
+    this.parentNodeClasses = `${this.circleNodeBaseClass} parent-node`;
+    this.leafNodeClasses = `${this.circleNodeBaseClass} leaf-node`;
+    this.selectedNodeClass = "selected-node";
+    this.selectedNodeClasses = `${this.circleNodeBaseClass} ${this.selectedNodeClass}`;
     this.viewerWidth = undefined;
     this.viewerHeight = undefined;
     this.duration = 750;
-    this.parentNodeColor = "lightsteelblue";
-    this.leafNodeColor = "#fff";
-    this.nodeOnClickColor = "red";
     this.tree = this._getTree(this.viewerHeight, this.viewerWidth);
     this.zoomListener = this._getZoomListener();
     this.diagonal = this._getDiagonal();
@@ -164,14 +166,23 @@ export default class DecisionTree extends React.Component {
       });
   };
 
+  _setNodeClass = (node) => {
+    return node.children ? this.parentNodeClasses : this.leafNodeClasses;
+  };
+
   _appendNodeCircles = (node) => {
     const instance = this;
     node
       .append("circle")
-      .attr("class", "nodeCircle")
-      .attr("r", 4.5)
-      .style("fill", function(d) {
-        return d.children ? instance.parentNodeColor : instance.leafNodeColor;
+      .attr("class", function(d) {
+        return instance._setNodeClass(d);
+      })
+      .attr("r", 6)
+      .on("mouseover", function() {
+        d3.select(this).attr("r", 9);
+      })
+      .on("mouseout", function() {
+        d3.select(this).attr("r", 6);
       });
   };
 
@@ -216,16 +227,34 @@ export default class DecisionTree extends React.Component {
       });
   };
 
+  _setNodeAsSelected = (node) => {
+    node.attr("class", this.selectedNodeClasses);
+  };
+
   _bindOnClickHandler = (node) => {
     const instance = this;
     node
       .on("click", function(d) {
-        d3.selectAll(".nodeCircle").style("fill", function(d) {
-          return d.children ? instance.parentNodeColor : instance.leafNodeColor;
-        });
-        d3.select(this).select(".nodeCircle").style("fill", instance.nodeOnClickColor);
-        d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(node, true);
-        // d.node ? nodeSummary.renderNodeSummary(d.node, params.updateInteractionParameters, params.retrainTree) : nodeSummary.renderNodeSummary(d.leaf, params.updateInteractionParameters, params.retrainTree, true);
+        const baseClass = `.${instance.circleNodeBaseClass}`;
+        const element = d3.select(this).select(baseClass);
+        const nodeCircles = d3.selectAll(baseClass);
+
+        if (element.attr("class").includes(instance.selectedNodeClass)) {
+          instance.props.toggleNodeSummary(false);
+          instance._resetAllNodeColor(nodeCircles);
+        } else {
+          instance._resetAllNodeColor(nodeCircles);
+          instance._setNodeAsSelected(element);
+          d.node ? instance._displayNodeSummary(d.node) : instance._displayNodeSummary(d.leaf, true);
+        }
+      });
+  };
+
+  _resetAllNodeColor = (nodeCircles) => {
+    const instance = this;
+    nodeCircles
+      .attr("class", function(d) {
+        return instance._setNodeClass(d);
       });
   };
 
@@ -311,7 +340,7 @@ export default class DecisionTree extends React.Component {
 
   _update = (source) => {
     const instance = this;
-    console.log("UPDATE");
+    // console.log("UPDATE");
 
     // Compute the new height, function counts total children of root node and sets tree height accordingly.
     // This prevents the layout looking squashed when new nodes are made visible or looking sparse when nodes are removed
@@ -378,7 +407,7 @@ export default class DecisionTree extends React.Component {
 
   renderDecisionTree = () => {
 
-    console.log("renderDecisionTree");
+    // console.log("renderDecisionTree");
 
     const data = this.props.data.tree_json;
 

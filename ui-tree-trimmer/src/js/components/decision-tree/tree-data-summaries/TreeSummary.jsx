@@ -20,7 +20,7 @@ export default class TreeSummary extends React.Component {
     const summaryArray = Object.keys(this.props.mlResults["tree_summary"]);
     const valuesArray = Object.values(this.props.mlResults["tree_summary"]);
 
-    const table = d3.select(containerNode).append("table").attr("class", this.tableName);
+    const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered` );
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 

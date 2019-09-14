@@ -206,7 +206,7 @@ export default class ConfusionMatrix extends React.Component {
 
   render() {
     return (
-      <div ref={node => this.confusionMatrixContainer = node} className='parameter-table-container'/>
+      <div ref={node => this.confusionMatrixContainer = node} className='confusion-matrix-container'/>
     );
   }
 };

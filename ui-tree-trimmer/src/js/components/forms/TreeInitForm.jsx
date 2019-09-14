@@ -64,18 +64,19 @@ export default class TreeInitForm extends React.Component {
   render() {
     return (
       <form className='tree-init-form' onSubmit={this._initializeTree}>
+
         <Label margin='small'>Selection Criterion</Label>
-        <Select options={this.options} value={this.state.criterion.label}
+        <Select className='form-input' options={this.options} value={this.state.criterion.label}
                 placeHolder={"Gini"} name='selectionCriterion' onChange={this._setCriterion}/>
 
         <Label margin='small'>Max Depth</Label>
-        <NumberInput defaultValue={20} min={1} name='maxDepth' onChange={this._setMaxDepth}/>
+        <NumberInput className='form-input' defaultValue={20} min={1} name='maxDepth' onChange={this._setMaxDepth}/>
 
-        <Label margin='small'>Min Samples to Split On</Label>
-        <NumberInput defaultValue={2} min={2} name='minSamplesSplit' onChange={this._setMinSamplesSplit}/>
+        <Label margin='small'>Min Samples - Split</Label>
+        <NumberInput className='form-input' defaultValue={2} min={2} name='minSamplesSplit' onChange={this._setMinSamplesSplit}/>
 
-        <Label margin='small'>Min Samples Required in Leaf Nodes</Label>
-        <NumberInput defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
+        <Label margin='small'>Min Samples - Leaf</Label>
+        <NumberInput className='form-input' defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
 
         <CheckBox className='random-state-checkbox' defaultChecked={true} label='Random State' name='randomState'
                   toggle={true} onChange={this._toggleRandomState}/>

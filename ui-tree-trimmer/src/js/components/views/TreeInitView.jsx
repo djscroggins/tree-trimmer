@@ -5,6 +5,7 @@ const Box = require("grommet/components/Box");
 import FileLoadForm from "../forms/FileLoadForm";
 import TreeInitForm from "../forms/TreeInitForm";
 
+import "../../../css/views/tree-init-view.css";
 import "../../../css/forms/base-form.css";
 
 export default class TreeInitView extends React.Component {

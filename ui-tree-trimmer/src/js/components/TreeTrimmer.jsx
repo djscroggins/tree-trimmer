@@ -1,4 +1,3 @@
-//{criterion: "gini", max_depth: "20", min_samples_split: "2", min_samples_leaf: "1", random_state: true}
 import React from "react";
 
 import _ from "lodash";
@@ -62,10 +61,15 @@ export default class TreeTrimmer extends React.Component {
     })
       .then(response => {
         console.log(`updateParameters -> ${response.status}: ${response.statusText}`);
-        return response.json()
+        return response.json();
       })
       .then(json => {
-        this.setState({ parameters: _parameters, mlResults: json["ml_results"] });
+        this.setState({
+          parameters: _parameters,
+          mlResults: json["ml_results"],
+          showNodeSummary: false,
+          nodeData: undefined
+        });
       })
       .catch(error => {
         console.log("ERROR: ", error);
@@ -76,7 +80,7 @@ export default class TreeTrimmer extends React.Component {
   render() {
     const { appInitialized, mlResults, parameters, showNodeSummary, nodeIsLeaf, nodeData } = this.state;
     return (
-      <Box className='page-container' colorIndex='light-2'>
+      <Box className='application-view' colorIndex='light-2'>
         <AppHeader/>
         {appInitialized ?
           <TreeTrimmerView mlResults={mlResults} parameters={parameters} showNodeSummary={showNodeSummary}

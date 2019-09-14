@@ -1,8 +1,13 @@
 import React from "react";
 
 import * as d3 from "d3";
+import _ from "lodash";
 
-import "../../../../css/feature-table.css";
+const Box = require("grommet/components/Box");
+const Button = require("grommet/components/Button");
+const Title = require("grommet/components/Tile");
+
+import "../../../../css/decision-tree/tree-data-summaries/feature-table.css";
 
 export default class FeatureTable extends React.Component {
   constructor(props) {
@@ -15,6 +20,11 @@ export default class FeatureTable extends React.Component {
     this.headerLabels = ["Feature", "Score"];
     this.featuresToFilterArray = undefined;
     this.featureCount = 0;
+    this.state = {
+      retrainButtonStyle: {
+        display: "none"
+      }
+    };
   }
 
   _setFeaturesToFilter = (parameters) => {
@@ -25,14 +35,6 @@ export default class FeatureTable extends React.Component {
     this.featureCount = this.featuresToFilterArray.length + features.length;
   };
 
-  _createTitle = (title, node, elementName = this.featuresTitleClass) => {
-    return d3.select(node)
-      .append("div")
-      .attr("class", elementName)
-      .append("h3")
-      .append("text")
-      .text(title);
-  };
 
   _createWarningMessageDiv = (node, elementName = this.warningMessageDivClass, display = "none") => {
     return d3.select(node).append("div")
@@ -42,7 +44,7 @@ export default class FeatureTable extends React.Component {
 
   _createTable = (node, elementName = this.featureTableClass, align = "center") => {
     const table = d3.select(node).append("table")
-      .attr("class", elementName)
+      .attr("class", `${elementName} table table-bordered`)
       .attr("align", align);
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -104,9 +106,9 @@ export default class FeatureTable extends React.Component {
 
   _resetContainer = () => {
     // d3.selectAll("#features-hr").remove();
-    d3.selectAll("." + this.featuresTitleClass).remove();
+    // d3.selectAll("." + this.featuresTitleClass).remove();
     d3.selectAll("." + this.featureTableClass).remove();
-    d3.selectAll("." + this.featureTableButtonClass).remove();
+    // d3.selectAll("." + this.featureTableButtonClass).remove();
     d3.selectAll("." + this.warningMessageDivClass).remove();
     this._removeWarning();
   };
@@ -126,8 +128,10 @@ export default class FeatureTable extends React.Component {
   _toggleRetrainButton = (featuresToFilterArray) => {
     if (featuresToFilterArray.length > 0) {
       d3.select("." + this.featureTableButtonClass).attr("display", "block");
+      this.setState({ retrainButtonStyle: { display: "block" } });
     } else {
       d3.select("." + this.featureTableButtonClass).attr("display", "none");
+      this.setState({ retrainButtonStyle: { display: "none" } });
     }
   };
 
@@ -144,7 +148,6 @@ export default class FeatureTable extends React.Component {
     this._setFeatureCount(features);
 
 
-    const title = this._createTitle("Important Features", containerNode);
     const warningMessageDiv = this._createWarningMessageDiv(containerNode);
     const { table, thead, tbody } = this._createTable(containerNode);
 
@@ -153,49 +156,15 @@ export default class FeatureTable extends React.Component {
     const rows = this._createFeatureRows(tbody, features, warningMessageDiv);
 
     this._createCells(rows);
+  };
 
-    // TODO: This should be a normal ass button
-    const thisTable = document.getElementsByClassName(this.featureTableClass);
-    // Set svg dimensions relative to table dimensions
-    const svgWidth = thisTable[0].offsetWidth;
-    const svgHeight = 60;
-    const buttonWidth = svgWidth - 10;
-    const buttonHeight = svgHeight - 10;
+  _updateParameters = () => {
+    console.log("UPDATE PARAMETERS");
+    this.props.updateParameters("filter_feature", this.featuresToFilterArray);
+  };
 
-    // Build svg
-    const svg = d3.select(containerNode)
-      .append("svg")
-      .attr("class", this.featureTableButtonClass)
-      .attr("width", svgWidth)
-      .attr("height", svgHeight)
-      // Center svg in div
-      .style("margin", "0 auto")
-      .attr("display", "none");
-
-    // Build rectangle
-    svg.append("g")
-      .append("rect")
-      .attr("x", (svgWidth - buttonWidth) / 2)
-      .attr("y", (svgHeight - buttonHeight) / 2)
-      .attr("width", buttonWidth)
-      .attr("height", buttonHeight)
-      .style("fill", "lightgreen")
-      .attr("rx", 10)
-      .attr("ry", 10)
-      .on("click", function() {
-        instance.props.updateParameters("filter_feature", instance.featuresToFilterArray);
-      });
-
-    svg.append("text")
-      .attr("x", svgWidth / 2)
-      .attr("y", svgHeight / 2)
-      .attr("dy", ".35em")
-      .attr("text-anchor", "middle")
-      // Ensure clicking on rectangle and text appear as single event to user
-      .text("Re-train tree")
-      .on("click", function() {
-        instance.props.updateParameters("filter_feature", instance.featuresToFilterArray);
-      });
+  _resetFiltersToFeatureArray = () => {
+    this.featuresToFilterArray.length = 0;
   };
 
   componentDidMount() {
@@ -205,14 +174,26 @@ export default class FeatureTable extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.mlResults.important_features) {
+    // console.log("FeatureTable Did Update");
+    // console.log(this.featuresToFilterArray);
+    const oldFeatures = prevProps.mlResults.important_features;
+    const newFeatures = this.props.mlResults.important_features;
+
+    if (!_.isEqual(oldFeatures, newFeatures)) {
+      // console.log("re-rendering feature table");
+      this._resetFiltersToFeatureArray();
       this.renderFeatureTable();
     }
   }
 
   render() {
+    const { retrainButtonStyle } = this.state;
     return (
-      <div ref={node => this.featureTableContainer = node}/>
+      <Box className='feature-label-box' align='center'>
+        <div className='feature-table-container' ref={node => this.featureTableContainer = node}/>
+        <Button className='feature-table-retrain-tree-button' label='Retrain Tree' onClick={this._updateParameters}
+                style={retrainButtonStyle}/>
+      </Box>
     );
   }
 };

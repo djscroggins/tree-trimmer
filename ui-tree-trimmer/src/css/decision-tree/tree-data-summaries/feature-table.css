@@ -1,0 +1,17 @@
+#important-features {
+    margin-top: 20px;
+    border-top: 1px solid black;
+}
+
+.features-title {
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.warning-message-div {
+    text-align: center;
+}
+
+/*.feature-table-retrain-tree-button {*/
+/*    display: none;*/
+/*}*/

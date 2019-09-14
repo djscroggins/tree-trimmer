@@ -1,8 +1,6 @@
 import React from "react";
-
 import * as d3 from "d3";
-
-import round from "../../../common/round";
+import _ from "lodash";
 
 export default class AccuracyReport extends React.Component {
   constructor(props) {
@@ -20,9 +18,10 @@ export default class AccuracyReport extends React.Component {
     const containerNode = this.accuracyTableContainer;
     const confusionMatrix = this.props.mlResults["confusion_matrix"];
 
-    const accuracyScore = [round(this.sumTruePositives(confusionMatrix) / this.computeInstanceSum(confusionMatrix), 4) * 100];
+    const accuracy = this.sumTruePositives(confusionMatrix) / this.computeInstanceSum(confusionMatrix);
+    const accuracyScore = [_.round(accuracy, 4) * 100];
 
-    const table = d3.select(containerNode).append("table").attr("class", "accuracy-table");
+    const table = d3.select(containerNode).append("table").attr("class", "accuracy-table table table-bordered");
     const thead = table.append("body");
     const tbody = table.append("tbody");
 
@@ -31,13 +30,17 @@ export default class AccuracyReport extends React.Component {
       .data(label)
       .enter()
       .append("th")
-      .text(function (d) {return d;});
+      .text(function(d) {
+        return d;
+      });
 
     tbody.selectAll("td")
       .data(accuracyScore)
       .enter()
       .append("td")
-      .text(function (d) {return d;})
+      .text(function(d) {
+        return d;
+      })
       .attr("align", "center");
 
   };
