@@ -1,16 +1,25 @@
 import React from "react";
 import * as d3 from "d3";
+import _ from "lodash";
 
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
 
 export default class NodeTrimOptions extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showRetrainTreeButton: false
+    };
+  }
 
   _toggleRetrainButton = () => {
+    console.log("NodeTrimOptions _toggleRetrainButton");
+    // this.setState({showRetrainTreeButton: !this.state.showRetrainTreeButton})
     if (this.props.updateArray.length > 0) {
-      d3.select("#retrain-button").attr("display", "block");
+      this.setState({showRetrainTreeButton: true});
     } else {
-      d3.select("#retrain-button").attr("display", "none");
+     this.setState({showRetrainTreeButton: false});
     }
   };
 
@@ -73,7 +82,7 @@ export default class NodeTrimOptions extends React.Component {
     console.log("showTrimOptions");
     console.log("isLeaf: ", leaf);
 
-    this._toggleRetrainButton();
+    // this._toggleRetrainButton();
 
     const optionsContainer = "#trim-options";
     const optionsTable = "#trim-options-table";
@@ -124,6 +133,9 @@ export default class NodeTrimOptions extends React.Component {
   };
 
   _updateParameters = () => {
+    console.log("NodeTrimOptions: _updateParameters");
+    console.log("updateArray, ", this.props.updateArray);
+    this.props.updateParameters(this.props.updateArray[0], this.props.updateArray[1]);
   };
 
   componentDidMount() {
@@ -138,12 +150,12 @@ export default class NodeTrimOptions extends React.Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     const node = this.props.node;
     const leaf = this.props.isLeaf;
     console.log("NodeTrimOptions: DID UPDATE");
 
-    if (node.node_depth) {
+    if (!_.isEqual(prevProps.node, node)) {
       console.log("NodeTrimOptions: nodeData: ", node);
       console.log("NodeTrimOptions: isLeaf: ", leaf);
       console.log("Rendering Node TrimOptions!");
@@ -154,10 +166,11 @@ export default class NodeTrimOptions extends React.Component {
 
 
   render() {
+    const { showRetrainTreeButton } = this.state;
     return (
       <Box>
         <div className='node-trim-options' ref={node => this.nodeTrimOptionsContainer = node}/>
-        <Button label='Retrain Tree'/>
+        {showRetrainTreeButton ? <Button label='Retrain Tree' onClick={this._updateParameters}/> : null}
       </Box>
     );
   }

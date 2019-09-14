@@ -309,7 +309,10 @@ export default class NodeSummary extends React.Component {
         {nodeData.node.node_depth > 0 ?
           <Button className='node-summary-button' label='Show Trim Options' onClick={this._onClick}/>
           : null}
-        {showNodeTrimOptions ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray} adjustUpdateArray={this.adjustUpdateArray}/> : null}
+        {showNodeTrimOptions ?
+          <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray}
+                           adjustUpdateArray={this.adjustUpdateArray}
+                           updateParameters={this.props.updateParameters}/> : null}
 
 
       </Box>
