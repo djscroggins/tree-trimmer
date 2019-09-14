@@ -21,7 +21,7 @@ export default class NodeSummary extends React.Component {
         isLeaf: undefined
       },
       showNodeTrimOptions: false,
-      showNodeTrimOptionsText: 'Show Trim Options'
+      showNodeTrimOptionsText: "Show Trim Options"
     };
   }
 
@@ -73,9 +73,9 @@ export default class NodeSummary extends React.Component {
     const { nodeData, showNodeTrimOptions, showNodeTrimOptionsText } = this.state;
     const { node, isLeaf } = nodeData;
     if (showNodeTrimOptions) {
-      this.setState({showNodeTrimOptions: false, showNodeTrimOptionsText: 'Show Trim Options'})
+      this.setState({ showNodeTrimOptions: false, showNodeTrimOptionsText: "Show Trim Options" });
     } else {
-      this.setState({ showNodeTrimOptions: true,  showNodeTrimOptionsText: 'Hide Trim Options'});
+      this.setState({ showNodeTrimOptions: true, showNodeTrimOptionsText: "Hide Trim Options" });
     }
     // this._showTrimOptions(node, isLeaf, "Button");
     // this.setState({ showNodeTrimOptions: true });
@@ -88,7 +88,10 @@ export default class NodeSummary extends React.Component {
     // console.log(this.props.nodeIsLeaf);
     // this.setState({ showNodeTrimOptions: true });
     const { nodeData, nodeIsLeaf } = this.props;
-    if (nodeData) this._renderNodeSummary(nodeData, nodeIsLeaf);
+    if (nodeData) {
+      this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
+      this._renderNodeSummary(nodeData, nodeIsLeaf);
+    }
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -97,18 +100,21 @@ export default class NodeSummary extends React.Component {
     // console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
     if (!_.isEqual(prevProps.nodeData, nodeData)) {
-      // console.log("Update: setting state");
+      console.log("NodeSummaryDidUpdate: setting state");
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
     }
 
-    if (this.state.nodeData.node) {
-      // console.log("Update: rendering Node summary");
+    if (!_.isEqual(prevState.nodeData.node, this.state.nodeData.node)) {
+      console.log("NodeSummaryDidUpdate: rendering Node summary");
+      console.log("prevState.nodeData.node: ", prevState.nodeData.node);
       this._renderNodeSummary(nodeData, nodeIsLeaf);
     }
   }
 
   render() {
     const { nodeData, showNodeTrimOptions, showNodeTrimOptionsText } = this.state;
+    console.log("React render()");
+    console.log(nodeData.node.node_depth);
     return (
       <Box className='node-summary-box' align='center'>
         <div className='node-summary-container' ref={node => this.nodeSummaryContainer = node}/>
