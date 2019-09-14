@@ -9,6 +9,8 @@ const Button = require("grommet/components/Button");
 
 import "../../../../css/decision-tree/tree-data-summaries/node-summary.css";
 
+import NodeTrimOptions from "./node-summary/NodeTrimOptions";
+
 export default class NodeSummary extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +19,8 @@ export default class NodeSummary extends React.Component {
       nodeData: {
         node: { node_depth: undefined },
         isLeaf: undefined
-      }
+      },
+      showNodeTrimOptions: false
     };
   }
 
@@ -37,12 +40,15 @@ export default class NodeSummary extends React.Component {
     return accumulator.join(", ");
   };
 
-  _showTrimOptions = (node, leaf) => {
+  _showTrimOptions = (node, leaf, caller = "SVG") => {
     //TODO: This should be its own component
+    console.log(`${caller}: NodeSummary: _showTrimOptions`);
+    console.log("node: ", node);
+    console.log("leaf: ", leaf);
+    // this.setState({ showNodeTrimOptions: true });
 
     const instance = this;
 
-    // console.log("showTrimOptions");
 
     this._toggleRetrainButton();
 
@@ -176,6 +182,8 @@ export default class NodeSummary extends React.Component {
 
   _renderNodeSummary = (node, leaf = false) => {
 
+    console.log("NodeSummary _renderNodeSummary");
+
     // this.setState({ nodeData: { node: node, isLeaf: leaf } });
 
     const instance = this;
@@ -207,46 +215,46 @@ export default class NodeSummary extends React.Component {
 
     // TODO: Convert to regular ass button
     // If not first node, draw trim button
-    console.log("Testing node state");
-    console.log(this.state.nodeData.node);
-    // if (node.node_depth > 0) {
-    //   const svg_height = 50;
-    //   const svg_width = 150;
-    //   const button_height = svg_height - 10;
-    //   const button_width = svg_width - 10;
-    //
-    //   const svg = div
-    //     .append("svg")
-    //     .attr("id", "trim-button")
-    //     .attr("width", svg_width)
-    //     .attr("height", svg_height)
-    //     // Center svg in div
-    //     .style("margin", "0 auto").attr("display", "block");
-    //
-    //   svg.append("g")
-    //     .append("rect")
-    //     .attr("x", (svg_width - button_width) / 2)
-    //     .attr("y", (svg_height - button_height) / 2)
-    //     .attr("width", button_width)
-    //     .attr("height", button_height)
-    //     .style("fill", "rgb(255, 179, 179")
-    //     .attr("rx", 10)
-    //     .attr("ry", 10)
-    //     .on("click", function() {
-    //       instance._showTrimOptions(node, leaf);
-    //     })
-    //   ;
-    //
-    //   svg.append("text")
-    //     .attr("x", svg_width / 2)
-    //     .attr("y", svg_height / 2)
-    //     .attr("dy", ".35em")
-    //     .attr("text-anchor", "middle")
-    //     // Ensure clicking on rectangle and text appear as single event to user
-    //     .text("Trim node options").on("click", function() {
-    //     instance._showTrimOptions(node, leaf);
-    //   });
-    // }
+    // console.log("Testing node state");
+    // console.log(this.state.nodeData.node);
+    if (false) {
+      const svg_height = 50;
+      const svg_width = 150;
+      const button_height = svg_height - 10;
+      const button_width = svg_width - 10;
+
+      const svg = div
+        .append("svg")
+        .attr("id", "trim-button")
+        .attr("width", svg_width)
+        .attr("height", svg_height)
+        // Center svg in div
+        .style("margin", "0 auto").attr("display", "block");
+
+      svg.append("g")
+        .append("rect")
+        .attr("x", (svg_width - button_width) / 2)
+        .attr("y", (svg_height - button_height) / 2)
+        .attr("width", button_width)
+        .attr("height", button_height)
+        .style("fill", "rgb(255, 179, 179")
+        .attr("rx", 10)
+        .attr("ry", 10)
+        .on("click", function() {
+          instance._showTrimOptions(node, leaf);
+        })
+      ;
+
+      svg.append("text")
+        .attr("x", svg_width / 2)
+        .attr("y", svg_height / 2)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        // Ensure clicking on rectangle and text appear as single event to user
+        .text("Trim node options").on("click", function() {
+        instance._showTrimOptions(node, leaf);
+      });
+    }
   };
 
   _onClick = () => {
@@ -255,7 +263,7 @@ export default class NodeSummary extends React.Component {
     console.log(this.state.nodeData.isLeaf);
     const { nodeData } = this.state;
     const { node, isLeaf } = nodeData;
-    this._showTrimOptions(node, isLeaf);
+    this._showTrimOptions(node, isLeaf, "Button");
   };
 
   componentDidMount() {
@@ -268,28 +276,31 @@ export default class NodeSummary extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.log("NodeSummaryDidUpdate");
-    console.log(this.props.nodeData);
+    // console.log(this.props.nodeData);
     // console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
     if (!_.isEqual(prevProps.nodeData, nodeData)) {
-      console.log("Update: setting state");
+      // console.log("Update: setting state");
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
     }
 
     if (this.state.nodeData.node) {
-      console.log("Update: rendering Node summary");
+      // console.log("Update: rendering Node summary");
       this._renderNodeSummary(nodeData, nodeIsLeaf);
     }
   }
 
   render() {
-    const { nodeData } = this.state;
+    const { nodeData, showNodeTrimOptions } = this.state;
     return (
       <Box className='node-summary-box' align='center'>
-        <div ref={node => this.nodeSummaryContainer = node}/>
+        <div className='node-summary-container' ref={node => this.nodeSummaryContainer = node}/>
         {nodeData.node.node_depth > 0 ?
           <Button className='node-summary-button' label='Show Trim Options' onClick={this._onClick}/>
           : null}
+        {false ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray}/> : null}
+        {showNodeTrimOptions ? <div>Your Mom is a Node Trim</div> : null}
+
 
       </Box>
     );
