@@ -8,6 +8,7 @@ const Button = require("grommet/components/Button");
 export default class NodeTrimOptions extends React.Component {
   constructor(props) {
     super(props);
+    this.updateArray = [];
     this.state = {
       showRetrainTreeButton: false
     };
@@ -16,62 +17,37 @@ export default class NodeTrimOptions extends React.Component {
   _toggleRetrainButton = () => {
     console.log("NodeTrimOptions _toggleRetrainButton");
     // this.setState({showRetrainTreeButton: !this.state.showRetrainTreeButton})
-    if (this.props.updateArray.length > 0) {
+    if (this.updateArray.length > 0) {
       this.setState({showRetrainTreeButton: true});
     } else {
      this.setState({showRetrainTreeButton: false});
     }
   };
 
-  _drawRetrainButton = () => {
-    const instance = this;
-    const thisTable = document.getElementById("trim-options-table");
-    const retrainSVGWidth = thisTable.offsetWidth;
-    const retrainSVGHeight = 60;
-    const retrainButtonWidth = retrainSVGWidth - 10;
-    const retrainButtonHeight = retrainSVGHeight - 10;
+  adjustUpdateArray = (node, option) => {
+    switch (option) {
+      case "Not enough samples to split":
+        let nNodeSamples = node.n_node_samples;
+        this.updateArray.splice(0, this.updateArray.length, "min_samples_split", nNodeSamples + 1);
+        break;
+      case "I want to limit the tree to this depth":
+        const nodeDepth = node.node_depth;
+        this.updateArray.splice(0, this.updateArray.length, "max_depth", nodeDepth);
+        break;
+      case "This node doesn't improve the tree enough":
+        const impurityDecrease = node.weighted_impurity_decrease;
+        this.updateArray.splice(0, this.updateArray.length, "min_impurity_decrease", impurityDecrease);
+        break;
+      case "Not enough samples in leaf":
+        const nLeafSamples = node.n_node_samples;
+        this.updateArray.splice(0, this.updateArray.length, "min_samples_leaf", nLeafSamples + 1);
+        break;
+      default:
+        console.log("Invalid option");
+    }
 
-    const retrainButton = d3.select("#trim-options")
-      .append("svg")
-      .attr("id", "retrain-button")
-      .attr("width", retrainSVGWidth)
-      .attr("height", retrainSVGHeight)
-      // Center svg in div
-      .style("margin", "0 auto")
-      .attr("display", "none");
-
-    retrainButton.append("g")
-      .append("rect")
-      .attr("x", (retrainSVGWidth - retrainButtonWidth) / 2)
-      .attr("y", (retrainSVGHeight - retrainButtonHeight) / 2)
-      .attr("width", retrainButtonWidth)
-      .attr("height", retrainButtonHeight)
-      .style("fill", "lightgreen")
-      .attr("rx", 10)
-      .attr("ry", 10)
-      .on("click", function() {
-        // console.log("Retraining tree: ", instance.updateArray);
-        instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
-        // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
-        // retrainTree();
-        // resetNodeSummary();
-        instance._resetContainer();
-      });
-
-    retrainButton.append("text")
-      .attr("x", retrainSVGWidth / 2)
-      .attr("y", retrainSVGHeight / 2)
-      .attr("dy", ".35em")
-      .attr("text-anchor", "middle")
-      // Ensure clicking on rectangle and text appear as single event to user
-      .text("Re-train tree").on("click", function() {
-      // console.log("Retraining tree: ", instance.updateArray);
-      instance.props.updateParameters(instance.updateArray[0], instance.updateArray[1]);
-      // updateInteractionParameters(instance.updateArray[0], instance.updateArray[1]);
-      // retrainTree();
-      // resetNodeSummary();
-      instance._resetContainer();
-    });
+    console.log("adjustUpdateArray");
+    console.log("updateArray ", this.updateArray);
   };
 
   _renderNodeTrimOptions = (node, leaf) => {
@@ -127,15 +103,15 @@ export default class NodeTrimOptions extends React.Component {
     tbody.selectAll("td").on("click", function(d) {
       d3.selectAll("td").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
-      instance.props.adjustUpdateArray(node, d);
+      instance.adjustUpdateArray(node, d);
       instance._toggleRetrainButton();
     });
   };
 
   _updateParameters = () => {
     console.log("NodeTrimOptions: _updateParameters");
-    console.log("updateArray, ", this.props.updateArray);
-    this.props.updateParameters(this.props.updateArray[0], this.props.updateArray[1]);
+    console.log("updateArray, ", this.updateArray);
+    this.props.updateParameters(this.updateArray[0], this.updateArray[1]);
   };
 
   componentDidMount() {
