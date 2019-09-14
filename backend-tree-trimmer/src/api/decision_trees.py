@@ -59,9 +59,7 @@ class DecisionTreeManager(Resource):
     @decision_trees.response(HTTPStatus.BAD_REQUEST, 'Bad Request', decision_trees_response)
     def post(self):
 
-        parameters = request.get_json()
-
-        _parameters['parameters'] = parameters
+        parameters = request.get_json().get('parameters')
 
         data_dict = self.get_data_set()
         data = copy.deepcopy(data_dict)
