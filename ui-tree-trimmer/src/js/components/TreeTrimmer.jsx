@@ -42,7 +42,7 @@ export default class TreeTrimmer extends React.Component {
 
 
   toggleNodeSummary = (bool) => {
-    this.setState({ showNodeSummary: bool});
+    this.setState({ showNodeSummary: bool });
   };
 
 
@@ -65,7 +65,12 @@ export default class TreeTrimmer extends React.Component {
         return response.json();
       })
       .then(json => {
-        this.setState({ parameters: _parameters, mlResults: json["ml_results"] });
+        this.setState({
+          parameters: _parameters,
+          mlResults: json["ml_results"],
+          showNodeSummary: false,
+          nodeData: undefined
+        });
       })
       .catch(error => {
         console.log("ERROR: ", error);

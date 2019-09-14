@@ -99,6 +99,9 @@ export default class NodeSummary extends React.Component {
     // console.log(this.props.nodeData);
     // console.log(this.props.nodeIsLeaf);
     const { nodeData, nodeIsLeaf } = this.props;
+
+    // console.log('nodeData', nodeData);
+
     if (!_.isEqual(prevProps.nodeData, nodeData)) {
       console.log("NodeSummaryDidUpdate: setting state");
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });

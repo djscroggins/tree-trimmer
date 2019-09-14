@@ -152,6 +152,8 @@ export default class NodeTrimOptions extends React.Component {
     const leaf = this.props.isLeaf;
     console.log("NodeTrimOptions: DID UPDATE");
 
+    console.log("node ", node);
+
     if (!_.isEqual(prevProps.node, node)) {
       console.log("NodeTrimOptions: nodeData: ", node);
       console.log("NodeTrimOptions: isLeaf: ", leaf);
