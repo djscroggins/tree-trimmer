@@ -5,6 +5,8 @@ import _ from "lodash";
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
 
+import { config } from "../../../../common/config";
+
 import "../../../../../css/decision-tree/tree-data-summaries/node-summary/node-trim-options.css";
 
 export default class NodeTrimOptions extends React.Component {
@@ -36,11 +38,10 @@ export default class NodeTrimOptions extends React.Component {
   };
 
   _resetUpdateArray = () => {
-    console.log("NodeTrimOptions _resetUpdateArray");
     this.updateArray.length = 0;
   };
 
-  adjustUpdateArray = (node, option) => {
+  _adjustUpdateArray = (node, option) => {
     switch (option) {
       case "Not enough samples to split":
         let nNodeSamples = node.n_node_samples;
@@ -61,14 +62,13 @@ export default class NodeTrimOptions extends React.Component {
       default:
         console.log("Invalid option");
     }
-    console.log("NodeTrimOptions adjustUpdateArray updateArray: ", this.updateArray);
   };
 
   _getTable = () => {
     return d3.select(this.nodeTrimOptionsContainer)
       .append("table")
       .attr("id", this.optionsTable)
-      .attr("class", "table tabled-bordered")
+      .attr("class", config.bootStrapTableClasses)
       .attr("align", "center");
   };
 
@@ -119,7 +119,7 @@ export default class NodeTrimOptions extends React.Component {
       d3.selectAll("td").attr("class", "unselected-td");
       if (elementClass === "unselected-td") {
         element.attr("class", "selected-td");
-        instance.adjustUpdateArray(node, d);
+        instance._adjustUpdateArray(node, d);
         instance._toggleRetrainButton();
       } else if (elementClass === "selected-td") {
         element.attr("class", "unselected-td");
@@ -143,19 +143,13 @@ export default class NodeTrimOptions extends React.Component {
   };
 
   _updateParameters = () => {
-    console.log("NodeTrimOptions: _updateParameters");
-    console.log("updateArray, ", this.updateArray);
     this.props.updateParameters(this.updateArray[0], this.updateArray[1]);
   };
 
   componentDidMount() {
-    console.log("NodeTrimOptions: DID MOUNT");
     const node = this.props.node;
     const leaf = this.props.isLeaf;
     if (node.node_depth) {
-      console.log("NodeTrimOptions: nodeData: ", node);
-      console.log("NodeTrimOptions: isLeaf: ", leaf);
-      console.log("Rendering Node TrimOptions!");
       this._renderNodeTrimOptions(node, leaf);
     }
   }
@@ -163,14 +157,8 @@ export default class NodeTrimOptions extends React.Component {
   componentDidUpdate(prevProps) {
     const node = this.props.node;
     const leaf = this.props.isLeaf;
-    console.log("NodeTrimOptions: DID UPDATE");
-
-    console.log("node ", node);
 
     if (!_.isEqual(prevProps.node, node)) {
-      console.log("NodeTrimOptions: nodeData: ", node);
-      console.log("NodeTrimOptions: isLeaf: ", leaf);
-      console.log("Rendering Node TrimOptions!");
       this._renderNodeTrimOptions(node, leaf);
     }
   }

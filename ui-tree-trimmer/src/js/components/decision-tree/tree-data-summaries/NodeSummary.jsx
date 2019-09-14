@@ -2,8 +2,6 @@ import React from "react";
 import * as d3 from "d3";
 import _ from "lodash";
 
-import round from "../../../common/round";
-
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
 
@@ -58,7 +56,7 @@ export default class NodeSummary extends React.Component {
     div.append("p").append("text").text(node.impurity[0] + " = " + node.impurity[1]);
 
     if (!leaf) {
-      div.append("p").append("text").text("Impurity decrease: " + round(node.weighted_impurity_decrease, 5) + " (" + node.percentage_impurity_decrease + "%)");
+      div.append("p").append("text").text("Impurity decrease: " + _.round(node.weighted_impurity_decrease, 4) + " (" + node.percentage_impurity_decrease + "%)");
     }
 
     div.append("p").append("text").text("Number of samples: " + node.n_node_samples);
