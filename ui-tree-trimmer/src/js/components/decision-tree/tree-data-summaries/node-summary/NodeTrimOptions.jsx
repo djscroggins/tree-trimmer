@@ -118,7 +118,7 @@ export default class NodeTrimOptions extends React.Component {
     tbody.selectAll("td").on("click", function(d) {
       d3.selectAll("td").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
-      instance._adjustUpdateArray(node, d);
+      instance.props.adjustUpdateArray(node, d);
       instance._toggleRetrainButton();
     });
   };

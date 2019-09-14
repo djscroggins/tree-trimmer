@@ -96,7 +96,7 @@ export default class NodeSummary extends React.Component {
     tbody.selectAll("td").on("click", function(d) {
       d3.selectAll("td").style("background-color", "transparent");
       d3.select(this).style("background-color", "rgb(255, 179, 179)");
-      instance._adjustUpdateArray(node, d);
+      instance.adjustUpdateArray(node, d);
       instance._toggleRetrainButton();
     });
   };
@@ -154,7 +154,7 @@ export default class NodeSummary extends React.Component {
   };
 
 
-  _adjustUpdateArray = (node, option) => {
+  adjustUpdateArray = (node, option) => {
     switch (option) {
       case "Not enough samples to split":
         let nNodeSamples = node.n_node_samples;
@@ -175,6 +175,9 @@ export default class NodeSummary extends React.Component {
       default:
         console.log("Invalid option");
     }
+
+    console.log("adjustUpdateArray");
+    console.log("updateArray ", this.updateArray);
   };
 
   _toggleRetrainButton = () => {
@@ -306,7 +309,7 @@ export default class NodeSummary extends React.Component {
         {nodeData.node.node_depth > 0 ?
           <Button className='node-summary-button' label='Show Trim Options' onClick={this._onClick}/>
           : null}
-        {showNodeTrimOptions ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray}/> : null}
+        {showNodeTrimOptions ? <NodeTrimOptions node={nodeData.node} isLeaf={nodeData.isLeaf} updateArray={this.updateArray} adjustUpdateArray={this.adjustUpdateArray}/> : null}
 
 
       </Box>
