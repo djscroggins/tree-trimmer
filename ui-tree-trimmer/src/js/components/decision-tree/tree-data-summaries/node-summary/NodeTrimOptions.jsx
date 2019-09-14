@@ -11,6 +11,11 @@ export default class NodeTrimOptions extends React.Component {
   constructor(props) {
     super(props);
     this.updateArray = [];
+    this.optionsContainer = "trim-options";
+    this.optionsTable = "trim-options-table";
+    this.optionsTableHeaderText = ["Why do you want to trim this node?"];
+    this.nodeOptionsText = ["Not enough samples to split", "I want to limit the tree to this depth", "This node doesn't improve the tree enough"];
+    this.leafOptionsText = ["Not enough samples in leaf", "I want to limit the tree to this depth"];
     this.state = {
       showRetrainTreeButton: false
     };
@@ -18,7 +23,6 @@ export default class NodeTrimOptions extends React.Component {
 
   _toggleRetrainButton = () => {
     console.log("NodeTrimOptions _toggleRetrainButton");
-    // this.setState({showRetrainTreeButton: !this.state.showRetrainTreeButton})
     if (this.updateArray.length > 0) {
       this.setState({ showRetrainTreeButton: true });
     } else {
@@ -26,7 +30,13 @@ export default class NodeTrimOptions extends React.Component {
     }
   };
 
+  _resetContainer = () => {
+    d3.select(this.optionsContainer).remove();
+    d3.select(this.optionsTable).remove();
+  };
+
   _resetUpdateArray = () => {
+    console.log("NodeTrimOptions _resetUpdateArray");
     this.updateArray.length = 0;
   };
 
@@ -51,82 +61,85 @@ export default class NodeTrimOptions extends React.Component {
       default:
         console.log("Invalid option");
     }
+    console.log("NodeTrimOptions adjustUpdateArray updateArray: ", this.updateArray);
   };
 
-  _renderNodeTrimOptions = (node, leaf) => {
-    //TODO: This should be its own component
+  _getTable = () => {
+    return d3.select(this.nodeTrimOptionsContainer)
+      .append("table")
+      .attr("id", this.optionsTable)
+      .attr("class", "table tabled-bordered")
+      .attr("align", "center");
+  };
 
-    const instance = this;
+  _bindHeaderText = (thead) => {
+    thead
+      .append("tr")
+      .selectAll("th")
+      .data(this.optionsTableHeaderText)
+      .enter()
+      .append("th")
+      .text(function(d) {
+        return d;
+      });
+  };
 
-    console.log("showTrimOptions");
-    console.log("isLeaf: ", leaf);
-
-    // this._toggleRetrainButton();
-
-    const optionsContainer = "#trim-options";
-    const optionsTable = "#trim-options-table";
-    const retrainButton = "#retrain-button";
-
-    d3.select(optionsContainer).remove();
-    d3.select(optionsTable).remove();
-    d3.select(retrainButton).remove();
-
-    // console.log(data_in);
-
-    const label = ["Why do you want to trim this node?"];
-
-    const node_options = ["Not enough samples to split", "I want to limit the tree to this depth", "This node doesn't improve the tree enough"];
-    const leaf_options = ["Not enough samples in leaf", "I want to limit the tree to this depth"];
-
-    const div = d3.select(instance.nodeTrimOptionsContainer).append("div").attr("id", "trim-options");
-
-    const table = d3.select(optionsContainer).append("table").attr("id", optionsTable).attr("class", "table tabled-borderd").attr("align", "center");
-    const thead = table.append("thead");
-    const tbody = table.append("tbody");
-
-    thead.append("tr").selectAll("th").data(label).enter().append("th").text(function(d) {
-      return d;
-    });
-
-
+  _bindRowData = (tbody, leaf) => {
     if (leaf) {
-      leaf_options.forEach((_, i, arr) =>
-        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").attr('class', 'unselected-td').text(function(d) {
-          return d;
-        }));
+      this.leafOptionsText.forEach((_, index, array) =>
+        tbody
+          .append("tr")
+          .selectAll("td")
+          .data(array.slice(index, index + 1))
+          .enter()
+          .append("td")
+          .attr("class", "unselected-td")
+          .text(function(d) {
+            return d;
+          }));
     } else {
-      node_options.forEach((_, i, arr) =>
-        tbody.append("tr").selectAll("td").data(arr.slice(i, i + 1)).enter().append("td").attr('class', 'unselected-td').text(function(d) {
+      this.nodeOptionsText.forEach((_, index, array) =>
+        tbody
+          .append("tr")
+          .selectAll("td")
+          .data(array.slice(index, index + 1))
+          .enter()
+          .append("td")
+          .attr("class", "unselected-td").text(function(d) {
           return d;
         }));
     }
+  };
 
-    // this._drawRetrainButton();
-
+  _bindOnClickHandler = (tbody, node) => {
+    const instance = this;
     tbody.selectAll("td").on("click", function(d) {
-      const clickedElement = d3.select(this);
-      const clickedElementBacgroundColor = clickedElement.style("background-color");
-      const clickedElementClass = clickedElement.attr("class");
-      console.log("Table Cell on Click Handler");
-      console.log("clickedElement: ", clickedElement);
-      console.log("clickedElement background-color ", clickedElementBacgroundColor);
-      console.log("clickedElement class", clickedElementClass);
+      const element = d3.select(this);
+      const elementClass = element.attr("class");
       d3.selectAll("td").attr("class", "unselected-td");
-      if (clickedElementClass === "unselected-td") {
-        // d3.select(this).style("background-color", "rgb(255, 179, 179)");
-        d3.select(this).attr("class", "selected-td");
+      if (elementClass === "unselected-td") {
+        element.attr("class", "selected-td");
         instance.adjustUpdateArray(node, d);
         instance._toggleRetrainButton();
-      } else if (clickedElementClass === 'selected-td') {
-        d3.select(this).attr("class", "unselected-td");
+      } else if (elementClass === "selected-td") {
+        element.attr("class", "unselected-td");
         instance._resetUpdateArray();
         instance._toggleRetrainButton();
       }
-
-      // const unselected = d3.selectAll("td.unselected-td");
-      // console.log("unselected td ", unselected);
-      // d3.select(this).style("background-color", "rgb(255, 179, 179)");
     });
+  };
+
+  _renderNodeTrimOptions = (node, leaf) => {
+
+    this._resetContainer();
+
+    const table = this._getTable();
+    const thead = table.append("thead");
+    const tbody = table.append("tbody");
+
+    this._bindHeaderText(thead);
+    this._bindRowData(tbody, leaf);
+    this._bindOnClickHandler(tbody, node);
   };
 
   _updateParameters = () => {
@@ -160,7 +173,6 @@ export default class NodeTrimOptions extends React.Component {
       console.log("Rendering Node TrimOptions!");
       this._renderNodeTrimOptions(node, leaf);
     }
-    // this._renderNodeTrimOptions(node, leaf);
   }
 
 
