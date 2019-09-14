@@ -5,14 +5,13 @@ from http import HTTPStatus
 from pathlib import Path
 import os
 import pickle
-import logging
 
 from flask import request, current_app
 from flask_restplus import Namespace, Resource, fields, marshal, abort
 
-from core.data_preprocessor import DataPreprocessor
-from core.decision_tree_wrapper import DecisionTreeWrapper
-from core.decision_tree_parser import DecisionTreeParser
+from ..core.data_preprocessor import DataPreprocessor
+from ..core.decision_tree_wrapper import DecisionTreeWrapper
+from ..core.decision_tree_parser import DecisionTreeParser
 
 decision_trees = Namespace(
     name='Decision Trees',
