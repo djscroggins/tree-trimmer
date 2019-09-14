@@ -1,4 +1,3 @@
-//{criterion: "gini", max_depth: "20", min_samples_split: "2", min_samples_leaf: "1", random_state: true}
 import React from "react";
 
 import _ from "lodash";

@@ -2,7 +2,7 @@ import React from "react";
 
 import ConfusionMatrix from "../decision-tree/tree-data-summaries/ConfusionMatrix";
 import FeatureTable from "../decision-tree/tree-data-summaries/FeatureTable";
-import NodeSummary from "../decision-tree/tree-data-summaries/NodeSummary";
+import NodeSummary from "../decision-tree/tree-data-summaries/node-summary/NodeSummary";
 import { config } from "../../common/config";
 
 const Box = require("grommet/components/Box");

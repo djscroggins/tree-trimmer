@@ -5,9 +5,9 @@ import _ from "lodash";
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
 
-import "../../../../css/decision-tree/tree-data-summaries/node-summary.css";
+import "../../../../../css/decision-tree/tree-data-summaries/node-summary.css";
 
-import NodeTrimOptions from "./node-summary/NodeTrimOptions";
+import NodeTrimOptions from "./NodeTrimOptions";
 
 export default class NodeSummary extends React.Component {
   constructor(props) {
