@@ -21,20 +21,10 @@ To run locally you will need Node v10.18.1 and Python 3.6.5 (or compatible versi
 ## Run in Docker
 
 ```bash
-./build-all
+./build-all && docker-compose up
 ```
 
-Scripts will run image detached, open browser window, then tail the logs. You'll need two shell instances
-
-```bash
-cd backend-tree-trimmer/
-./docker-run.sh
-```
-
-```bash
-cd ui-tree-trimmer/
-./docker-run.sh
-```
+UI can be viewed a [localhost:3000](http://localhost:3000/), swagger docs for API at [localhost:5000/api/v1](http://localhost:5000/api/v1)
 
 ## Run Locally (separate shells)
 
