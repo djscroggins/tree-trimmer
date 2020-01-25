@@ -82,7 +82,7 @@ class DecisionTreeManager(Resource):
             result.update(parsed_tree)
 
             with open('file_storage/data-dict.pickle', 'wb') as f:
-                pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
+                pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
             results['ml_results'] = result
 
