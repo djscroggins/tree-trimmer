@@ -1,6 +1,7 @@
 import React from "react";
 
-import _ from "lodash";
+// import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 const Box = require("grommet/components/Box");
 
@@ -51,9 +52,9 @@ export default class TreeTrimmer extends React.Component {
 
 
   updateParameters = (param, value) => {
-    const _parameters = _.cloneDeep(this.state.parameters);
+    const _parameters = cloneDeep(this.state.parameters);
     _parameters[param] = value;
-    fetch("http://localhost:5000/decision-trees", {
+    fetch(`${process.env.API_HOST}/${process.env.DECISION_TREE_NS}`, {
       mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json" },

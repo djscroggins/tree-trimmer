@@ -24,7 +24,7 @@ export default class FileLoadForm extends React.Component {
     formData.append("file", this.state.selectedFile);
     formData.append("target_index", this.state.targetIndex);
 
-    fetch("http://localhost:5000/files", {
+    fetch(`${process.env.API_HOST}/${process.env.FILES_NS}`, {
       mode: "cors",
       method: "POST",
       body: formData

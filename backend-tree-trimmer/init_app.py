@@ -1,5 +1,6 @@
 import os
 import pickle
+from pathlib import Path
 
 from flask import Flask
 from flask_cors import CORS
@@ -11,12 +12,16 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 
 
 def create_data_dict():
-    with open('file_storage/data-dict.pickle', 'wb') as f:
+    data_dict_path = Path('file_storage/data-dict.pickle').resolve()
+
+    # if not data_dict_path.exists():
+    #     os.mknod(data_dict_path)
+
+    with open(data_dict_path, 'wb') as f:
         pickle.dump(dict(), f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def create_app(config_name: str) -> Flask:
-
     create_data_dict()
 
     app = Flask(__name__,
