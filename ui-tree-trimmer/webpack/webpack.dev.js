@@ -1,6 +1,6 @@
 const WebpackBar = require("webpackbar");
 const merge = require("webpack-merge");
-const config = require("./webpack.config.js");
+const config = require("./webpack.base.js");
 
 
 module.exports = merge(config, {
