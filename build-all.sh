@@ -1,4 +1,4 @@
-cd backend-tree-trimmer/
+cd react-app/
 ./build.sh
-cd ../ui-tree-trimmer/
+cd ../flask-app/
 ./build.sh
