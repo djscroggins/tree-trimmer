@@ -1,5 +1,4 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const WebpackBar = require("webpackbar");
 module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".css"]
@@ -36,7 +35,7 @@ module.exports = {
           },
           {
             loader: "sass-loader", options: {
-              includePaths: ["./node_modules", "./node_modules/grommet/node_modules"]
+              includePaths: ["../node_modules", "../node_modules/grommet/node_modules"]
             }
           }
         ]
@@ -48,6 +47,5 @@ module.exports = {
       template: "./src/index.html",
       filename: "./index.html"
     }),
-    new WebpackBar()
   ]
 };
