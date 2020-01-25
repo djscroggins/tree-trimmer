@@ -9,7 +9,7 @@ class Config:
 
 
 class DevServer(Config):
-    FLASK_HOST = '0.0.0.0'
+    FLASK_HOST = 'localhost'
     FLASK_PORT = 5000
     DEBUG = True
 
