@@ -5,4 +5,8 @@ file_storage/iris.csv
 file_storage/windeplus.csv
 .DS_Store
 .dockerignore
+.env
+build.sh
+docker-run.sh
+.gitignore
 

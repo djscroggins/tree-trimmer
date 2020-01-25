@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-source ../.env.build
+source ../.env
 docker build -t api-tree-trimmer:${API_BUILD} .
