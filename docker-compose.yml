@@ -1,0 +1,10 @@
+version: '3'
+services:
+  api:
+    image: api-tree-trimmer:0.0.1
+    ports:
+      - "5000:80"
+  ui:
+    image: ui-tree-trimmer:0.0.1
+    ports:
+      - "3000:3000"
