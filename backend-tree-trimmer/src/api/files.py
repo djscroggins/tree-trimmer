@@ -30,13 +30,13 @@ class FileManager(Resource):
 
     @staticmethod
     def allowed_file(filename) -> bool:
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in config.get('ALLOWED_EXTENSIONS')
 
     @files.response(HTTPStatus.CREATED, 'File successfully loaded', file_upload_response)
     @files.response(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted', file_upload_response)
     def post(self):
 
-        current_user = config.get('default_user')
+        current_user = config.get('DEFAULT_USER')
         self._storage_manager.initialize_user_data(current_user)
         data_dict = self._storage_manager.get_user_data(current_user)
 

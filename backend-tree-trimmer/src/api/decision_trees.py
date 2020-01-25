@@ -55,7 +55,7 @@ class DecisionTreeManager(Resource):
     def post(self):
 
         parameters = request.get_json().get('parameters')
-        current_user = config.get('default_user')
+        current_user = config.get('DEFAULT_USER')
         data_dict = self._storage_manager.get_user_data(current_user)
         data = copy.deepcopy(data_dict)
 
