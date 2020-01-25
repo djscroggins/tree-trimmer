@@ -9,6 +9,9 @@ from flask_restplus import Namespace, Resource, fields, marshal, abort
 from werkzeug.utils import secure_filename
 
 from ..core.data_preprocessor import DataPreprocessor
+from config import config
+from ..common.storage import StorageManager
+# from run import initialized_app as app
 
 # from api import data_dict
 
@@ -27,7 +30,8 @@ file_upload_response = files.model('file_upload_response', {
 class FileManager(Resource):
 
     def __init__(self, *args, **kwargs):
-        self.UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+        self.UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'files_storage/')
+        self._storage_manager: StorageManager = current_app.storage_manager
         super().__init__(*args, **kwargs)
 
     @staticmethod
@@ -38,10 +42,9 @@ class FileManager(Resource):
     @files.response(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted', file_upload_response)
     def post(self):
 
-        app_path = Path(__file__).parents[1]
-
-        with open(os.path.join(app_path, self.UPLOAD_FOLDER + 'data-dict.pickle'), 'rb') as f:
-            data_dict = pickle.load(f)
+        current_user = config.get('default_user')
+        self._storage_manager.initialize_user_data(current_user)
+        data_dict = self._storage_manager.get_user_data(current_user)
 
         print(request.headers)
         print(request.form)

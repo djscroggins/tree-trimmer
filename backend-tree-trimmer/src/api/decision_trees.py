@@ -38,18 +38,22 @@ post_body = decision_trees.model('post_body', {
 
 results = {}
 _parameters = {}
+DEFAULT_USER = 'david'
 
 
 @decision_trees.route('')
 class DecisionTreeManager(Resource):
 
     def __init__(self, *args, **kwargs):
-        self.UPLOAD_FOLDER = current_app.config['UPLOAD_FOLDER']
+        self.UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'file_storage/')
         super().__init__(*args, **kwargs)
 
     def get_data_set(self):
-        app_path = Path(__file__).parents[1]
-        with open(os.path.join(app_path, self.UPLOAD_FOLDER + 'data-dict.pickle'), 'rb') as f:
+        app_path = Path(__file__).parents[2]
+        # with open(os.path.join(app_path, self.UPLOAD_FOLDER + 'data-dict.pickle'), 'rb') as f:
+        #     data_dict = pickle.load(f)
+
+        with open(app_path.joinpath(self.UPLOAD_FOLDER, 'data-dict.pickle'), 'rb') as f:
             data_dict = pickle.load(f)
 
         return data_dict

@@ -18,6 +18,9 @@ ENV STATIC_PATH /app/static
 # ENV STATIC_INDEX 1
 ENV STATIC_INDEX 0
 
+ENV UPLOAD_FOLDER=file_storage/
+ENV STORAGE_BASE=storage/
+
 # Move the base entrypoint to reuse it
 RUN mv /entrypoint.sh /uwsgi-nginx-entrypoint.sh
 # Copy the entrypoint that will generate Nginx additional configs
