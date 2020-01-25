@@ -9,10 +9,6 @@ from ..core.data_preprocessor import DataPreprocessor
 from config import config
 from ..common.storage import StorageManager
 
-# from run import initialized_app as app
-
-# from api import data_dict
-
 files = Namespace(
     name='Files',
     description='API for file management',
