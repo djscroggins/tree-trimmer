@@ -1,7 +1,6 @@
 import os
 import pickle
 from pathlib import Path
-from typing import Union
 
 from werkzeug.utils import secure_filename
 
