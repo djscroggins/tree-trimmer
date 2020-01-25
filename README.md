@@ -14,7 +14,7 @@ To run locally you will need Node v10.18.1 and Python 3.6.5 (or compatible versi
 
 The React app requires ```.env``` files to run on your machine and expects the file to be in ```environments``` directory.
 
-Right now the config is simple. Create the following in ```ui/environments/.env.local``` and ```ui/environments/.env```:
+Right now the config is simple. Create the following in ```react-app/environments/.env.local``` and ```react-app/environments/.env```:
 
 ```bash
 API_HOST=http://localhost:5000
@@ -24,7 +24,7 @@ FILES_NS=files
 
 #### Flask
 
-For local development you need ```api/.env```
+For local development you need ```flask-app/.env```
 
 ```bash
 FLASK_ENV=development
@@ -56,13 +56,13 @@ UI can be viewed a [localhost:3000](http://localhost:3000/), swagger docs for AP
 ### Run Locally (separate shells)
 
 ```bash
-cd ui-tree-trimmer/
+cd react-app/
 npm install
 npm start
 ```
 
 ```bash
-cd backend-tree-trimmer/
+cd flask-app/
 pip install -r requirements.txt
 ./dev-run.sh
 ```
