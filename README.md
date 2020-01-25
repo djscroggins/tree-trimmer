@@ -20,6 +20,13 @@ To run locally you will need Node v10.18.1 and Python 3.6.5 (or compatible versi
 
 ## Run in Docker
 
+Create ```.env``` file in root with desired tags. Tags are picked up by docker-compose, build scripts and individual run scripts:
+
+```bash
+UI_BUILD=0.0.1
+API_BUILD=0.0.1
+```
+
 ```bash
 ./build-all && docker-compose up
 ```
