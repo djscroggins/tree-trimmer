@@ -1,11 +1,11 @@
 import React from "react";
 
 import * as d3 from "d3";
-import _ from "lodash";
+// import _ from "lodash";
+import isEqual from "lodash/isEqual";
 
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
-const Title = require("grommet/components/Tile");
 
 import "../../../../css/decision-tree/tree-data-summaries/feature-table.css";
 
@@ -179,7 +179,7 @@ export default class FeatureTable extends React.Component {
     const oldFeatures = prevProps.mlResults.important_features;
     const newFeatures = this.props.mlResults.important_features;
 
-    if (!_.isEqual(oldFeatures, newFeatures)) {
+    if (!isEqual(oldFeatures, newFeatures)) {
       // console.log("re-rendering feature table");
       this._resetFiltersToFeatureArray();
       this.renderFeatureTable();

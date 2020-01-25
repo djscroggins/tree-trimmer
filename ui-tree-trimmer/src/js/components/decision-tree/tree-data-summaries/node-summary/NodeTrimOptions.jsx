@@ -1,6 +1,7 @@
 import React from "react";
 import * as d3 from "d3";
-import _ from "lodash";
+// import _ from "lodash";
+import isEqual from "lodash/isEqual";
 
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
@@ -158,7 +159,7 @@ export default class NodeTrimOptions extends React.Component {
     const node = this.props.node;
     const leaf = this.props.isLeaf;
 
-    if (!_.isEqual(prevProps.node, node)) {
+    if (!isEqual(prevProps.node, node)) {
       this._renderNodeTrimOptions(node, leaf);
     }
   }

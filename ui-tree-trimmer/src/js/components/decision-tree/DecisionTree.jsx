@@ -1,7 +1,8 @@
 //TODO: Move container names to config object
 import React from "react";
 
-import _ from "lodash";
+// import _ from "lodash";
+import isEqual from "lodash/isEqual";
 
 import * as d3 from "d3";
 
@@ -447,7 +448,7 @@ export default class DecisionTree extends React.Component {
     // console.log("new data, ", this.props.data.tree_json);
     const prevData = prevProps.data.tree_json;
     const newData = this.props.data.tree_json;
-    if (!_.isEqual(prevData, newData)) {
+    if (!isEqual(prevData, newData)) {
       // console.log("Re-rendering decision tree");
       this.renderDecisionTree();
     }

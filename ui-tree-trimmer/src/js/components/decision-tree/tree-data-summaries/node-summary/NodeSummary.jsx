@@ -1,6 +1,8 @@
 import React from "react";
 import * as d3 from "d3";
-import _ from "lodash";
+// import _ from "lodash";
+import isEqual from "lodash/isEqual";
+import round from "lodash/round";
 
 const Box = require("grommet/components/Box");
 const Button = require("grommet/components/Button");
@@ -50,7 +52,7 @@ export default class NodeSummary extends React.Component {
     div.append("p").append("text").text(node.impurity[0] + " = " + node.impurity[1]);
 
     if (!leaf) {
-      div.append("p").append("text").text("Impurity decrease: " + _.round(node.weighted_impurity_decrease, 4) + " (" + node.percentage_impurity_decrease + "%)");
+      div.append("p").append("text").text("Impurity decrease: " + round(node.weighted_impurity_decrease, 4) + " (" + node.percentage_impurity_decrease + "%)");
     }
 
     div.append("p").append("text").text("Number of samples: " + node.n_node_samples);
@@ -82,12 +84,12 @@ export default class NodeSummary extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { nodeData, nodeIsLeaf } = this.props;
-    if (!_.isEqual(prevProps.nodeData, nodeData)) {
+    if (!isEqual(prevProps.nodeData, nodeData)) {
       console.log("NodeSummaryDidUpdate: setting state");
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
     }
 
-    if (!_.isEqual(prevState.nodeData.node, this.state.nodeData.node)) {
+    if (!isEqual(prevState.nodeData.node, this.state.nodeData.node)) {
       console.log("NodeSummaryDidUpdate: rendering Node summary");
       console.log("prevState.nodeData.node: ", prevState.nodeData.node);
       this._renderNodeSummary(nodeData, nodeIsLeaf);
