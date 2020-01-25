@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-docker run -i -p 5000:80 tree-trimmer:0.0.1
+container=$(docker run -d -p 5000:80 tree-trimmer:0.0.1) \
+&& sleep 5 \
+&& open http://localhost:5000/api/v1 \
+&& docker logs -f $container

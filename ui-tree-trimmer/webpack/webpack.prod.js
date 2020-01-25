@@ -2,6 +2,9 @@ const merge = require("webpack-merge");
 const webpack = require("webpack");
 const path = require("path");
 const config = require("./webpack.base.js");
+const dotenv = require('dotenv-webpack');
+
+const envBasePath = path.resolve(__dirname, "../environments");
 
 module.exports = merge(config, {
   optimization: {
@@ -17,5 +20,10 @@ module.exports = merge(config, {
       'process.env': {
         'NODE_ENV': 'production'
       }
-    })]
+    }),
+    new dotenv({
+      path: `${envBasePath}/.env`,
+      systemvars: true
+    })
+  ]
 });
