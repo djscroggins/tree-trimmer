@@ -55,20 +55,23 @@ class FileManager(Resource):
         target_index = loads((request.form['target_index']))
         print(target_index)
 
-        if not os.path.isdir(self.UPLOAD_FOLDER):
-            os.makedirs(self.UPLOAD_FOLDER)
+        # if not os.path.isdir(self.UPLOAD_FOLDER):
+        #     os.makedirs(self.UPLOAD_FOLDER)
 
         if file and self.allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(self.UPLOAD_FOLDER, filename)
-            file.save(file_path)
+            # filename = secure_filename(file.filename)
+            # file_path = os.path.join(self.UPLOAD_FOLDER, filename)
+            # file.save(file_path)
+            file_path: Path = self._storage_manager.save_user_data_file(current_user, file)
 
             dpp = DataPreprocessor()
-            numpy_dict = dpp.file_to_numpy(file_path, target_index)
+            # TODO: Pass Path instance to this method
+            numpy_dict = dpp.file_to_numpy(str(file_path), target_index)
             data_dict.update(numpy_dict)
 
-            with open(self.UPLOAD_FOLDER + 'data-dict.pickle', 'wb') as f:
-                pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
+            self._storage_manager.update_user_data(current_user, data_dict)
+            # with open(self.UPLOAD_FOLDER + 'data-dict.pickle', 'wb') as f:
+            #     pickle.dump(data_dict, f, protocol=pickle.HIGHEST_PROTOCOL)
 
             return marshal(dict(message='File successfully loaded'), file_upload_response), HTTPStatus.CREATED
 
