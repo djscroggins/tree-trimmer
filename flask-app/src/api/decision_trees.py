@@ -47,6 +47,7 @@ class DecisionTreeManager(Resource):
         self._data_preprocessor = DataPreprocessor()
         self._dt_wrapper = DecisionTreeWrapper
         self._dt_parser = DecisionTreeParser
+        self._logger = current_app.logger
         super().__init__(*args, **kwargs)
 
     @decision_trees.expect(post_body)
@@ -81,6 +82,6 @@ class DecisionTreeManager(Resource):
 
             return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.CREATED
         except AssertionError as e:
-            print(e)
-            print(traceback.print_exc())
+            self._logger.error(e)
+            self._logger.error((traceback.print_exc()))
             abort(HTTPStatus.BAD_REQUEST, str(e))

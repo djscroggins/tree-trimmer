@@ -1,12 +1,20 @@
 from typing import List, Dict
+import os
+from logging import DEBUG, INFO
 
+from flask import current_app
 import numpy as np
 import pandas as pd
 from pandas.core.frame import DataFrame
 from pytypes import typechecked
 
+from .custom_logging import Logger
+
 
 class DataPreprocessor:
+
+    def __init__(self):
+        self._logger = current_app.logger
 
     @typechecked
     def _get_target(self, df: DataFrame, target_index: int) -> np.ndarray:

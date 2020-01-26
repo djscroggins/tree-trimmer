@@ -26,6 +26,7 @@ class FileManager(Resource):
     def __init__(self, *args, **kwargs):
         self._storage_manager: StorageManager = current_app.storage_manager
         self._data_preprocessor = DataPreprocessor()
+        self._logger = current_app.logger
         super().__init__(*args, **kwargs)
 
     @staticmethod

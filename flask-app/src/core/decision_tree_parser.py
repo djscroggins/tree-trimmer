@@ -1,5 +1,6 @@
 from typing import List, Dict, Union
 
+from flask import current_app
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from pytypes import typechecked
@@ -9,6 +10,7 @@ class DecisionTreeParser:
     """
     Class for parsing scikit-learn DecisionTreeClassifier tree data structure.
     """
+
     @typechecked
     def __init__(self, clf: DecisionTreeClassifier, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
@@ -20,6 +22,7 @@ class DecisionTreeParser:
         self.target_data = data.get('target')
         self.criterion = parameters.get('criterion')
         self.labels = data.get('labels').tolist()
+        self._logger = current_app.logger
 
     @typechecked
     def _get_node_data(self, node_index: int, leaf: bool = False) \

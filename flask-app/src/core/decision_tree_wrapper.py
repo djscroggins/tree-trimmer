@@ -1,5 +1,6 @@
 from typing import List, Tuple, Dict, Union
 
+from flask import current_app
 import numpy as np
 from pytypes import typechecked
 from sklearn.metrics import confusion_matrix as skl_confusion_matrix
@@ -26,6 +27,7 @@ class DecisionTreeWrapper:
             else min_impurity_decrease + 0.0001
         self.random_state = 7 if parameters.get('random_state') else None
         self.classifier = None
+        self._logger = current_app.logger
 
     @typechecked
     def _get_top_features(self, limit: int = 10) -> List[Tuple[str, np.float64]]:
