@@ -28,7 +28,6 @@ class DataPreprocessor:
 
     @typechecked
     def _get_features(self, df: DataFrame, target_index: int) -> DataFrame:
-        print(type(df))
         feature_indices = [x for x in range(df.shape[1]) if x != target_index]
         return df.iloc[:, feature_indices]
 

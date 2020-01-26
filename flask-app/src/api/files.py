@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, dumps
 from http import HTTPStatus
 from pathlib import Path
 
@@ -43,6 +43,8 @@ class FileManager(Resource):
 
         file = request.files['file']
 
+        self._logger.info(f'Request to upload {file.filename}')
+
         target_index = loads((request.form['target_index']))
 
         if file and self.allowed_file(file.filename):
@@ -55,7 +57,10 @@ class FileManager(Resource):
 
             self._storage_manager.update_user_data(current_user, data_dict)
 
-            return marshal(dict(message='File successfully loaded'), file_upload_response), HTTPStatus.CREATED
+            self._logger.info(f'{file.filename} successfully uploaded')
+
+            return marshal(dict(message='File successfully uploaded'), file_upload_response), HTTPStatus.CREATED
 
         else:
+            self._logger.warn(f'{file.filename} is not an accepted file format')
             abort(HTTPStatus.FORBIDDEN, 'Only .csv files currently accepted')
