@@ -1,4 +1,4 @@
-from json import loads, dumps
+from json import loads
 from http import HTTPStatus
 from pathlib import Path
 
@@ -7,7 +7,7 @@ from flask_restplus import Namespace, Resource, fields, marshal, abort
 
 from ..core.data_preprocessor import DataPreprocessor
 from config import config
-from ..common.storage import StorageManager
+from src.core.storage import StorageManager
 
 files = Namespace(
     name='Files',

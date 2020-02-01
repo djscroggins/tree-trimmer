@@ -6,7 +6,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from src.api import tree_trimmer_api
-from src.common.storage import StorageManager
+from src.core.storage import StorageManager
 from src.core.custom_logging import Logger
 
 

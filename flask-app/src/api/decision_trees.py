@@ -9,7 +9,7 @@ from ..core.data_preprocessor import DataPreprocessor
 from ..core.decision_tree_wrapper import DecisionTreeWrapper
 from ..core.decision_tree_parser import DecisionTreeParser
 from config import config
-from ..common.storage import StorageManager
+from src.core.storage import StorageManager
 
 decision_trees = Namespace(
     name='Decision Trees',
