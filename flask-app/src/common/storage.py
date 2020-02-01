@@ -22,8 +22,6 @@ class StorageManager:
         return self._get_user_path(username).joinpath('data', file).resolve()
 
     def _get_user_file_path(self, username: str, s_filename: str) -> Path:
-        print('_get_user_file_path')
-        print(type(s_filename))
         return self._get_user_path(username).joinpath('files', s_filename).resolve()
 
     @staticmethod

@@ -1,5 +1,6 @@
 from typing import List, Dict, Union
 
+from flask import current_app
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from pytypes import typechecked
@@ -9,7 +10,8 @@ class DecisionTreeParser:
     """
     Class for parsing scikit-learn DecisionTreeClassifier tree data structure.
     """
-    @typechecked
+
+    # @typechecked
     def __init__(self, clf: DecisionTreeClassifier, **kwargs: dict) -> None:
         assert ('data' and 'parameters' in kwargs)
         data, parameters = kwargs.get('data'), kwargs.get('parameters')
@@ -20,8 +22,9 @@ class DecisionTreeParser:
         self.target_data = data.get('target')
         self.criterion = parameters.get('criterion')
         self.labels = data.get('labels').tolist()
+        self._logger = current_app.logger
 
-    @typechecked
+    # @typechecked
     def _get_node_data(self, node_index: int, leaf: bool = False) \
             -> Dict[str, Union[List[List[int]], List[Union[np.float64, str]], int]]:
         """
@@ -52,7 +55,7 @@ class DecisionTreeParser:
             return dict(split=split, impurity=impurity, n_node_samples=n_node_samples,
                         node_class_counts=node_class_counts)
 
-    @typechecked
+    # @typechecked
     def _get_impurity_decrease_data(self, node_index: int, left_index: np.int64, right_index: np.int64,
                                     origin_impurity: float) -> Dict[str, np.float64]:
         """
@@ -84,7 +87,7 @@ class DecisionTreeParser:
 
         return dict(weighted_impurity_decrease=impurity_decrease, percentage_impurity_decrease=percentage_decrease)
 
-    @typechecked
+    # @typechecked
     def _parse_to_dictionary(self, node_index: int = 0, depth: int = 0, origin_impurity_in: float = 0.0) -> dict:
         """
         Parses DecisionTreeClassifier tree structure to Python dict in D3.js hierarchical format
@@ -135,7 +138,7 @@ class DecisionTreeParser:
 
         return test_dict
 
-    @typechecked
+    # @typechecked
     def parse(self) -> dict:
         tree_dict = self._parse_to_dictionary()
         tree_summary = dict(total_depth=max(self.tree_depth), total_nodes=self.classifier.tree_.node_count)

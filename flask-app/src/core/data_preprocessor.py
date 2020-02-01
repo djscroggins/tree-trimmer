@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from flask import current_app
 import numpy as np
 import pandas as pd
 from pandas.core.frame import DataFrame
@@ -7,6 +8,9 @@ from pytypes import typechecked
 
 
 class DataPreprocessor:
+
+    def __init__(self):
+        self._logger = current_app.logger
 
     @typechecked
     def _get_target(self, df: DataFrame, target_index: int) -> np.ndarray:
@@ -20,7 +24,6 @@ class DataPreprocessor:
 
     @typechecked
     def _get_features(self, df: DataFrame, target_index: int) -> DataFrame:
-        print(type(df))
         feature_indices = [x for x in range(df.shape[1]) if x != target_index]
         return df.iloc[:, feature_indices]
 
@@ -56,10 +59,13 @@ class DataPreprocessor:
         df = pd.read_csv(file_path, header=0)
 
         target = self._get_target(df, target_index)
+        self._logger.info(target)
+        self._logger.info(type(target[0]))
         feature_values = self._get_features(df, target_index)
         feature_names = self._get_feature_names(feature_values)
         feature_values = self._get_feature_values(feature_values)
         labels = self._get_labels(target)
+        self._logger.info(labels)
 
         return dict(target=target, feature_values=feature_values, feature_names=feature_names, labels=labels)
 
