@@ -13,7 +13,8 @@ export default class FileLoadForm extends React.Component {
       selectedFile: undefined,
       targetIndex: 0,
       overlayButtonStyle: {},
-      overlayButtonText: "Select a file ..."
+      overlayButtonText: "Select a file ...",
+      fileNotAllowed: false
     };
   }
 
@@ -29,26 +30,30 @@ export default class FileLoadForm extends React.Component {
       method: "POST",
       body: formData
     }).then(response => {
-      console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
-      this.props.setFileUploaded(true);
-      return response.json();
+      if (response.status === 403) {
+        console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
+        this.setState({ fileNotAllowed: true });
+      } else {
+        console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
+        this.setState({ fileNotAllowed: false });
+        this.props.setFileUploaded(true);
+        return response.json();
+      }
     })
-      .catch(error => console.log(error));
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   _saveFile = (e) => {
     console.log(e.target.files[0].name);
     const file = e.target.files[0];
     const fileName = file.name;
-    this.setState({ selectedFile: file, overlayButtonText: fileName });
+    this.setState({ selectedFile: file, overlayButtonText: fileName, fileNotAllowed: false });
   };
 
   _setIndex = (e) => {
     this.setState({ targetIndex: e.target.value });
-  };
-
-  _onButtonChange = (e) => {
-    console.log(e);
   };
 
   _getButtonWidth = () => {
@@ -66,7 +71,7 @@ export default class FileLoadForm extends React.Component {
   }
 
   render() {
-    const { selectedFile, overlayButtonStyle, overlayButtonText } = this.state;
+    const { selectedFile, overlayButtonStyle, overlayButtonText, fileNotAllowed } = this.state;
     const { fileUploaded } = this.props;
     return (
       <form className='file-load-form' onSubmit={this._uploadFile}>
@@ -77,6 +82,10 @@ export default class FileLoadForm extends React.Component {
             <button style={overlayButtonStyle}>{overlayButtonText}</button>
           </div>
         </div>
+        {fileNotAllowed ?
+          <div style={{ color: "red" }}>
+            {overlayButtonText} is not a supported file (only .csv currently allowed)
+          </div> : null}
         {!fileUploaded ?
           <Box align='center'>
             <Label labelFor='targetIndex' margin='small'>Target Index</Label>
