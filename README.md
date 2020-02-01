@@ -1,6 +1,12 @@
 # interactiveDecisionTree
 
-Demo code for interactive decision tree builder
+![Start Screen](screenshots/start-screen.png)
+
+![Loaded File](screenshots/loaded-file.png)
+
+![Initialized Tree](screenshots/initialized-tree.png)
+
+![Trim Options](screenshots/trim-options.png)
 
 ## Set up
 
