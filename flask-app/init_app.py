@@ -7,7 +7,7 @@ from flask_cors import CORS
 
 from src.api import tree_trimmer_api
 from src.core.storage import StorageManager
-from src.core.custom_logging import Logger
+from src.core.utilities.custom_logging import Logger
 
 
 def create_app() -> Flask:
