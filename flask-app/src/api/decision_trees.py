@@ -7,9 +7,9 @@ from flask_restplus import Namespace, Resource, fields, marshal, abort
 
 from ..core.data_preprocessor import DataPreprocessor
 from ..core.decision_tree_wrapper import DecisionTreeWrapper
-from ..core.decision_tree_parser import DecisionTreeParser
+from src.core.decision_tree.decision_tree_parser import DecisionTreeParser
 from config import config
-from src.core.storage import StorageManager
+from ..core.storage import StorageManager
 
 decision_trees = Namespace(
     name='Decision Trees',
