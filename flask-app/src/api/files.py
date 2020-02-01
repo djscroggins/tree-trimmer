@@ -7,7 +7,7 @@ from flask_restplus import Namespace, Resource, fields, marshal, abort
 
 from src.core.utilities.data_preprocessor import DataPreprocessor
 from config import config
-from src.core.decision_tree.storage import StorageManager
+from src.core.utilities.storage import StorageManager
 
 files = Namespace(
     name='Files',
