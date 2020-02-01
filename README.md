@@ -14,6 +14,10 @@ An interactive application for manipulating Decision Tree models
 
 ![Initialized Tree](screenshots/initialized-tree.png)
 
+## Filtering Features
+
+![Filtering Features](screenshots/filter-features.png)
+
 ## Node Trim Options
 
 ![Trim Options](screenshots/trim-options.png)
