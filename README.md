@@ -2,7 +2,7 @@
 
 An interactive application for manipulating Decision Tree models
 
-Start Screen:
+<p style="text-align: center;"> Start Screen: </p>
 
 ![Start Screen](screenshots/start-screen.png)
 
