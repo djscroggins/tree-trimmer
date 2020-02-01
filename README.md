@@ -1,4 +1,6 @@
-# interactiveDecisionTree
+# Tree Trimmer
+
+An interactive application for manipulating Decision Tree models
 
 Start Screen:
 
