@@ -80,6 +80,8 @@ class DecisionTreeManager(Resource):
 
             results['ml_results'] = result
 
+            self._logger.info(result)
+
             return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.CREATED
         except AssertionError as e:
             self._logger.error(e)

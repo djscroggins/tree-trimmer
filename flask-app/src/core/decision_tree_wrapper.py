@@ -71,7 +71,7 @@ class DecisionTreeWrapper:
     def get_classifier(self) -> DecisionTreeClassifier:
         return self.classifier
 
-    @typechecked
+    # @typechecked
     def get_summary(self) -> Dict[str, Union[List[List[int]], List[Tuple[str, np.float64]], List[int]]]:
         important_features = self._get_top_features()
         conf_matrix = self._get_cross_val_confusion_matrix()

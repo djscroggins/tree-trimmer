@@ -1,4 +1,5 @@
 mongo-expirements/
+storage/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
