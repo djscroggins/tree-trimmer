@@ -5,7 +5,7 @@ from pathlib import Path
 from flask import current_app, request
 from flask_restplus import Namespace, Resource, fields, marshal, abort
 
-from ..core.data_preprocessor import DataPreprocessor
+from src.core.utilities.data_preprocessor import DataPreprocessor
 from config import config
 from src.core.storage import StorageManager
 
