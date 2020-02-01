@@ -32,7 +32,7 @@ export default class FileLoadForm extends React.Component {
     }).then(response => {
       if (response.status === 403) {
         console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
-        this.setState({ fileNotAllowed: true });
+        this.setState({ fileNotAllowed: true, selectedFile: undefined });
       } else {
         console.log(`_uploadFile -> ${response.status}: ${response.statusText}`);
         this.setState({ fileNotAllowed: false });
