@@ -1,6 +1,6 @@
 # Tree Trimmer
 
-An interactive application for manipulating Decision Tree models
+An interactive application for manipulating Decision Tree models. React + D3 UI with Flask API.
 
 ## Start Screen
 
