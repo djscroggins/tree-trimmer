@@ -2,19 +2,19 @@
 
 An interactive application for manipulating Decision Tree models
 
-<p style="text-align: center;"> Start Screen: </p>
+## Start Screen
 
 ![Start Screen](screenshots/start-screen.png)
 
-Initialization Screen:
+## Initialization Screen
 
 ![Loaded File](screenshots/loaded-file.png)
 
-Initialized Tree:
+## Initialized Tree
 
 ![Initialized Tree](screenshots/initialized-tree.png)
 
-Node Trim Options:
+## Node Trim Options
 
 ![Trim Options](screenshots/trim-options.png)
 
