@@ -11,7 +11,6 @@ from src.core.decision_tree.decision_tree_parser import DecisionTreeParser
 from src.core.utilities.storage import StorageManager
 from config import config
 
-
 decision_trees = Namespace(
     name='Decision Trees',
     description='Namespace for decision tree creation',

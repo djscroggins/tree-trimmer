@@ -6,8 +6,8 @@ from flask import current_app, request
 from flask_restplus import Namespace, Resource, fields, marshal, abort
 
 from src.core.utilities.data_preprocessor import DataPreprocessor
-from config import config
 from src.core.utilities.storage import StorageManager
+from config import config
 
 files = Namespace(
     name='Files',
