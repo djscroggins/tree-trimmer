@@ -1,11 +1,15 @@
 # interactiveDecisionTree
 
+Start Screen:
 ![Start Screen](screenshots/start-screen.png)
 
+Initialization Screen:
 ![Loaded File](screenshots/loaded-file.png)
 
+Initialized Tree:
 ![Initialized Tree](screenshots/initialized-tree.png)
 
+Node Trim Options:
 ![Trim Options](screenshots/trim-options.png)
 
 ## Set up
