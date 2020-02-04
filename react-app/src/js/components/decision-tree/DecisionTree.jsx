@@ -202,12 +202,12 @@ export default class DecisionTree extends React.Component {
       .text(function(d) {
         return d.node ? instance._getSplitterText(d.node) : instance._getCriterionText(d.leaf);
       })
-      .append("tspan")
-      .attr("x", 0)
-      .attr("dy", "1em")
-      .text(function(d) {
-        return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
-      })
+      // .append("tspan")
+      // .attr("x", 0)
+      // .attr("dy", "1em")
+      // .text(function(d) {
+      //   return d.node ? instance._getCriterionText(d.node) : instance._getNodeSamplesText(d.leaf);
+      // })
       .append("tspan")
       .attr("x", 0)
       .attr("dy", "1em")
