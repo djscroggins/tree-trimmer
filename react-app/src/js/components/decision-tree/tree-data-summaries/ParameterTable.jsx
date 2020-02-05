@@ -12,7 +12,7 @@ export default class ParameterTable extends React.Component {
       "max_depth": "Max Tree Depth",
       "min_samples_leaf": "Min Samples Allowed in Leaf",
       "min_samples_split": "Min Samples Required to Split"
-    }
+    };
   }
 
   _resetContainer = () => {
@@ -27,7 +27,7 @@ export default class ParameterTable extends React.Component {
 
     let replacedParameters = Object.keys(_parameters).map((key) => {
       const newKey = this.keyReplacements[key] || key;
-      return { [newKey] : _parameters[key] };
+      return { [newKey]: _parameters[key] };
     });
 
     _parameters = replacedParameters.reduce((a, b) => Object.assign({}, a, b));
@@ -36,9 +36,10 @@ export default class ParameterTable extends React.Component {
     let parametersArray = Object.keys(_parameters);
     const valuesArray = Object.values(_parameters)
       .filter((value, index, array) =>
-        parametersArray.indexOf("filter_feature") !== array.indexOf(value)
+        parametersArray.indexOf("filter_feature") !== array.indexOf(value) &&
+        parametersArray.indexOf("random_state") !== array.indexOf(value)
       );
-    parametersArray = parametersArray.filter(key => key !== 'filter_feature');
+    parametersArray = parametersArray.filter(key => key !== "filter_feature" && key !== "random_state");
 
     //  Set up table
     const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered`);
