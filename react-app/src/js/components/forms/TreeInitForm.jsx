@@ -29,7 +29,7 @@ export default class TreeInitForm extends React.Component {
       max_depth: maxDepth,
       min_samples_split: minSamplesSplit,
       min_samples_leaf: minSamplesLeaf,
-      random_state: randomState
+      random_state: true
     };
 
     fetch(`${process.env.API_HOST}/${process.env.DECISION_TREE_NS}`, {
@@ -40,6 +40,7 @@ export default class TreeInitForm extends React.Component {
     })
       .then(response => {
         console.log(`_initializeTree -> ${response.status}: ${response.statusText}`);
+        console.log(payload);
         return response.json();
       })
       .then(json => {
@@ -76,10 +77,10 @@ export default class TreeInitForm extends React.Component {
         <NumberInput className='form-input' defaultValue={2} min={2} name='minSamplesSplit' onChange={this._setMinSamplesSplit}/>
 
         <Label margin='small'>Min Samples - Leaf</Label>
-        <NumberInput className='form-input' defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
+        <NumberInput className='form-input min-samples-split-input' defaultValue={1} min={1} name='minSamplesLeaf' onChange={this._setMinSamplesLeaf}/>
 
-        <CheckBox className='random-state-checkbox' defaultChecked={true} label='Random State' name='randomState'
-                  toggle={true} onChange={this._toggleRandomState}/>
+        {/*<CheckBox className='random-state-checkbox' defaultChecked={true} label='Random State' name='randomState'*/}
+        {/*          toggle={true} onChange={this._toggleRandomState}/>*/}
 
         <Button label='Initialize Tree' type='submit'/>
       </form>
