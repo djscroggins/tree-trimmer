@@ -3,6 +3,8 @@ import React from "react";
 import cloneDeep from "lodash/cloneDeep";
 import * as d3 from "d3";
 
+import replaceKeys from "../../../common/keyReplacement";
+
 export default class ParameterTable extends React.Component {
   constructor(props) {
     super(props);
@@ -25,13 +27,7 @@ export default class ParameterTable extends React.Component {
     const containerNode = this.parameterTableContainer;
     let _parameters = cloneDeep(this.props.parameters);
 
-    let replacedParameters = Object.keys(_parameters).map((key) => {
-      const newKey = this.keyReplacements[key] || key;
-      return { [newKey]: _parameters[key] };
-    });
-
-    _parameters = replacedParameters.reduce((a, b) => Object.assign({}, a, b));
-    console.log(_parameters);
+    _parameters = replaceKeys(_parameters, this.keyReplacements);
 
     let parametersArray = Object.keys(_parameters);
     const valuesArray = Object.values(_parameters)

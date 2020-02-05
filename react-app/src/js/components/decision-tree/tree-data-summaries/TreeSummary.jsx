@@ -1,11 +1,17 @@
 import React from "react";
 
+import replaceKeys from "../../../common/keyReplacement";
+import cloneDeep from "lodash/cloneDeep";
 import * as d3 from "d3";
 
 export default class TreeSummary extends React.Component {
   constructor(props) {
     super(props);
     this.tableName = "tree-summary-table";
+    this.keyReplacements = {
+      "total_depth": "Total Tree Depth",
+      "total_nodes": "Total Nodes in Tree"
+    };
   }
 
 
@@ -17,10 +23,13 @@ export default class TreeSummary extends React.Component {
   renderTreeSummary = () => {
     this._resetContainer();
     const containerNode = this.treeSummaryContainer;
-    const summaryArray = Object.keys(this.props.mlResults["tree_summary"]);
-    const valuesArray = Object.values(this.props.mlResults["tree_summary"]);
+    let treeSummary = cloneDeep(this.props.mlResults["tree_summary"]);
 
-    const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered` );
+    treeSummary = replaceKeys(treeSummary, this.keyReplacements);
+    const summaryArray = Object.keys(treeSummary);
+    const valuesArray = Object.values(treeSummary);
+
+    const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered`);
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
