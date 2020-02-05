@@ -1,11 +1,18 @@
 import React from "react";
 
+import cloneDeep from "lodash/cloneDeep";
 import * as d3 from "d3";
 
 export default class ParameterTable extends React.Component {
   constructor(props) {
     super(props);
     this.tableName = "parameters-table";
+    this.keyReplacements = {
+      "criterion": "Criterion",
+      "max_depth": "Max Tree Depth",
+      "min_samples_leaf": "Min Samples Allowed in Leaf",
+      "min_samples_split": "Min Samples Required to Split"
+    }
   }
 
   _resetContainer = () => {
@@ -14,10 +21,20 @@ export default class ParameterTable extends React.Component {
 
   renderParameterTable = () => {
     this._resetContainer();
+
     const containerNode = this.parameterTableContainer;
-    const parameters = this.props.parameters;
-    let parametersArray = Object.keys(parameters);
-    const valuesArray = Object.values(parameters)
+    let _parameters = cloneDeep(this.props.parameters);
+
+    let replacedParameters = Object.keys(_parameters).map((key) => {
+      const newKey = this.keyReplacements[key] || key;
+      return { [newKey] : _parameters[key] };
+    });
+
+    _parameters = replacedParameters.reduce((a, b) => Object.assign({}, a, b));
+    console.log(_parameters);
+
+    let parametersArray = Object.keys(_parameters);
+    const valuesArray = Object.values(_parameters)
       .filter((value, index, array) =>
         parametersArray.indexOf("filter_feature") !== array.indexOf(value)
       );
