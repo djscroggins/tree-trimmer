@@ -64,7 +64,7 @@ export default class ParameterTable extends React.Component {
       && key !== "random_state"
       && key !== "criterion");
     const tooltipText = this._getToolTipText(parametersArray);
-    console.log(tooltipText);
+    // console.log(tooltipText);
 
     //  Set up table
     const table = d3.select(containerNode).append("table").attr("class", `${this.tableName} table table-bordered`);

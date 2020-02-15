@@ -4,3 +4,5 @@
 .env*
 *.env
 gapMinder.csv
+*gap-minder*.csv
+case-study-notes.md

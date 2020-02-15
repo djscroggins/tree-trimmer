@@ -61,9 +61,9 @@ export default class NodeSummary extends React.Component {
   };
 
   _showTrimOptions = () => {
-    console.log("onClick");
-    console.log(this.state.nodeData.node);
-    console.log(this.state.nodeData.isLeaf);
+    // console.log("onClick");
+    // console.log(this.state.nodeData.node);
+    // console.log(this.state.nodeData.isLeaf);
     const { showNodeTrimOptions } = this.state;
     if (showNodeTrimOptions) {
       this.setState({ showNodeTrimOptions: false, showNodeTrimOptionsText: "Show Trim Options" });
@@ -73,8 +73,8 @@ export default class NodeSummary extends React.Component {
   };
 
   componentDidMount() {
-    console.log("NodeSummaryDidMount");
-    console.log(this.props.nodeData);
+    // console.log("NodeSummaryDidMount");
+    // console.log(this.props.nodeData);
     const { nodeData, nodeIsLeaf } = this.props;
     if (nodeData) {
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
@@ -85,21 +85,21 @@ export default class NodeSummary extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     const { nodeData, nodeIsLeaf } = this.props;
     if (!isEqual(prevProps.nodeData, nodeData)) {
-      console.log("NodeSummaryDidUpdate: setting state");
+      // console.log("NodeSummaryDidUpdate: setting state");
       this.setState({ nodeData: { node: nodeData, isLeaf: nodeIsLeaf } });
     }
 
     if (!isEqual(prevState.nodeData.node, this.state.nodeData.node)) {
-      console.log("NodeSummaryDidUpdate: rendering Node summary");
-      console.log("prevState.nodeData.node: ", prevState.nodeData.node);
+      // console.log("NodeSummaryDidUpdate: rendering Node summary");
+      // console.log("prevState.nodeData.node: ", prevState.nodeData.node);
       this._renderNodeSummary(nodeData, nodeIsLeaf);
     }
   }
 
   render() {
     const { nodeData, showNodeTrimOptions, showNodeTrimOptionsText } = this.state;
-    console.log("React render()");
-    console.log(nodeData.node.node_depth);
+    // console.log("React render()");
+    // console.log(nodeData.node.node_depth);
     return (
       <Box className='node-summary-box' align='center'>
         <div className='node-summary-container' ref={node => this.nodeSummaryContainer = node}/>

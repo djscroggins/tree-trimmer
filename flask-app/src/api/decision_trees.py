@@ -59,8 +59,10 @@ class DecisionTreeManager(Resource):
         current_user = config.get('DEFAULT_USER')
         data_dict = self._storage_manager.get_user_data(current_user)
         data = copy.deepcopy(data_dict)
+        self._logger.info(f'DATA COPY: {data}')
 
         feature_filter = parameters.get('filter_feature')
+        self._logger.info(f'FEATURE_FILTER: {feature_filter}')
 
         if feature_filter:
             filtered_feat_dict = self._data_preprocessor.filter_features(data=data, feature_filter=feature_filter)
@@ -80,7 +82,7 @@ class DecisionTreeManager(Resource):
 
             results['ml_results'] = result
 
-            self._logger.info(result)
+            # self._logger.info(result)
 
             return marshal(dict(ml_results=result), decision_trees_response), HTTPStatus.CREATED
         except AssertionError as e:

@@ -159,8 +159,10 @@ export default class FeatureTable extends React.Component {
   };
 
   _updateParameters = () => {
-    console.log("UPDATE PARAMETERS");
+    // console.log("UPDATE PARAMETERS");
+    console.log(`UPDATE PARAMETERS filter_features: ${this.featuresToFilterArray}`);
     this.props.updateParameters("filter_feature", this.featuresToFilterArray);
+    this._resetFiltersToFeatureArray();
   };
 
   _resetFiltersToFeatureArray = () => {
@@ -184,6 +186,11 @@ export default class FeatureTable extends React.Component {
       this._resetFiltersToFeatureArray();
       this.renderFeatureTable();
     }
+  }
+
+  componentWillUnmount() {
+    // console.log("Feature Table Component will Unmount");
+    this._resetFiltersToFeatureArray();
   }
 
   render() {
