@@ -2,14 +2,26 @@ import React from "react";
 
 import * as d3 from "d3";
 
+import "../../../../css/decision-tree/tree-data-summaries/confusion-matrix.css";
+
 export default class ConfusionMatrix extends React.Component {
   constructor(props) {
     super(props);
     this.confusionMatrixSVG = "matrix-svg";
+    this.summaryClass = "summary";
+    this.label_map = [];
   }
 
   _resetContainer = () => {
     d3.selectAll("." + this.confusionMatrixSVG).remove();
+    d3.select(`.${this.summaryClass}`).remove();
+  };
+
+  _setClassSummaryAndLabels = (labels) => {
+    labels.forEach((cv, i, array) => {
+      array.splice(i, 1, i);
+      this.label_map.push(`${i}: ${cv}`);
+    });
   };
 
 
@@ -20,8 +32,23 @@ export default class ConfusionMatrix extends React.Component {
     const { width, height } = dimensions;
     //TODO: Change return types from backend to camel case
     const matrix = mlResults["confusion_matrix"];
-    const classLabels = mlResults["class_labels"];
+    const _ = mlResults["class_labels"];
+    const classLabels = _.slice(0);
+    this._setClassSummaryAndLabels(classLabels);
+    console.log(classLabels);
     const { startColor, endColor } = colorRange;
+
+
+    d3
+      .select(this.confusionMatrixContainer)
+      .selectAll('div')
+      .data(this.label_map)
+      .enter()
+      .append("div")
+      .attr("class", this.summaryClass)
+      .text(function(d) {
+        return d;
+      });
 
     // Standard margins; if label is number returns fixed left margin else sets relative to length of longest label
     const margin = {
