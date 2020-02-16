@@ -32,7 +32,7 @@ class DecisionTreeWrapper:
     @typechecked
     def _get_top_features(self, limit: int = 10) -> List[Tuple[str, np.float64]]:
         """
-        Returns (up to) 10 most important feature indices sorted by importance
+        Returns (up to) 10 most important feature indices sorted by importance that are greater than 0
 
         Args:
             limit (int): limit of important features to return
@@ -42,7 +42,8 @@ class DecisionTreeWrapper:
 
         """
         top_indices = np.argsort(self.classifier.feature_importances_)[::-1][:limit]
-        return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices]
+        return [(self.feature_names[i], round(self.classifier.feature_importances_[i], 4)) for i in top_indices
+                if self.classifier.feature_importances_[i] != 0]
 
     @typechecked
     def _get_cross_val_predict(self) -> np.ndarray:
