@@ -35,7 +35,7 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "jquery": ">=3.4.0",
-    "lodash-es": "^4.17.15",
+    "lodash-es": "^4.17.21",
     "popper.js": "^1.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
